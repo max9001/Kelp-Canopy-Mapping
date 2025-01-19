@@ -4,6 +4,10 @@ import random
 import tifffile as tiff
 from PIL import Image
 import os
+from pyprojroot import here
+
+# Get the root directory of the project
+dir_root = here() #here() searches for a known marker file (like README.md) 
 
 def normalize_band(band):
     return (band - band.min()) / (band.max() - band.min())
@@ -11,16 +15,17 @@ def normalize_band(band):
 def gamma_correction(image, gamma=1.0):
     return np.power(image, gamma)
 
-directory = "data/train_kelp/"
-filenames = os.listdir(directory)
+directory = str(dir_root)
+
+filenames = os.listdir(directory + "/data/train_kelp/")
 
 filename = random.choice(filenames)
 filename = filename[:-9]
 
 # filename = "AA498489"
 
-GT_img = "kaggle_dataset/train_kelp/" + filename + "_kelp.tif"
-ST_img = "kaggle_dataset/train_satellite/" + filename + "_satellite.tif"
+GT_img = directory + "/data/train_kelp/" + filename + "_kelp.tif"
+ST_img = directory + "/data/train_satellite/" + filename + "_satellite.tif"
 
 image_GT = Image.open(GT_img)
 image_GT = np.array(image_GT)
