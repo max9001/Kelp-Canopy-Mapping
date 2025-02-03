@@ -101,6 +101,10 @@ class KelpDataset(Dataset):
         return Image.fromarray(image).resize((320, 320))
 
 def main():
+
+    # print("enter a name for this run: ")
+    # run_name = input()
+
     # Prepare dataset splits
     filenames = prepare_filenames()
     train_data, train_masks, val_data, val_masks, test_data, test_masks = filenames

@@ -1,4 +1,5 @@
-from pyprojroot import here
+# from pyprojroot import here
+from pathlib import Path
 import os
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -20,9 +21,13 @@ def prepare_filenames():
 
 def split_dataset():
 
-    dir_root = here()
-    directory = str(dir_root)
-    filenames = np.array(os.listdir(directory + "/data/train_kelp/"))
+    # dir_root = here()
+    # directory = str(dir_root)
+    # filenames = np.array(os.listdir(directory + "/data/train_kelp/"))
+
+    dir_root = Path().resolve().parent  # Equivalent to here()
+    directory = dir_root / "data" / "train_kelp"
+    filenames = np.array([f.name for f in directory.iterdir() if f.is_file()])
     filenames = [f[:8] for f in filenames]
 
     # 60% of the data for training, 20% for validation, and 20% for testing.
@@ -32,11 +37,19 @@ def split_dataset():
     return train_files, val_files, test_files
     
 def get_gt_filenames(filenames):
-    dir_root = here()
-    directory = str(dir_root)
-    return [directory + "/data/train_kelp/" + f + "_kelp.tif" for f in filenames]
+    # dir_root = here()
+    # directory = str(dir_root)
+    # return [directory + "/data/train_kelp/" + f + "_kelp.tif" for f in filenames]
+
+    dir_root = Path().resolve().parent
+    directory = dir_root / "data" / "train_kelp"  
+    return [str(directory / f"{f}_kelp.tif") for f in filenames]
 
 def get_st_filenames(filenames):
-    dir_root = here()
-    directory = str(dir_root)
-    return [directory + "/data/train_satellite/" + f + "_satellite.tif" for f in filenames]
+    # dir_root = here()
+    # directory = str(dir_root)
+    # return [directory + "/data/train_satellite/" + f + "_satellite.tif" for f in filenames]
+
+    dir_root = Path().resolve().parent
+    directory = dir_root / "data" / "train_satellite"  
+    return [str(directory / f"{f}_satellite.tif") for f in filenames]

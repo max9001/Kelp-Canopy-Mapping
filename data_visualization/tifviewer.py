@@ -5,9 +5,9 @@ import tifffile as tiff
 from PIL import Image
 import os
 from pyprojroot import here
+from pathlib import Path
 
 # Get the root directory of the project
-dir_root = here() #here() searches for a known marker file (like README.md) 
 
 def normalize_band(band):
     return (band - band.min()) / (band.max() - band.min())
@@ -15,17 +15,18 @@ def normalize_band(band):
 def gamma_correction(image, gamma=1.0):
     return np.power(image, gamma)
 
-directory = str(dir_root)
+directory = Path().resolve().parent
+get_names = directory / "data" / "train_kelp"  
 
-filenames = os.listdir(directory + "/data/train_kelp/")
+filenames = np.array([f.name for f in get_names.iterdir() if f.is_file()])
 
 filename = random.choice(filenames)
 filename = filename[:-9]
 
-# filename = "AA498489"
+filename = "AA498489"
 
-GT_img = directory + "/data/train_kelp/" + filename + "_kelp.tif"
-ST_img = directory + "/data/train_satellite/" + filename + "_satellite.tif"
+GT_img = str(directory / "data" / "train_kelp" / f"{filename}_kelp.tif")
+ST_img = str(directory / "data" / "train_satellite" / f"{filename}_satellite.tif")
 
 image_GT = Image.open(GT_img)
 image_GT = np.array(image_GT)
