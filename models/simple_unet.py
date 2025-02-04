@@ -8,6 +8,8 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 import sys
 from pyprojroot import here
+from pathlib import Path
+import os 
 
 dir_root = here()
 sys.path.append(str(dir_root))
@@ -34,6 +36,12 @@ class UNet(pl.LightningModule):
         self.loss_fn = nn.BCELoss()  # Binary Cross Entropy Loss
         self.accuracy = Accuracy(task="binary")  # Binary accuracy
         self.iou = JaccardIndex(task="binary")  # IoU for binary segmentation
+
+        
+        # Ensure output directory exists
+        self.output_dir = Path().resolve().parent / "output" / "predictions" 
+        os.makedirs(self.output_dir, exist_ok=True)
+
 
     def forward(self, x):
         x = self.encoder(x)
@@ -64,12 +72,23 @@ class UNet(pl.LightningModule):
 
         acc = self.accuracy(preds_binary, labels.int())  # Binary accuracy
         iou = self.iou(preds_binary, labels.int())  # Compute IoU
-        
+
+        # Convert predictions to NumPy
+        preds_np = preds_binary.cpu().numpy()  # Move to CPU, convert to NumPy
+        labels_np = labels.cpu().numpy()
+
+        # Save each mask separately
+        for i in range(preds_np.shape[0]):  # Batch dimension
+            filename = os.path.join(self.output_dir, f"mask_{batch_idx}_{i}.tif")
+            tiff.imwrite(filename, (preds_np[i, 0] * 255).astype("uint8"))  # Scale to 0-255 for saving
+
+        # Logging
         self.log('test_loss', loss)
         self.log('test_accuracy', acc)
-        self.log('test_iou', iou)  # Log IoU score
+        self.log('test_iou', iou)
 
         return {'test_loss': loss, 'test_accuracy': acc, 'test_iou': iou}
+
 
     def configure_optimizers(self):
         optimizer = optim.Adam(self.parameters(), lr=1e-4)
@@ -137,7 +156,13 @@ def main():
 
     # Initialize PyTorch Lightning Trainer
     # trainer = pl.Trainer(max_epochs=10)  # Set gpus to 1 if you have GPU, else remove it
-    trainer = pl.Trainer(accelerator="gpu", devices=1, max_epochs=20)
+    trainer = pl.Trainer(
+        accelerator="gpu" if torch.cuda.is_available() else "cpu",
+        devices=1,
+        max_epochs=1, 
+        limit_train_batches=100,
+        limit_val_batches=10,
+    )
 
 
     # Train the model
