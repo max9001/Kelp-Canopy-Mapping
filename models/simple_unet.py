@@ -3,7 +3,7 @@ import torch.nn as nn
 import pytorch_lightning as pl
 import tifffile as tiff
 import torch.optim as optim
-from torchmetrics import Accuracy
+from torchmetrics import Accuracy, JaccardIndex 
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 import sys
@@ -32,7 +32,8 @@ class UNet(pl.LightningModule):
             nn.Sigmoid()  # Sigmoid activation for binary segmentation
         )
         self.loss_fn = nn.BCELoss()  # Binary Cross Entropy Loss
-        self.accuracy =  Accuracy(task="binary")
+        self.accuracy = Accuracy(task="binary")  # Binary accuracy
+        self.iou = JaccardIndex(task="binary")  # IoU for binary segmentation
 
     def forward(self, x):
         x = self.encoder(x)
@@ -57,10 +58,18 @@ class UNet(pl.LightningModule):
         images, labels = batch
         preds = self(images)
         loss = self.loss_fn(preds, labels)
-        acc = self.accuracy(preds, labels.int())  # Use accuracy metric
+
+        # Convert predictions to binary (threshold = 0.5)
+        preds_binary = (preds > 0.5).float()
+
+        acc = self.accuracy(preds_binary, labels.int())  # Binary accuracy
+        iou = self.iou(preds_binary, labels.int())  # Compute IoU
+        
         self.log('test_loss', loss)
         self.log('test_accuracy', acc)
-        return {'test_loss': loss, 'test_accuracy': acc}
+        self.log('test_iou', iou)  # Log IoU score
+
+        return {'test_loss': loss, 'test_accuracy': acc, 'test_iou': iou}
 
     def configure_optimizers(self):
         optimizer = optim.Adam(self.parameters(), lr=1e-4)
@@ -127,7 +136,9 @@ def main():
     model = UNet()
 
     # Initialize PyTorch Lightning Trainer
-    trainer = pl.Trainer(max_epochs=10)  # Set gpus to 1 if you have GPU, else remove it
+    # trainer = pl.Trainer(max_epochs=10)  # Set gpus to 1 if you have GPU, else remove it
+    trainer = pl.Trainer(accelerator="gpu", devices=1, max_epochs=20)
+
 
     # Train the model
     trainer.fit(model, train_loader, val_loader)
