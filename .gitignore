@@ -1,6 +1,7 @@
 data/test_satellite/*
 data/train_satellite/*
 data/train_kelp/*
+output/predictions/*
 
 __pycache__/
 *.pyc

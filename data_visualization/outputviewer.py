@@ -23,7 +23,6 @@ for _ in range(max_attempts):
         break
 
 # print(valid_image)
-
 if valid_image is not None:
     plt.figure(figsize=(12, 6))
     plt.title(f"Predicted Image: {filename}", fontsize=25)
