@@ -22,6 +22,10 @@ for _ in range(max_attempts):
         valid_image = output_mask
         break
 
+output_mask = tiff.imread(directory / filename)
+valid_image = output_mask
+
+
 # print(valid_image)
 if valid_image is not None:
     plt.figure(figsize=(12, 6))

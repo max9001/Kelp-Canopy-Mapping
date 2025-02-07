@@ -2,6 +2,9 @@ data/test_satellite/*
 data/train_satellite/*
 data/train_kelp/*
 output/predictions/*
+models/lightning_logs*
+
+Helpful HPC3 Commands.txt
 
 __pycache__/
 *.pyc
