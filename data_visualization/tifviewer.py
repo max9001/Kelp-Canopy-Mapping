@@ -15,6 +15,19 @@ def normalize_band(band):
 def gamma_correction(image, gamma=1.0):
     return np.power(image, gamma)
 
+def get_overlay(image_GT):
+    rgba_overlay = np.zeros((image_GT.shape[0], image_GT.shape[1], 4), dtype=np.float32)
+
+    cmap = plt.get_cmap('Wistia')
+    kelp_color = cmap(1.0)  # Get the color for the 'highest' value in Wistia (fully opaque kelp)
+
+    # Set the RGBA values where kelp is present
+    rgba_overlay[image_GT == 1, :3] = kelp_color[:3]  # Set RGB from colormap
+    rgba_overlay[image_GT == 1, 3] = 1.0  # Set alpha to 1 (fully opaque) for kelp
+    rgba_overlay[image_GT == 0, 3] = 0.0 #Set alpha to 0 where there is no kelp.
+
+    return rgba_overlay
+
 directory = Path().resolve().parent
 get_names = directory / "data" / "train_kelp"  
 
@@ -23,7 +36,8 @@ filenames = np.array([f.name for f in get_names.iterdir() if f.is_file()])
 filename = random.choice(filenames)
 filename = filename[:-9]
 
-filename = "AA498489"
+# filename = "AA498489"
+filename = "KA317221"
 
 GT_img = str(directory / "data" / "train_kelp" / f"{filename}_kelp.tif")
 ST_img = str(directory / "data" / "train_satellite" / f"{filename}_satellite.tif")
@@ -58,9 +72,9 @@ plt.imshow(rgb_image)
 plt.subplot(1, 2, 2)
 plt.title("Labeled Kelp", fontsize=25)
 plt.imshow(rgb_image)
-plt.imshow(image_GT, cmap='Wistia', alpha=image_GT)
-
-# plt.tight_layout()
+rgba_overlay = get_overlay(image_GT)
+plt.imshow(rgba_overlay)  # Now overlaying a proper RGBA image
+# # plt.tight_layout()
 plt.show()
 
 
