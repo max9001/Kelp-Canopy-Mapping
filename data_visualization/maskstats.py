@@ -10,7 +10,11 @@ def calculate_kelp_pixel_counts(directory):
     Calculates kelp pixel counts and returns a list of (count, filename) tuples.
     """
     kelp_counts = []
-    filenames = [f for f in directory.iterdir() if f.is_file() and f.name.endswith('_kelp.tif')]
+    
+
+
+    filenames = [f for f in directory.iterdir() if f.is_file() and f.name.startswith('mask_') and f.name.endswith('.tif')] # Corrected
+    # filenames = [f for f in directory.iterdir() if f.is_file() and f.name.endswith('_kelp.tif')]
 
     for filename in tqdm(filenames, desc="Processing Images"):
         try:
