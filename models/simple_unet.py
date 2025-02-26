@@ -17,12 +17,12 @@ sys.path.append(str(dir_root))
 from utils.get_data import prepare_filenames
 
 # Define a simple U-Net model for semantic segmentation
-
 class UNet(pl.LightningModule):
     def __init__(self):
         super(UNet, self).__init__()
+        # A simple U-Net structure with 2 convolutional blocks
         self.encoder = nn.Sequential(
-            nn.Conv2d(7, 64, kernel_size=3, padding=1),
+            nn.Conv2d(7, 64, kernel_size=3, padding=1),  # 7 input channels (RGB+NIR)
             nn.ReLU(),
             nn.Conv2d(64, 128, kernel_size=3, padding=1),
             nn.ReLU()
@@ -30,15 +30,18 @@ class UNet(pl.LightningModule):
         self.decoder = nn.Sequential(
             nn.Conv2d(128, 64, kernel_size=3, padding=1),
             nn.ReLU(),
-            nn.Conv2d(64, 1, kernel_size=3, padding=1),
-            nn.Sigmoid()
+            nn.Conv2d(64, 1, kernel_size=3, padding=1),  # Output channel is 1 (binary)
+            nn.Sigmoid()  # Sigmoid activation for binary segmentation
         )
-        self.loss_fn = nn.BCELoss()
-        self.accuracy = Accuracy(task="binary")
-        self.iou = Accuracy(task="binary", ignore_index=True)  # Using Accuracy as IoU placeholder; ideally use JaccardIndex for IoU
+        self.loss_fn = nn.BCELoss()  # Binary Cross Entropy Loss
+        self.accuracy = Accuracy(task="binary")  # Binary accuracy
+        self.iou = JaccardIndex(task="binary")  # IoU for binary segmentation
+
         
+        # Ensure output directory exists
         self.output_dir = Path().resolve().parent / "output" / "predictions" 
         os.makedirs(self.output_dir, exist_ok=True)
+
 
     def forward(self, x):
         x = self.encoder(x)
@@ -46,21 +49,21 @@ class UNet(pl.LightningModule):
         return x
 
     def training_step(self, batch, batch_idx):
-        images, labels, _ = batch  # Discard filename here
+        images, labels = batch
         preds = self(images)
         loss = self.loss_fn(preds, labels)
         self.log('train_loss', loss)
         return loss
 
     def validation_step(self, batch, batch_idx):
-        images, labels, _ = batch  # Discard filename here
+        images, labels = batch
         preds = self(images)
         loss = self.loss_fn(preds, labels)
         self.log('val_loss', loss)
         return loss
 
     def test_step(self, batch, batch_idx):
-        images, labels, filenames = batch  # Now we also get the filename for each sample in the batch
+        images, labels = batch
         preds = self(images)
         loss = self.loss_fn(preds, labels)
 
@@ -70,25 +73,26 @@ class UNet(pl.LightningModule):
         acc = self.accuracy(preds_binary, labels.int())  # Binary accuracy
         iou = self.iou(preds_binary, labels.int())  # Compute IoU
 
-        # Convert predictions to NumPy and save using the provided filenames
-        preds_np = preds_binary.cpu().numpy()  # Shape: (batch_size, 1, H, W)
-        for i in range(preds_np.shape[0]):
-            # Use the provided filename from the dataset for this sample
-            file_name = filenames[i]
-            save_path = os.path.join(self.output_dir, file_name)
-            # Scale the binary mask to 0-255 and save as a TIFF image
-            tiff.imwrite(save_path, (preds_np[i, 0] * 255).astype("uint8"))
+        # Convert predictions to NumPy
+        preds_np = preds_binary.cpu().numpy()  # Move to CPU, convert to NumPy
+        labels_np = labels.cpu().numpy()
 
+        # Save each mask separately
+        for i in range(preds_np.shape[0]):  # Batch dimension
+            filename = os.path.join(self.output_dir, f"mask_{batch_idx}_{i}.tif")
+            tiff.imwrite(filename, (preds_np[i, 0] * 255).astype("uint8"))  # Scale to 0-255 for saving
+
+        # Logging
         self.log('test_loss', loss)
         self.log('test_accuracy', acc)
         self.log('test_iou', iou)
 
         return {'test_loss': loss, 'test_accuracy': acc, 'test_iou': iou}
 
+
     def configure_optimizers(self):
         optimizer = optim.Adam(self.parameters(), lr=1e-4)
         return optimizer
-
 
 class KelpDataset(Dataset):
     def __init__(self, image_filenames, mask_filenames, transform=None):
@@ -113,9 +117,7 @@ class KelpDataset(Dataset):
         # Ensure that the mask is binary and of type float32
         mask = mask.float()
 
-        # Return the base filename for the mask so we can use it later
-        mask_filename = os.path.basename(self.mask_filenames[idx])
-        return image, mask, mask_filename
+        return image, mask
 
     def load_image(self, filename):
         # Load the image using tiff.imread
@@ -125,7 +127,6 @@ class KelpDataset(Dataset):
     def resize(self, image):
         # Resize to the desired size (320x320)
         return Image.fromarray(image).resize((320, 320))
-
 
 def main():
 
@@ -158,9 +159,9 @@ def main():
     trainer = pl.Trainer(
         accelerator="gpu" if torch.cuda.is_available() else "cpu",
         devices=1,
-        max_epochs=1, 
-        limit_train_batches=100,
-        limit_val_batches=10,
+        max_epochs=10
+        # limit_train_batches=100,
+        # limit_val_batches=10,
     )
 
 

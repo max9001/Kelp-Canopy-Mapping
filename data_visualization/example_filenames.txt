@@ -1,25 +1,25 @@
 Example Filenames for Each Bin (Outliers Removed):
 
-Outlier Thresholds: Lower=2.00, Upper=8987.00
+Outlier Thresholds: Lower=0.00, Upper=0.00
 
-Bin [0]: AB417661_kelp.tif
-Bin [1-448): AA498489_kelp.tif
-Bin [448-895): AB602248_kelp.tif
-Bin [895-1342): AB160377_kelp.tif
-Bin [1342-1789): AC147670_kelp.tif
-Bin [1789-2237): AB678991_kelp.tif
-Bin [2237-2684): AO832229_kelp.tif
-Bin [2684-3131): BC524965_kelp.tif
-Bin [3131-3578): AA648736_kelp.tif
-Bin [3578-4025): AJ861319_kelp.tif
-Bin [4025-4473): AL506221_kelp.tif
-Bin [4473-4920): AF233037_kelp.tif
-Bin [4920-5367): AP757629_kelp.tif
-Bin [5367-5814): BT871051_kelp.tif
-Bin [5814-6261): DF568531_kelp.tif
-Bin [6261-6709): AD480612_kelp.tif
-Bin [6709-7156): AF541878_kelp.tif
-Bin [7156-7603): DB564915_kelp.tif
-Bin [7603-8050): TC854354_kelp.tif
-Bin [8050-8497): EE817555_kelp.tif
-Bin [8497-8945): KN761938_kelp.tif
+Bin [0]: mask_0_0.tif
+Bin [0-0): No example found
+Bin [0-0): No example found
+Bin [0-0): No example found
+Bin [0-0): No example found
+Bin [0-0): No example found
+Bin [0-0): No example found
+Bin [0-0): No example found
+Bin [0-0): No example found
+Bin [0-0): No example found
+Bin [0-1): No example found
+Bin [1-1): No example found
+Bin [1-1): No example found
+Bin [1-1): No example found
+Bin [1-1): No example found
+Bin [1-1): No example found
+Bin [1-1): No example found
+Bin [1-1): No example found
+Bin [1-1): No example found
+Bin [1-1): No example found
+Bin [1-1): No example found
