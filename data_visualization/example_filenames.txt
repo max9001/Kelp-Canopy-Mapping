@@ -2,7 +2,7 @@ Example Filenames for Each Bin (Outliers Removed):
 
 Outlier Thresholds: Lower=0.00, Upper=0.00
 
-Bin [0]: mask_0_0.tif
+Bin [0]: mask_0_1.tif
 Bin [0-0): No example found
 Bin [0-0): No example found
 Bin [0-0): No example found

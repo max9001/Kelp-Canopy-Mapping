@@ -1,6 +1,8 @@
 data/test_satellite/*
 data/train_satellite/*
 data/train_kelp/*
+data/train100/*
+data/train100_augmented/*
 output/predictions/*
 models/lightning_logs*
 

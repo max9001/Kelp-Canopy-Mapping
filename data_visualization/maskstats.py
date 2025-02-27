@@ -13,7 +13,7 @@ def calculate_kelp_pixel_counts(directory):
     
 
 
-    filenames = [f for f in directory.iterdir() if f.is_file() and f.name.startswith('mask_') and f.name.endswith('.tif')] # Corrected
+    filenames = [f for f in directory.iterdir() if f.is_file() and f.name.startswith('mask_') and f.name.endswith('.tif')] 
     # filenames = [f for f in directory.iterdir() if f.is_file() and f.name.endswith('_kelp.tif')]
 
     for filename in tqdm(filenames, desc="Processing Images"):
@@ -112,6 +112,7 @@ def plot_histogram_with_outlier_handling(kelp_counts_with_filenames, bins=50, ou
 def main():
     # directory = Path().resolve().parent / "data" / "train_kelp"
     directory = Path().resolve().parent / "output" / "predictions"
+    # directory = Path().resolve().parent / "data" / "train100_augmented"
     if not directory.exists():
         raise FileNotFoundError(f"The directory {directory} does not exist.")
 
