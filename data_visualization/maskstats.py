@@ -4,6 +4,7 @@ from PIL import Image
 from pathlib import Path
 import os
 from tqdm import tqdm
+import heapq  # Import for efficient top-k selection
 
 def calculate_kelp_pixel_counts(directory):
     """
@@ -12,9 +13,13 @@ def calculate_kelp_pixel_counts(directory):
     kelp_counts = []
     
 
-
+    filenames = []
     filenames = [f for f in directory.iterdir() if f.is_file() and f.name.startswith('mask_') and f.name.endswith('.tif')] 
     # filenames = [f for f in directory.iterdir() if f.is_file() and f.name.endswith('_kelp.tif')]
+    for f in tqdm(directory.iterdir(), desc="Scanning directory for kelp files"):
+        # Check if the item is a file and ends with the desired suffix
+        if f.is_file() and f.name.endswith('_kelp.tif'):
+            filenames.append(f) # Append the Path object to the list
 
     for filename in tqdm(filenames, desc="Processing Images"):
         try:
@@ -107,20 +112,54 @@ def plot_histogram_with_outlier_handling(kelp_counts_with_filenames, bins=50, ou
                 f.write(f"Bin [{int(bin_lower)}-{int(bin_upper)}): No example found\n")
     # --- End File Write ---
 
+def get_top_k_counts(kelp_counts_with_filenames, k=1000):
+    """
+    Efficiently gets the top k (count, filename) pairs using a heap.
 
+    Args:
+        kelp_counts_with_filenames: List of (count, filename) tuples.
+        k: The number of top elements to retrieve.
 
-def main():
+    Returns:
+        dict: A dictionary where keys are filenames and values are pixel counts,
+              containing the top k entries.  Returns an empty dictionary if
+              k is greater than the number of available items, or if the input list
+              is empty.
+    """
+    if not kelp_counts_with_filenames or k <= 0:  # Handle empty input or invalid k
+        return {}
+    if k > len(kelp_counts_with_filenames):
+        k = len(kelp_counts_with_filenames) #take all the counts
+
+    # Use heapq.nlargest to get the top k elements efficiently.
+    # We directly use the (count, filename) tuples; heapq will use the count for comparison.
+    top_k_list = heapq.nlargest(k, kelp_counts_with_filenames, key=lambda x: x[0])
+
+    # Convert the list of (count, filename) tuples to a dictionary {filename: count}
+    top_k_dict = {filename: count for count, filename in top_k_list}
+    return top_k_dict
+
+def main(option):
     # directory = Path().resolve().parent / "data" / "train_kelp"
     directory = Path().resolve().parent / "output" / "predictions"
-    # directory = Path().resolve().parent / "data" / "train100_augmented"
+    print("started")
+    # directory = Path().resolve().parent / "data" / "tiled_kelp"
     if not directory.exists():
         raise FileNotFoundError(f"The directory {directory} does not exist.")
 
     kelp_counts_with_filenames = calculate_kelp_pixel_counts(directory)
+    # top_1000_counts = get_top_k_counts(kelp_counts_with_filenames, k=1000)
 
+    # print(f"Total number of images processed: {len(list(top_1000_counts.values()))}")
+    # print(f"Number of images with zero kelp pixels: {list(top_1000_counts.values()).count(0)}")
+    # print(f"Maximum kelp pixel count: {max(list(top_1000_counts.values()))}")
+    # print(f"Minimum kelp pixel count: {min(list(top_1000_counts.values()))}")
+    # print(f"Average kelp pixel count: {np.mean(list(top_1000_counts.values())):.2f}")
+    # print(f"Median kelp pixel count: {np.median(list(top_1000_counts.values())):.2f}")
+    # exit()
     # Adjust outlier thresholds as needed
-    plot_histogram_with_outlier_handling(kelp_counts_with_filenames, bins=20,
-                                         outlier_threshold_lower=0.01, outlier_threshold_upper=0.99)
+    # plot_histogram_with_outlier_handling(kelp_counts_with_filenames, bins=20,
+    #                                      outlier_threshold_lower=0.01, outlier_threshold_upper=0.99)
 
     # --- Calculate and print statistics (no changes here) ---
     kelp_counts = [count for count, _ in kelp_counts_with_filenames] # Extract just the counts

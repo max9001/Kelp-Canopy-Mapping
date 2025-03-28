@@ -11,6 +11,9 @@ from pyprojroot import here
 from pathlib import Path
 import os
 import torch.nn.functional as F  # Import functional for Dice Loss
+from pytorch_lightning.callbacks import LearningRateMonitor, EarlyStopping  # Import callbacks
+from lightning.pytorch.tuner import Tuner  # Import Tuner directly
+
 
 dir_root = here()
 sys.path.append(str(dir_root))
@@ -33,25 +36,12 @@ class DiceLoss(nn.Module):
 
         return 1 - dice
 
-class CombinedLoss(nn.Module): # combining BCE and dice
-    def __init__(self, alpha=0.5, beta=0.5):
-        super(CombinedLoss, self).__init__()
-        self.bce_loss = nn.BCELoss()
-        self.dice_loss = DiceLoss()
-        self.alpha = alpha
-        self.beta = beta
-
-    def forward(self, inputs, targets):
-        return self.alpha * self.bce_loss(inputs, targets) + self.beta * self.dice_loss(inputs, targets)
-
-
-
 class UNet(pl.LightningModule):
-    def __init__(self, use_dice_loss=True, loss_weights=None): #added param for choice of loss function
+    def __init__(self, lr=1e-4):  # Add learning rate as a hyperparameter
         super(UNet, self).__init__()
-        # A simple U-Net structure with 2 convolutional blocks
+        self.save_hyperparameters() #save it
         self.encoder = nn.Sequential(
-            nn.Conv2d(7, 64, kernel_size=3, padding=1),  # 7 input channels
+            nn.Conv2d(7, 64, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.Conv2d(64, 128, kernel_size=3, padding=1),
             nn.ReLU()
@@ -59,84 +49,75 @@ class UNet(pl.LightningModule):
         self.decoder = nn.Sequential(
             nn.Conv2d(128, 64, kernel_size=3, padding=1),
             nn.ReLU(),
-            nn.Conv2d(64, 1, kernel_size=3, padding=1),  # Output channel is 1 (binary)
+            nn.Conv2d(64, 1, kernel_size=3, padding=1),
         )
-        # Choose loss function
-        self.use_dice_loss = use_dice_loss
-        if self.use_dice_loss:
-            self.loss_fn = DiceLoss()
-        else:
-            if loss_weights is not None:
-                 self.loss_fn = nn.BCELoss(weight=torch.tensor(loss_weights, dtype=torch.float32))
-            else:
-                self.loss_fn = nn.BCELoss() #default BCE
-        # self.loss_fn = CombinedLoss() #uncomment to use Combined loss
 
-        self.accuracy = Accuracy(task="binary")  # Binary accuracy
-        self.iou = JaccardIndex(task="binary")  # IoU for binary segmentation
-
-        # Ensure output directory exists
+        self.loss_fn = DiceLoss()
+        self.accuracy = Accuracy(task="binary")
+        self.iou = JaccardIndex(task="binary")
         self.output_dir = Path().resolve().parent / "output" / "predictions"
         os.makedirs(self.output_dir, exist_ok=True)
+        self._initialize_weights()
+
+    def _initialize_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
 
     def forward(self, x):
         x = self.encoder(x)
         x = self.decoder(x)
         return x
 
-
     def training_step(self, batch, batch_idx):
         images, labels = batch
         preds = self(images)
-        # print(f"Max label value: {torch.max(labels)}, Min label value: {torch.min(labels)}")
-        if not self.use_dice_loss:  # If not using Dice, apply sigmoid
-            preds = torch.sigmoid(preds)
-
         loss = self.loss_fn(preds, labels)
-        self.log('train_loss', loss)
+        self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
         images, labels = batch
         preds = self(images)
-        if not self.use_dice_loss:  # If not using Dice, apply sigmoid
-           preds = torch.sigmoid(preds)
         loss = self.loss_fn(preds, labels)
-        self.log('val_loss', loss)
+        self.log('val_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         return loss
 
     def test_step(self, batch, batch_idx):
         images, labels = batch
         preds = self(images)
-        if not self.use_dice_loss:
-            preds = torch.sigmoid(preds) # Sigmoid only if not dice
         loss = self.loss_fn(preds, labels)
-
-        # Convert predictions to binary (threshold = 0.5)
-        preds_binary = (preds > 0.5).float()
-
-        acc = self.accuracy(preds_binary, labels.int())  # Binary accuracy
-        iou = self.iou(preds_binary, labels.int())  # Compute IoU
-
-        # Convert predictions and labels to NumPy
+        preds_binary = (torch.sigmoid(preds) > 0.5).float()
+        acc = self.accuracy(preds_binary, labels.int())
+        iou = self.iou(preds_binary, labels.int())
         preds_np = preds_binary.cpu().numpy()
-        labels_np = labels.cpu().numpy()
-
-        # Save each mask separately
-        for i in range(preds_np.shape[0]):  # Batch dimension
+        for i in range(preds_np.shape[0]):
             filename = os.path.join(self.output_dir, f"mask_{batch_idx}_{i}.tif")
-            tiff.imwrite(filename, (preds_np[i, 0] * 255).astype("uint8"))  # Scale to 0-255
-
-        # Logging
+            tiff.imwrite(filename, (preds_np[i, 0] * 255).astype("uint8"))
         self.log('test_loss', loss)
         self.log('test_accuracy', acc)
         self.log('test_iou', iou)
-
         return {'test_loss': loss, 'test_accuracy': acc, 'test_iou': iou}
 
     def configure_optimizers(self):
-        optimizer = optim.Adam(self.parameters(), lr=1e-4)
-        return optimizer
+        optimizer = optim.Adam(self.parameters(), lr=self.hparams.lr)
+        scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=5, factor=0.1)
+        return {
+            "optimizer": optimizer,
+            "lr_scheduler": {
+                "scheduler": scheduler,
+                "monitor": "val_loss",
+            },
+        }
+
+    def prepare_data(self):
+        pass
+
+    def setup(self, stage=None):
+        pass
+
 
 class KelpDataset(Dataset):
     def __init__(self, image_filenames, mask_filenames, transform=None):
@@ -148,6 +129,9 @@ class KelpDataset(Dataset):
         return len(self.image_filenames)
 
     def __getitem__(self, idx):
+
+        # assert os.path.exists(self.image_filenames[idx]), f"File not found: {self.image_filenames[idx]}"
+
         image = self.load_image(self.image_filenames[idx])
         mask = self.load_image(self.mask_filenames[idx])
 
@@ -170,7 +154,7 @@ class KelpDataset(Dataset):
 
 def main():
     # Prepare dataset splits
-    filenames = prepare_filenames()
+    filenames = prepare_filenames(sys.argv[1])
     train_data, train_masks, val_data, val_masks, test_data, test_masks = filenames
 
     # Create transform
@@ -182,45 +166,57 @@ def main():
     train_dataset = KelpDataset(train_data, train_masks, transform)
     val_dataset = KelpDataset(val_data, val_masks, transform)
     test_dataset = KelpDataset(test_data, test_masks, transform)
+    
+    train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True, num_workers=4, pin_memory=True, persistent_workers=True)
+    val_loader = DataLoader(val_dataset, batch_size=4, num_workers=4, pin_memory=True, persistent_workers=True)
+    test_loader = DataLoader(test_dataset, batch_size=4, num_workers=4, pin_memory = True, persistent_workers=True)
 
-    train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True, num_workers=4)
-    val_loader = DataLoader(val_dataset, batch_size=4, num_workers=4)
-    test_loader = DataLoader(test_dataset, batch_size=4, num_workers=4)
+    early_stop_callback = EarlyStopping(
+        monitor='val_loss',   # Quantity to monitor (must match the key logged in validation_step)
+        patience=10,          # Number of epochs with no improvement after which training will be stopped. Adjust as needed.
+        verbose=True,         # Print info when stopping
+        mode='min'            # Stop when the quantity monitored has stopped decreasing (correct for loss)
+    )
 
-    # --- Calculate class weights (for weighted BCE) ---
-    #This is helpful for highly imbalanced datasets.
-    # num_pixels = 0
-    # num_kelp = 0
-    # for _, mask_file in zip(train_data, train_masks):
-    #     mask = tiff.imread(mask_file)
-    #     num_pixels += mask.size
-    #     num_kelp += np.sum(mask == 1)  # Assuming kelp is 1, no-kelp is 0
-    # num_no_kelp = num_pixels - num_kelp
-    # class_weights = [num_kelp / num_pixels, num_no_kelp / num_pixels] # normalize, swap to have no-kelp first
-    # class_weights = [class_weights[1],class_weights[0]] #order for pytorch.
-    # print(f"Class Weights for BCE: {class_weights}")
-
-    # --- Choose Loss Function ---
-    use_dice = True  # Set to True to use Dice Loss, False for BCELoss (or weighted BCELoss)
-    loss_weights = class_weights if not use_dice else None # pass weights, only if using BCE.
+    # train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True, num_workers=4)
+    # val_loader = DataLoader(val_dataset, batch_size=4, num_workers=4)
+    # test_loader = DataLoader(test_dataset, batch_size=4, num_workers=4)
 
     # Initialize the UNet model
-    model = UNet(use_dice_loss=use_dice, loss_weights=loss_weights)
+    model = UNet(lr = 5e-5)
 
-
-    # Initialize PyTorch Lightning Trainer
     trainer = pl.Trainer(
         accelerator="gpu" if torch.cuda.is_available() else "cpu",
         devices=1,
-        max_epochs=5,
-        limit_train_batches=20,  # For faster debugging, limit batches
-        limit_val_batches=10,
-        limit_test_batches=5, 
+        max_epochs=200, 
+        # callbacks=[early_stop_callback],
+        log_every_n_steps=10,  # Log more frequently
     )
+
+    # # --- Learning Rate Finder (Correct Usage) ---
+    # #0.005754399373371567
+    # tuner = Tuner(trainer)
+    # lr_finder = tuner.lr_find(
+    #     model,
+    #     train_dataloaders=train_loader,
+    #     val_dataloaders=val_loader,
+    #     min_lr=1e-8,  # Optional: Set min/max LR
+    #     max_lr=1.0   # Optional
+    # )
+
+    # # Get the suggested learning rate
+    # suggested_lr = lr_finder.suggestion()
+    # print(f"Suggested learning rate: {suggested_lr}")
+
+    # # Update the model's learning rate
+    # model.hparams.lr = suggested_lr
+    # model.configure_optimizers() #re-init optimizer
+
 
     # Train and test the model
     trainer.fit(model, train_loader, val_loader)
     trainer.test(model, test_loader)
+
 
 if __name__ == "__main__":
     main()

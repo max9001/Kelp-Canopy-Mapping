@@ -5,7 +5,7 @@ import tifffile as tiff
 from pathlib import Path
 
 # Get the output directory
-directory = Path().resolve().parent / "output" / "predictions"
+directory = Path().resolve().parent / "output" / "predictions_resnet_test"
 
 # Get a list of all image filenames
 filenames = np.array([f.name for f in directory.iterdir() if f.is_file()])

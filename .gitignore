@@ -1,9 +1,11 @@
 data/test_satellite/*
 data/train_satellite/*
 data/train_kelp/*
-data/train100/*
-data/train100_augmented/*
-output/predictions/*
+data/balanced_tiled_40_60/train_satellite/*
+data/balanced_tiled_40_60/train_kelp/*
+data/tiled_kelp/*
+data/tiled_satellite/*
+output/predictions_resnet_test/*
 models/lightning_logs*
 
 Helpful HPC3 Commands.txt
