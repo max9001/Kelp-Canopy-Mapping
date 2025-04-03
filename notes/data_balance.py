@@ -252,8 +252,8 @@ def main():
     dest_dir = root_dir / "data" / "balanced_tiled_40_60" # Descriptive name
 
     # --- Configuration ---
-    TARGET_TOTAL_SAMPLES = 10000  # Adjust this to your desired dataset size
-    TARGET_ZERO_PERCENTAGE = 0.40 # 40% zero kelp
+    TARGET_TOTAL_SAMPLES = 100000  # Adjust this to your desired dataset size
+    TARGET_ZERO_PERCENTAGE = 0.50 # 40% zero kelp
 
     # --- Run the process ---
     if not source_kelp_dir.exists():

@@ -5,21 +5,38 @@ from pathlib import Path
 import os
 from tqdm import tqdm
 import heapq  # Import for efficient top-k selection
+import sys
+import random
 
-def calculate_kelp_pixel_counts(directory):
+def calculate_kelp_pixel_counts(directory, option):
     """
     Calculates kelp pixel counts and returns a list of (count, filename) tuples.
     """
     kelp_counts = []
-    
-
     filenames = []
-    filenames = [f for f in directory.iterdir() if f.is_file() and f.name.startswith('mask_') and f.name.endswith('.tif')] 
-    # filenames = [f for f in directory.iterdir() if f.is_file() and f.name.endswith('_kelp.tif')]
-    for f in tqdm(directory.iterdir(), desc="Scanning directory for kelp files"):
-        # Check if the item is a file and ends with the desired suffix
-        if f.is_file() and f.name.endswith('_kelp.tif'):
-            filenames.append(f) # Append the Path object to the list
+
+    # --------- option --------
+    if option == "original":
+        filenames = [f for f in directory.iterdir() if f.is_file() and f.name.endswith('_kelp.tif')]
+
+    if option == "output":
+        filenames = [f for f in directory.iterdir() if f.is_file() and f.name.startswith('prediction_') and f.name.endswith('.tif')] 
+
+    if option == "tile" or option == "tile_balanced":
+        # filenames = []
+        # count = 0
+        # limit = 100000
+        # for f in directory.iterdir():
+        #     if f.is_file() and f.name.endswith('_kelp.tif'):
+        #         filenames.append(f)
+        #         count += 1
+        #         if count >= limit:
+        #             break
+        for f in tqdm(directory.iterdir(), desc="Scanning directory for kelp files"):
+            # Check if the item is a file and ends with the desired suffix
+            if f.is_file() and f.name.endswith('_kelp.tif'):
+                filenames.append(f) # Append the Path object to the list
+        filenames = random.sample(filenames, 100000)
 
     for filename in tqdm(filenames, desc="Processing Images"):
         try:
@@ -139,15 +156,35 @@ def get_top_k_counts(kelp_counts_with_filenames, k=1000):
     top_k_dict = {filename: count for count, filename in top_k_list}
     return top_k_dict
 
-def main(option):
-    # directory = Path().resolve().parent / "data" / "train_kelp"
-    directory = Path().resolve().parent / "output" / "predictions"
-    print("started")
-    # directory = Path().resolve().parent / "data" / "tiled_kelp"
+
+
+
+
+
+#---------------------------------------------------------------------------------
+
+def main():
+    option = sys.argv[1]
+    
+    if option == "original":
+        directory = Path().resolve().parent / "data" / "train_kelp"
+
+    if option == "output":
+        directory = Path().resolve().parent / "output" / "predictions_resnet_test"
+        
+    if option == "tile":
+        directory = Path().resolve().parent / "data" / "tiled_kelp"
+
+    if option == "tile_balanced":
+        directory = Path().resolve().parent / "data" / "balanced_tiled_40_60" / "train_kelp"
+
+    
+
+ 
     if not directory.exists():
         raise FileNotFoundError(f"The directory {directory} does not exist.")
 
-    kelp_counts_with_filenames = calculate_kelp_pixel_counts(directory)
+    kelp_counts_with_filenames = calculate_kelp_pixel_counts(directory, option)
     # top_1000_counts = get_top_k_counts(kelp_counts_with_filenames, k=1000)
 
     # print(f"Total number of images processed: {len(list(top_1000_counts.values()))}")

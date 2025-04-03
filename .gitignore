@@ -5,10 +5,12 @@ data/balanced_tiled_40_60/train_satellite/*
 data/balanced_tiled_40_60/train_kelp/*
 data/tiled_kelp/*
 data/tiled_satellite/*
-output/predictions_resnet_test/*
-models/lightning_logs*
 
+output/predictions_resnet_test/*
+models/lightning_logs/*
+models/checkpoints_resnet/*
 Helpful HPC3 Commands.txt
 
 __pycache__/
 *.pyc
+*.cpkt
