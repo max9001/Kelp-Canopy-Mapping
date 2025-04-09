@@ -22,12 +22,12 @@ sys.path.append(str(dir_root))
 # Assuming get_data.py contains prepare_filenames
 # from utils.get_data import prepare_filenames # Make sure this import works
 
-# --- Dummy prepare_filenames for testing if needed ---
+
 def prepare_filenames(data_type="tile"):
     print(f"Using dummy prepare_filenames for type: {data_type}")
     # --- CHOOSE YOUR DATASET PATH HERE ---
-    # dataset_name = "balanced_tiled_40_60" # Example for 25x25
-    dataset_name = "" # Example for 350x350 (assuming you have this)
+    dataset_name = "balanced_tiled_40_60" # Example for 25x25
+    # dataset_name = "" # Example for 350x350 (assuming you have this)
     # dataset_name = "some_other_50x50_dataset" # Example for 50x50
     # ---
 
@@ -109,7 +109,9 @@ class KelpSegmentationModel(pl.LightningModule):
         self.test_iou = JaccardIndex(task="binary")
         self.test_accuracy = Accuracy(task="binary")
 
-        self.output_dir = Path().resolve().parent / "output" / "predictions_resnet_dynamic" # Changed output dir name
+
+        # ============================================================================
+        self.output_dir = Path().resolve().parent / "output" / "peepeepoopoo" # Changed output dir name
         self.output_dir.mkdir(parents=True, exist_ok=True)
         print(f"Test predictions will be saved to: {self.output_dir}")
 
@@ -324,21 +326,21 @@ def main():
     print("Initializing Model and Trainer...")
     model = KelpSegmentationModel(learning_rate=1e-4) # Model doesn't need the size passed
 
-    checkpoint_callback = pl.callbacks.ModelCheckpoint(
-        monitor='val_iou',
-        dirpath='checkpoints_resnet/',
-        filename='kelp-resnet-dynamic-{epoch:02d}-{val_iou:.3f}', # Changed filename slightly
-        save_top_k=3,
-        mode='max',
-    )
-    lr_monitor = pl.callbacks.LearningRateMonitor(logging_interval='epoch')
+    # checkpoint_callback = pl.callbacks.ModelCheckpoint(
+    #     monitor='val_iou',
+    #     dirpath='checkpoints_peepeepoopoo/',
+    #     filename='kelp-resnet-dynamic-{epoch:02d}-{val_iou:.3f}', # Changed filename slightly
+    #     save_top_k=3,
+    #     mode='max',
+    # )
+    # lr_monitor = pl.callbacks.LearningRateMonitor(logging_interval='epoch')
 
     trainer = pl.Trainer(
         accelerator="gpu" if torch.cuda.is_available() else "cpu",
         devices=1,
-        max_epochs=10,
+        max_epochs=100,
         log_every_n_steps=10,
-        callbacks=[checkpoint_callback, lr_monitor],
+        # callbacks=[checkpoint_callback, lr_monitor],
         # limit_train_batches=0.1, # Uncomment for faster debugging
         # limit_val_batches=0.1,
         # limit_test_batches=0.1,
@@ -354,15 +356,15 @@ def main():
          traceback.print_exc()
          return
 
-    # Test
-    print("Starting Testing (predictions will be saved)...")
-    best_model_path = checkpoint_callback.best_model_path
-    if best_model_path and Path(best_model_path).exists():
-        print(f"Loading best model from: {best_model_path}")
-        trainer.test(model, dataloaders=test_loader, ckpt_path=best_model_path)
-    else:
-        print("No best model checkpoint found or path invalid. Testing with last model state.")
-        trainer.test(model, dataloaders=test_loader)
+    # # Test
+    # print("Starting Testing (predictions will be saved)...")
+    # best_model_path = checkpoint_callback.best_model_path
+    # if best_model_path and Path(best_model_path).exists():
+    #     print(f"Loading best model from: {best_model_path}")
+    #     trainer.test(model, dataloaders=test_loader, ckpt_path=best_model_path)
+    # else:
+    #     print("No best model checkpoint found or path invalid. Testing with last model state.")
+    trainer.test(model, dataloaders=test_loader)
 
     print("Testing finished. Predictions saved.")
 

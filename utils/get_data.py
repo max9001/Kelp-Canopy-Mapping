@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from pathlib import Path
 
-def prepare_filenames(option):
+def prepare_filenames(option="tile"):
 
     if option == "original":
         print("Loading Original Dataset...")
