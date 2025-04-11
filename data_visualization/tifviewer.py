@@ -6,6 +6,7 @@ from PIL import Image
 import os
 from pyprojroot import here
 from pathlib import Path
+import sys
 
 # Get the root directory of the project
 
@@ -37,7 +38,7 @@ filename = random.choice(filenames)
 filename = filename[:-9]
 
 # filename = "AA498489"
-filename = "KA317221"
+filename = sys.argv[1]
 
 GT_img = str(directory / "data" / "train_kelp" / f"{filename}_kelp.tif")
 ST_img = str(directory / "data" / "train_satellite" / f"{filename}_satellite.tif")
@@ -78,3 +79,22 @@ plt.imshow(rgba_overlay)  # Now overlaying a proper RGBA image
 plt.show()
 
 
+
+
+
+
+
+
+ST_img = str(directory / "data" / "train_satellite" / f"{filename}_satellite.tif")
+
+image_ST = tiff.imread(ST_img)
+image_ST = np.array(image_ST)
+
+# Band description:
+# 	0: Short-wave infrared (SWIR)
+# 	1: Near infrared (NIR)
+# 	2: Red 
+# 	3: Green 
+# 	4: Blue 
+# 	5: Cloud Mask (binary - is there cloud or not)
+# 	6: Digital Elevation Model (meters above sea-level)

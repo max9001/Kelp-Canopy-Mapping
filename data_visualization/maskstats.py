@@ -185,19 +185,8 @@ def main():
         raise FileNotFoundError(f"The directory {directory} does not exist.")
 
     kelp_counts_with_filenames = calculate_kelp_pixel_counts(directory, option)
-    # top_1000_counts = get_top_k_counts(kelp_counts_with_filenames, k=1000)
 
-    # print(f"Total number of images processed: {len(list(top_1000_counts.values()))}")
-    # print(f"Number of images with zero kelp pixels: {list(top_1000_counts.values()).count(0)}")
-    # print(f"Maximum kelp pixel count: {max(list(top_1000_counts.values()))}")
-    # print(f"Minimum kelp pixel count: {min(list(top_1000_counts.values()))}")
-    # print(f"Average kelp pixel count: {np.mean(list(top_1000_counts.values())):.2f}")
-    # print(f"Median kelp pixel count: {np.median(list(top_1000_counts.values())):.2f}")
-    # exit()
-    # Adjust outlier thresholds as needed
-    # plot_histogram_with_outlier_handling(kelp_counts_with_filenames, bins=20,
-    #                                      outlier_threshold_lower=0.01, outlier_threshold_upper=0.99)
-
+    
     # --- Calculate and print statistics (no changes here) ---
     kelp_counts = [count for count, _ in kelp_counts_with_filenames] # Extract just the counts
     print(f"Total number of images processed: {len(kelp_counts)}")
@@ -208,6 +197,18 @@ def main():
     print(f"Median kelp pixel count: {np.median(kelp_counts):.2f}")
     # --- End of statistics ---
 
+    print("\n--- Top 5 Files with Most Kelp Pixels ---")
+    # Sort the list by count (descending) and take the top 5
+    top_5 = sorted(kelp_counts_with_filenames, key=lambda item: item[0], reverse=True)[:5]
+
+    for i, (count, filename) in enumerate(top_5):
+        print(f"{i+1}. {filename} (Count: {count})")
+    # --- End Top 5 ---
+
+
+    # Adjust outlier thresholds as needed
+    plot_histogram_with_outlier_handling(kelp_counts_with_filenames, bins=20,
+                                         outlier_threshold_lower=0.01, outlier_threshold_upper=0.99)
 
 
 if __name__ == "__main__":
