@@ -1,14 +1,26 @@
-- need to start doing standardized testing
+- [ ] delete old "custom" datasets. 
 
-    - [ ] need to run tests much differently - more application specific
+- [ ] clean data. VC433864 should definitely be deleted. see if there are outliers for standard deviation, or cases where min/max is unusual. do this per band.
 
-        - [ ] paritition 350x350 set - need to reserve images for test
+- [ ] for each band, Calculate the mean and standard deviation  across all images in the training set only. Apply the normalization (pixel_value - channel_mean) / channel_std to all images (train, validation, and test) using the means and standard deviations calculated from the training set.
 
-        - [ ] regenerate tiles, balanced tiles, etc
+- [ ] paritition cleaned 350x350 set - need to reserve images for test regenerate tiles, balanced tiles, etc
 
-        - [ ] all tests should be performed on the 350x350 test set
+- [ ] create `test.py` that takes data and some kind of model weights as input, generates masks from input data, calculates the 4 metrics (IOU, precision, recall, f1)
 
-            - [ ] calcualte IOU
-            - [ ] calcualte precision for kelp class
-            - [ ] calculate recall for kelp class
-            - [ ] calculate f1
+- [ ] retrain on 3 datasets. save model weights or something similar
+
+- [ ] test unmodified data on model trained on unmodified data, get 4 metrics
+
+- [ ] test data on model trained on data thats only been tiled (no deletion). tile test set, generate masks, reconstruct and get 4 metrics
+
+- [ ] test data on model trained on tiled + deleted data. tile test set, generate masks, reconstruct and get 4 metrics
+
+***now caught up to where I am now, just with things done correctly***
+
+- [ ] implement some kind of augmentation. 50% chance that a given augmentation will be applied (H flip, V flip, 90 rotation clockwise, counter clockwise, color jitter)
+
+- [ ] expirament with other loss functions.
+
+    
+ 
