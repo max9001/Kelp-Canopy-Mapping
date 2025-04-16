@@ -1,8 +1,8 @@
-- [ ] delete old "custom" datasets. 
+- [x] delete old "custom" datasets. 4/15 11:15
 
-- [ ] clean data. VC433864 should definitely be deleted. see if there are outliers for standard deviation, or cases where min/max is unusual. do this per band.
+- [x] clean data. VC433864 should definitely be deleted. see if there are outliers for standard deviation, or cases where min/max is unusual. do this per band. 4/15 5:36
 
-- [ ] for each band, Calculate the mean and standard deviation  across all images in the training set only. Apply the normalization (pixel_value - channel_mean) / channel_std to all images (train, validation, and test) using the means and standard deviations calculated from the training set.
+- [x] for each band, Calculate the mean and standard deviation  across all images in the training set only. Apply the normalization (pixel_value - channel_mean) / channel_std to all images (train, validation, and test) using the means and standard deviations calculated from the training set. 4/15 5:36
 
 - [ ] paritition cleaned 350x350 set - need to reserve images for test regenerate tiles, balanced tiles, etc
 

@@ -30,7 +30,7 @@ def get_overlay(image_GT):
     return rgba_overlay
 
 directory = Path().resolve().parent
-get_names = directory / "data" / "train_kelp"  
+get_names = directory / "data" / "cleaned" / "train_kelp"  
 
 filenames = np.array([f.name for f in get_names.iterdir() if f.is_file()])
 
@@ -38,10 +38,10 @@ filename = random.choice(filenames)
 filename = filename[:-9]
 
 # filename = "AA498489"
-filename = sys.argv[1]
+# filename = sys.argv[1]
 
-GT_img = str(directory / "data" / "train_kelp" / f"{filename}_kelp.tif")
-ST_img = str(directory / "data" / "train_satellite" / f"{filename}_satellite.tif")
+GT_img = str(directory / "data"/ "cleaned" / "train_kelp" / f"{filename}_kelp.tif")
+ST_img = str(directory / "data"/ "cleaned" / "train_satellite" / f"{filename}_satellite.tif")
 
 image_GT = Image.open(GT_img)
 image_GT = np.array(image_GT)
@@ -85,7 +85,7 @@ plt.show()
 
 
 
-ST_img = str(directory / "data" / "train_satellite" / f"{filename}_satellite.tif")
+ST_img = str(directory / "data" / "cleaned" / "train_satellite" / f"{filename}_satellite.tif")
 
 image_ST = tiff.imread(ST_img)
 image_ST = np.array(image_ST)
