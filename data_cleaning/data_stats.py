@@ -33,7 +33,7 @@ if not (base_dir / "data").exists():
          raise FileNotFoundError("Could not automatically find the 'data' directory relative to the script.")
 
 
-data_dir = base_dir / "data" / "cleaned"
+data_dir = base_dir / "data" / "original"
 sat_dir = data_dir / "train_satellite"
 kelp_dir = data_dir / "train_kelp"
 

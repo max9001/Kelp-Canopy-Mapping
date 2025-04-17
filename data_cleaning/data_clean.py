@@ -3,252 +3,258 @@ import tifffile
 from pathlib import Path
 from tqdm import tqdm
 import warnings
-import gc # Garbage collector
+import gc
+from joblib import Parallel, delayed
+import multiprocessing
 
 # --- Configuration ---
 BASE_DIR = Path().resolve().parent
-# *** VERY IMPORTANT: This script will modify files in this directory! ***
-# *** Make sure this points to the COPY of your data.             ***
+if not (BASE_DIR / "data").exists():
+     BASE_DIR = Path().resolve()
+     if not (BASE_DIR / "data").exists():
+         raise FileNotFoundError("Could not automatically find the 'data' directory relative to the script.")
+
 CLEANED_DATA_DIR = BASE_DIR / "data" / "cleaned"
-SAT_DIR = CLEANED_DATA_DIR / "train_satellite"
+SAT_DIR = CLEANED_DATA_DIR / "train_satellite" # MODIFY THIS DIRECTORY
 
-# Check if the target directory exists
 if not SAT_DIR.is_dir():
-    raise FileNotFoundError(
-        f"Specified satellite directory does not exist: {SAT_DIR}\n"
-        "Make sure you have copied your original data to this 'cleaned' location."
-    )
+    raise FileNotFoundError(f"Directory not found: {SAT_DIR}")
 
-# Band definitions (0-based index)
-BANDS_TO_NORMALIZE = [0, 1, 2, 3, 4, 6] # SWIR, NIR, Red, Green, Blue, DEM
+# --- Constants ---
+NUM_BANDS = 7
+EXPECTED_DIM = 350
+BANDS_TO_NORMALIZE = [0, 1, 2, 3, 4, 6] # SWIR, NIR, Red, Green, Blue, DEM (Indices for C,H,W)
 CLOUD_MASK_BAND = 5
 DEM_BAND = 6
-
-# Data markers and masking thresholds
 BAD_DATA_MARKER = -32768
-# Pixels < 0 in spectral bands (0-4) are also often bad/missing data
 SPECTRAL_BANDS = [0, 1, 2, 3, 4]
-NEGATIVE_THRESHOLD = 0 # Treat values < 0 in spectral bands as bad
-
-CLOUD_MASK_THRESHOLD = 1 # Pixels in band 5 equal to this are clouds
-WATER_MASK_THRESHOLD = 0 # Pixels in band 6 less than or equal to this are water
-
-# Clipping configuration (Optional)
-APPLY_CLIPPING = True # Set to False to disable clipping before stat calculation
-CLIP_LOW_PERCENTILE = 1.0 # e.g., 1st percentile
-CLIP_HIGH_PERCENTILE = 99.0 # e.g., 99th percentile
-
-# Epsilon to prevent division by zero during standardization
+NEGATIVE_THRESHOLD = 0
+CLOUD_MASK_THRESHOLD = 1
+WATER_MASK_THRESHOLD = 0
 EPSILON = 1e-8
+APPLY_CLIPPING = True # Control clipping in Phase 2
 
-# --- Helper Functions ---
+# *** IMPORTANT: Define Global Clipping Thresholds ***
+# These need to be calculated beforehand (e.g., from your previous run or
+# a separate script analyzing a sample/full dataset more slowly).
+# Using the values you provided as an example:
+GLOBAL_CLIP_THRESHOLDS = {
+    # band_idx: (low_percentile_value, high_percentile_value)
+    0: (6.00, 19689.00),
+    1: (6.00, 19673.00),
+    2: (6.00, 19661.00),
+    3: (6.00, 19647.00),
+    4: (6.00, 19647.00),
+    6: (7.00, 19603.00),
+}
+
+
+# --- Helper Functions (fix_image_shape, create_masks - keep as before) ---
+def fix_image_shape(img, filename):
+    """Attempts to reshape/transpose image to (C, H, W)."""
+    if img.ndim != 3:
+        warnings.warn(f"Skipping {filename}: Unexpected dimensions {img.ndim}, expected 3.")
+        return None
+    shape = img.shape
+    dims = list(shape)
+    try:
+        c_idx = dims.index(NUM_BANDS)
+        # Check if other dimensions match EXPECTED_DIM
+        other_dims = [d for i, d in enumerate(dims) if i != c_idx]
+        if len(other_dims) == 2 and all(d == EXPECTED_DIM for d in other_dims):
+             if shape == (NUM_BANDS, EXPECTED_DIM, EXPECTED_DIM): return img # C, H, W
+             if shape == (EXPECTED_DIM, EXPECTED_DIM, NUM_BANDS): return np.transpose(img, (2, 0, 1)) # H, W, C
+             if shape == (EXPECTED_DIM, NUM_BANDS, EXPECTED_DIM): return np.transpose(img, (1, 0, 2)) # H, C, W
+             # Add other permutations if necessary, e.g., W, H, C -> transpose(img, (2, 1, 0)) etc.
+             else:
+                 warnings.warn(f"Skipping {filename}: Ambiguous shape {shape} - cannot reliably determine C, H, W order.")
+                 return None
+        else:
+             warnings.warn(f"Skipping {filename}: Shape {shape} has {NUM_BANDS} bands but other dims are not ({EXPECTED_DIM}, {EXPECTED_DIM}).")
+             return None
+    except ValueError:
+        warnings.warn(f"Skipping {filename}: Shape {shape} does not contain expected number of bands ({NUM_BANDS}).")
+        return None
 
 def create_masks(img_data):
-    """Creates masks for bad data, clouds, and water."""
-    # 1. Bad data mask (specific marker and negatives in spectral)
+    """Creates masks. Assumes input shape (C, H, W)."""
     bad_data_mask = (img_data == BAD_DATA_MARKER)
     for band_idx in SPECTRAL_BANDS:
-         if band_idx < img_data.shape[0]: # Check if band exists
+         if band_idx < img_data.shape[0]:
              bad_data_mask[band_idx, :, :] |= (img_data[band_idx, :, :] < NEGATIVE_THRESHOLD)
-
-    # 2. Cloud mask
     cloud_mask = np.zeros_like(img_data[0, :, :], dtype=bool)
     if CLOUD_MASK_BAND < img_data.shape[0]:
         cloud_mask = (img_data[CLOUD_MASK_BAND, :, :] == CLOUD_MASK_THRESHOLD)
-
-    # 3. Water mask (based on DEM)
     water_mask = np.zeros_like(img_data[0, :, :], dtype=bool)
     if DEM_BAND < img_data.shape[0] and np.issubdtype(img_data[DEM_BAND, :, :].dtype, np.number):
-        # Ensure DEM band isn't itself entirely bad data before masking
-        dem_valid = ~bad_data_mask[DEM_BAND, :, :]
-        water_mask[dem_valid] = (img_data[DEM_BAND, :, :][dem_valid] <= WATER_MASK_THRESHOLD)
-    
-    # Combine masks: Mask pixels that are bad OR cloud OR water
-    # Apply cloud/water mask only to bands we intend to normalize stats for
+        # Ensure DEM isn't all bad data before masking
+        dem_not_bad = ~bad_data_mask[DEM_BAND, :, :]
+        # Apply water mask only where DEM is not bad data
+        water_mask[dem_not_bad] = (img_data[DEM_BAND, :, :][dem_not_bad] <= WATER_MASK_THRESHOLD)
+
+    # Combined mask for STATS calculation (ignore bad data, clouds, water)
     combined_mask_for_stats = np.zeros_like(img_data, dtype=bool)
     for band_idx in BANDS_TO_NORMALIZE:
          if band_idx < img_data.shape[0]:
-             # Mask if bad data OR (cloud AND it's not the cloud mask band itself) OR (water AND it's not the DEM band itself - though DEM is usually normalized)
-             # Simplified: mask if bad OR cloud OR water for the purpose of stat calculation on normalized bands
               combined_mask_for_stats[band_idx, :, :] = (
                   bad_data_mask[band_idx, :, :] | cloud_mask | water_mask
               )
-              
-    # Return the bad data mask separately for initial NaN replacement
-    # and the combined mask for statistical calculations
-    return bad_data_mask, combined_mask_for_stats, cloud_mask, water_mask
+    return bad_data_mask, combined_mask_for_stats
 
 
-# --- Main Script ---
+# --- Phase 1: Calculate Mean/Std Iteratively ---
+print("\n--- Phase 1: Calculating statistics iteratively ---")
 
-print(f"Starting standardization process for data in: {SAT_DIR}")
-print("*** This script will modify files in place! ***")
+accumulators = {
+    band_idx: {'sum': 0.0, 'sum_sq': 0.0, 'count': 0}
+    for band_idx in BANDS_TO_NORMALIZE
+}
+
 tif_files = sorted(list(SAT_DIR.glob("*_satellite.tif")))
-
 if not tif_files:
     print(f"Error: No satellite TIFF files found in {SAT_DIR}")
     exit()
-
 print(f"Found {len(tif_files)} files.")
 
-# --- Phase 1: Calculate Statistics (Mean, Std Dev, and Clipping Thresholds) ---
-print("\n--- Phase 1: Calculating statistics across the dataset ---")
-
-# Initialize lists to store valid, masked pixel values for each band
-# Warning: This can be memory intensive for large datasets!
-# Consider iterative calculation (sum, sum_sq, count) for very large datasets.
-all_band_data = {band_idx: [] for band_idx in BANDS_TO_NORMALIZE}
-total_pixels_processed = 0
-pixels_per_image = None
-
-# First pass to gather data for stats
-for file_path in tqdm(tif_files, desc="Pass 1/2: Reading data for stats"):
+for file_path in tqdm(tif_files, desc="Pass 1/1: Calculating stats"):
     try:
-        img = tifffile.imread(file_path)
-        # Ensure data is float for NaN compatibility
-        img_float = img.astype(np.float32)
-        if pixels_per_image is None and len(img_float.shape) == 3:
-             pixels_per_image = img_float.shape[1] * img_float.shape[2]
+        img_raw = tifffile.imread(file_path)
+        img = fix_image_shape(img_raw, file_path.name)
+        if img is None: continue
 
+        img_float = img.astype(np.float64) # Use float64 for accumulators to avoid precision issues
 
-        # Handle potential 2D images or unexpected shapes
-        if len(img_float.shape) != 3 or img_float.shape[0] < max(BANDS_TO_NORMALIZE):
-             warnings.warn(f"Skipping {file_path.name}: Unexpected shape {img_float.shape}")
-             continue
-             
-        # Create masks
-        bad_data_mask, combined_mask_for_stats, _, _ = create_masks(img_float)
-
-        # Temporarily replace *all* bad data markers with NaN for calculations
-        img_float[bad_data_mask] = np.nan
+        _, combined_mask_for_stats = create_masks(img_float)
+        img_float[combined_mask_for_stats] = np.nan # Mask bad/cloud/water for stats
 
         for band_idx in BANDS_TO_NORMALIZE:
             if band_idx < img_float.shape[0]:
-                band_pixels = img_float[band_idx, :, :]
-                # Apply the combined mask (bad data, clouds, water)
-                mask = combined_mask_for_stats[band_idx, :, :]
-                valid_pixels = band_pixels[~mask] # Select only pixels NOT masked
-                all_band_data[band_idx].extend(valid_pixels.tolist()) # Append valid pixels
+                band_data = img_float[band_idx, :, :]
+                valid_pixels = band_data[~np.isnan(band_data)]
 
-        total_pixels_processed += pixels_per_image if pixels_per_image else 0
-        
-        # Clear memory
-        del img, img_float, band_pixels, valid_pixels, bad_data_mask, combined_mask_for_stats
+                accumulators[band_idx]['sum'] += np.sum(valid_pixels)
+                accumulators[band_idx]['sum_sq'] += np.sum(valid_pixels**2)
+                accumulators[band_idx]['count'] += valid_pixels.size
+
+        del img_raw, img, img_float, band_data, valid_pixels, combined_mask_for_stats
         gc.collect()
 
-
     except Exception as e:
-        warnings.warn(f"Skipping {file_path.name} due to error during stat calculation pass: {e}")
+        warnings.warn(f"Skipping {file_path.name} during stats calculation: {e}")
 
-# Calculate clipping thresholds (if enabled) and stats
+# Calculate final mean and std
 print("\nCalculating final statistics...")
 band_stats = {}
-clip_thresholds = {}
-
 for band_idx in BANDS_TO_NORMALIZE:
-    data_array = np.array(all_band_data[band_idx], dtype=np.float32)
-    
-    if data_array.size == 0:
-         warnings.warn(f"No valid data found for band {band_idx} after masking. Setting stats to mean=0, std=1.")
-         mean = 0.0
-         std = 1.0
-         low_clip, high_clip = -np.inf, np.inf # No effective clipping
+    total_sum = accumulators[band_idx]['sum']
+    total_sum_sq = accumulators[band_idx]['sum_sq']
+    total_count = accumulators[band_idx]['count']
+
+    if total_count == 0:
+        warnings.warn(f"No valid pixels found for band {band_idx}. Setting mean=0, std=1.")
+        mean, std = 0.0, 1.0
     else:
-        # Calculate clipping thresholds on the gathered data *before* calculating mean/std
-        if APPLY_CLIPPING:
-            low_clip = np.nanpercentile(data_array, CLIP_LOW_PERCENTILE)
-            high_clip = np.nanpercentile(data_array, CLIP_HIGH_PERCENTILE)
-            clip_thresholds[band_idx] = (low_clip, high_clip)
-            # Apply clipping to the data before calculating mean/std
-            data_array = np.clip(data_array, low_clip, high_clip)
-            print(f"Band {band_idx}: Applied clipping [{low_clip:.2f}, {high_clip:.2f}]")
-        else:
-            low_clip, high_clip = -np.inf, np.inf # Store ineffective thresholds if clipping off
-            clip_thresholds[band_idx] = (low_clip, high_clip)
+        mean = total_sum / total_count
+        # Variance = E[X^2] - (E[X])^2
+        variance = (total_sum_sq / total_count) - (mean**2)
+        if variance < 0: # Handle potential floating point inaccuracies near zero
+             variance = 0
+        std = np.sqrt(variance)
+        if std < EPSILON:
+            warnings.warn(f"Std dev for band {band_idx} is near zero ({std}). Setting to 1.0 to avoid division by zero.")
+            std = 1.0
 
+    band_stats[band_idx] = {'mean': mean, 'std': std}
+    print(f"Band {band_idx}: Mean={mean:.4f}, StdDev={std:.4f} (Calculated BEFORE clipping)")
 
-        # Calculate mean and std dev on the (potentially clipped) valid data
-        mean = np.nanmean(data_array)
-        std = np.nanstd(data_array)
-
-    # Store stats
-    band_stats[band_idx] = {'mean': mean, 'std': std if std > EPSILON else 1.0} # Avoid std=0
-
-    print(f"Band {band_idx}: Mean={band_stats[band_idx]['mean']:.4f}, StdDev={band_stats[band_idx]['std']:.4f}")
-    
-    # Clear memory for the band
-    all_band_data[band_idx] = [] # Free list memory
-    del data_array
-    gc.collect()
-    
-# Clear the large data structure
-del all_band_data
+del accumulators # Free accumulator memory
 gc.collect()
 
-# --- Phase 2: Apply Standardization and Save ---
-print("\n--- Phase 2: Applying standardization and saving modified files ---")
 
-for file_path in tqdm(tif_files, desc="Pass 2/2: Applying normalization"):
+# --- Phase 2: Apply Clipping, Normalization, Save (Parallel) ---
+print("\n--- Phase 2: Applying clipping, normalization, and saving (Parallel) ---")
+
+def process_file(file_path, global_stats, global_clips, apply_clip):
+    """Processes a single file: clips, normalizes, saves."""
     try:
-        # Read the image again
-        img = tifffile.imread(file_path)
-        original_dtype = img.dtype
-        img_standardized = img.astype(np.float32) # Work with float32
+        img_raw = tifffile.imread(file_path)
+        img = fix_image_shape(img_raw, file_path.name)
+        if img is None: return f"Skipped {file_path.name}: Invalid shape"
 
-        # Handle potential 2D images or unexpected shapes encountered earlier
-        if len(img_standardized.shape) != 3 or img_standardized.shape[0] < max(BANDS_TO_NORMALIZE):
-             # This file should have been skipped in phase 1, but double-check
-             warnings.warn(f"Skipping {file_path.name} in phase 2: Unexpected shape {img_standardized.shape}")
-             continue
-             
-        # Re-create bad data mask for NaN replacement
-        bad_data_mask, _, _, _ = create_masks(img_standardized)
+        img_normalized = img.astype(np.float32) # Use float32 for final output
 
-        # Keep the original cloud mask band untouched if it exists
+        # Create bad data mask (only need this one now)
+        bad_data_mask, _ = create_masks(img_normalized) # Don't need combined mask here
+
+        # Store original cloud mask
         original_cloud_mask_data = None
-        if CLOUD_MASK_BAND < img_standardized.shape[0]:
-            original_cloud_mask_data = img_standardized[CLOUD_MASK_BAND, :, :].copy()
+        if CLOUD_MASK_BAND < img_normalized.shape[0]:
+            original_cloud_mask_data = img_normalized[CLOUD_MASK_BAND, :, :].copy()
 
-        # Apply standardization band by band
         for band_idx in BANDS_TO_NORMALIZE:
-             if band_idx < img_standardized.shape[0]:
-                 band_data = img_standardized[band_idx, :, :]
-                 band_bad_mask = bad_data_mask[band_idx, :, :]
+            if band_idx < img_normalized.shape[0]:
+                band_data = img_normalized[band_idx, :, :]
+                band_bad_mask = bad_data_mask[band_idx, :, :]
 
-                 # Replace bad data with NaN for clipping/standardization
-                 band_data[band_bad_mask] = np.nan
+                # Replace bad data with NaN for clipping/math
+                band_data[band_bad_mask] = np.nan
 
-                 # Apply clipping (using pre-calculated thresholds)
-                 if APPLY_CLIPPING:
-                      low_clip, high_clip = clip_thresholds[band_idx]
-                      band_data = np.clip(band_data, low_clip, high_clip) # np.clip handles NaNs correctly (keeps them NaN)
+                # --- Apply Clipping (using GLOBAL thresholds) ---
+                if apply_clip and band_idx in global_clips:
+                    low_clip, high_clip = global_clips[band_idx]
+                    # Use nan_to_num before clip might be safer if clip doesn't handle NaN well
+                    # band_data = np.nan_to_num(band_data, nan=some_value_outside_clip_range)
+                    band_data = np.clip(band_data, low_clip, high_clip) # np.clip handles NaNs correctly
 
-                 # Apply standardization: (value - mean) / std
-                 mean = band_stats[band_idx]['mean']
-                 std = band_stats[band_idx]['std']
-                 standardized_band = (band_data - mean) / (std + EPSILON) # Add epsilon for safety
+                # --- Apply Standardization ---
+                mean = global_stats[band_idx]['mean']
+                std = global_stats[band_idx]['std']
+                standardized_band = (band_data - mean) / std # std already checked for > EPSILON
 
-                 # Replace NaNs (originally bad data) with 0 after standardization
-                 standardized_band[np.isnan(standardized_band)] = 0.0
+                # Replace final NaNs (orig bad data) with 0
+                standardized_band[np.isnan(standardized_band)] = 0.0
+                img_normalized[band_idx, :, :] = standardized_band
 
-                 img_standardized[band_idx, :, :] = standardized_band
-
-        # Restore the original cloud mask data
+        # Restore original cloud mask
         if original_cloud_mask_data is not None:
-            img_standardized[CLOUD_MASK_BAND, :, :] = original_cloud_mask_data
+            img_normalized[CLOUD_MASK_BAND, :, :] = original_cloud_mask_data
 
-        # Save the modified image back to the *same file path*
-        # Ensure output dtype is float32 for standardized data
-        tifffile.imwrite(file_path, img_standardized.astype(np.float32), imagej=True) # imagej=True often helps compatibility
+        # Transpose back to H, W, C for saving
+        img_to_save = np.transpose(img_normalized, (1, 2, 0))
+
+        # Final shape check
+        if img_to_save.shape != (EXPECTED_DIM, EXPECTED_DIM, NUM_BANDS):
+             return f"Failed {file_path.name}: Final shape incorrect {img_to_save.shape}"
+
+        # Overwrite the file
+        tifffile.imwrite(file_path, img_to_save.astype(np.float32), imagej=True)
+        return f"Processed {file_path.name}"
 
     except Exception as e:
-        warnings.warn(f"Failed to process and save {file_path.name}: {e}")
-        # Optionally, decide if you want to stop or continue on error
+        return f"Failed {file_path.name}: {e}"
 
-print("\nStandardization process complete.")
-print(f"Files in {SAT_DIR} have been modified.")
+# Determine number of workers (use N-1 cores or as appropriate)
+num_cores = multiprocessing.cpu_count()
+workers = max(1, num_cores - 1)
+print(f"Using {workers} workers for parallel processing...")
 
+# Run in parallel
+results = Parallel(n_jobs=workers, backend='loky')( # 'loky' is often more robust
+    delayed(process_file)(fp, band_stats, GLOBAL_CLIP_THRESHOLDS, APPLY_CLIPPING) for fp in tqdm(tif_files, desc="Pass 2/2: Normalizing")
+)
 
+# Optional: Print results/errors from parallel processing
+processed_count = 0
+error_count = 0
+for res in results:
+    if "Processed" in res:
+        processed_count += 1
+    else:
+        error_count += 1
+        print(res) # Print failures
+
+print(f"\nParallel processing complete. Processed: {processed_count}, Failed/Skipped: {error_count}")
+print(f"Files in {SAT_DIR} have been modified and saved in (Height, Width, Bands) format.")
 '''
 
 Calculating final statistics...
@@ -265,4 +271,12 @@ Band 4: Mean=8794.6309, StdDev=3625.4009
 Band 6: Applied clipping [7.00, 19603.00]
 Band 6: Mean=8791.6172, StdDev=3620.2842
 
+
+Calculating final statistics...
+Band 0: Mean=13735.6915, StdDev=2968.9758 (Calculated BEFORE clipping)
+Band 1: Mean=15268.2139, StdDev=3569.4751 (Calculated BEFORE clipping)
+Band 2: Mean=9861.2322, StdDev=1682.6679 (Calculated BEFORE clipping)
+Band 3: Mean=9736.3202, StdDev=1663.2848 (Calculated BEFORE clipping)
+Band 4: Mean=8932.5510, StdDev=1367.7162 (Calculated BEFORE clipping)
+Band 6: Mean=43.6187, StdDev=57.8011 (Calculated BEFORE clipping)
 '''
