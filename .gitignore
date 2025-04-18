@@ -13,5 +13,5 @@ Helpful HPC3 Commands.txt
 
 __pycache__/
 *.pyc
-*.cpkt
+*.ckpt
 *.tif
