@@ -4,9 +4,9 @@
 
 - [x] for each band, Calculate the mean and standard deviation  across all images in the training set only. Apply the normalization (pixel_value - channel_mean) / channel_std to all images (train, validation, and test) using the means and standard deviations calculated from the training set. 4/15 5:36
 
-- [ ] paritition cleaned 350x350 set - need to reserve images for test regenerate tiles, balanced tiles, etc
+- [x] paritition cleaned 350x350 set - need to reserve images for test regenerate tiles, balanced tiles, etc
 
-- [ ] create `test.py` that takes data and some kind of model weights as input, generates masks from input data, calculates the 4 metrics (IOU, precision, recall, f1)
+- [x] create `test.py` that takes data and some kind of model weights as input, generates masks from input data, calculates the 4 metrics (IOU, precision, recall, f1)
 
 - [ ] retrain on 3 datasets. save model weights or something similar
 
