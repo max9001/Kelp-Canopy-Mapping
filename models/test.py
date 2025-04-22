@@ -19,7 +19,7 @@ from torchmetrics import JaccardIndex, Precision, Recall, F1Score
 # *** SET THESE VALUES BEFORE RUNNING ***
 
 # Path to the trained model weights (.pth file)
-RUN = "normalized_20_test"
+RUN = "normalized_augmented_120_test"
 ################################################
 
 
