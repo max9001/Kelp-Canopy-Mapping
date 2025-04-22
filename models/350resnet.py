@@ -11,13 +11,19 @@ import os
 import sys
 from torchvision.models import resnet18, ResNet18_Weights
 import torch.nn.functional as F
-# from tqdm import tqdm # Not strictly needed for this script's core logic anymore
-
-# --- Metrics ---
 from torchmetrics import Accuracy, JaccardIndex
 
-# Assuming utils is in the parent directory or PYTHONPATH is set correctly
-# Adjust relative path if needed
+# .pth file
+WEIGHTS_FILENAME = "best_weights.pth"
+
+# .ckpt file
+CHECKPOINT_FILENAME = "checkpoint"
+
+# where it will be saved
+RUN_DIR = Path().resolve().parent / "runs" / "normalized_20_test"
+
+MAX_EPOCHS = 20 # Adjust as needed
+
 try:
     # Assumes script is in 'models' and utils is sibling to 'models' parent
     UTILS_DIR = Path().resolve().parent.parent / "utils"
@@ -251,6 +257,10 @@ def main():
     except ValueError as e:
          print(f"ERROR creating dataset: {e}")
          return
+    
+    RUN_DIR.mkdir(parents=True, exist_ok=True)
+    print(f"Checkpoint and Model Path will be saved in: {RUN_DIR}")
+
 
     # Create DataLoaders
     print("Creating DataLoaders...")
@@ -273,17 +283,12 @@ def main():
     print("Initializing Model...")
     model = KelpSegmentationModel(target_size=(350, 350), learning_rate=1e-4)
 
-    # --- Checkpoint Callback ---
-    # Define where checkpoints will be saved
-    CHECKPOINT_DIR = Path("./350x350_200_resnet").resolve() # Save in current dir subfolder
-    CHECKPOINT_DIR.mkdir(exist_ok=True)
-    print(f"Checkpoints will be saved in: {CHECKPOINT_DIR}")
-
     # Configure the checkpoint callback
     checkpoint_callback = pl.callbacks.ModelCheckpoint(
         monitor='val_loss',           # Metric to monitor
-        dirpath=CHECKPOINT_DIR,       # Directory to save checkpoints
-        filename='kelp-resnet-best-{epoch:02d}-{val_loss:.4f}', # Filename pattern
+        dirpath=RUN_DIR,       # Directory to save checkpoints
+        # filename='kelp-resnet-best-{epoch:02d}-{val_loss:.4f}', # Filename pattern
+        filename=f'{CHECKPOINT_FILENAME}-{{epoch:02d}}-{{val_loss:.4f}}',
         save_top_k=1,                 # Save only the best model
         mode='min',                   # Mode for the monitored metric ('min' for loss/error)
         save_last=False,              # Optionally save the last epoch checkpoint too
@@ -292,7 +297,6 @@ def main():
 
     # --- Trainer ---
     print("Initializing Trainer...")
-    MAX_EPOCHS = 200 # Adjust as needed
     trainer = pl.Trainer(
         accelerator="gpu" if torch.cuda.is_available() else "cpu",
         devices=1, # Or specify multiple GPUs [0, 1]
@@ -330,10 +334,12 @@ def main():
             # We need to instantiate the model class first to load state dict into it
             best_model = KelpSegmentationModel.load_from_checkpoint(best_checkpoint_path)
 
+
+            # --------------------------------------------------------------------------------
             # Define path for saving only the weights (.pth)
-            WEIGHTS_SAVE_DIR = Path("./saved_weights").resolve()
-            WEIGHTS_SAVE_DIR.mkdir(exist_ok=True)
-            weights_save_path = WEIGHTS_SAVE_DIR / "kelp_resnet_350_best_weights.pth"
+            # WEIGHTS_SAVE_DIR = Path("./saved_weights").resolve()
+            # WEIGHTS_SAVE_DIR.mkdir(exist_ok=True)
+            weights_save_path = RUN_DIR / WEIGHTS_FILENAME
 
             # Save the state dictionary
             torch.save(best_model.state_dict(), weights_save_path)

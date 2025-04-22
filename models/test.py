@@ -19,14 +19,18 @@ from torchmetrics import JaccardIndex, Precision, Recall, F1Score
 # *** SET THESE VALUES BEFORE RUNNING ***
 
 # Path to the trained model weights (.pth file)
-WEIGHTS_PATH_STR = Path().resolve().parent / "models" / "FIXME"
+RUN = "normalized_20_test"
+################################################
+
+
+WEIGHTS_PATH_STR = Path().resolve().parent / "runs" / RUN / "best_weights.pth"
 
 # Path to the base directory containing the pre-split data folders
 # (test_sat, test_gt, etc.)
 DATA_DIR_STR = Path().resolve().parent / "data" / "cleaned"
 
 # Directory to save the predicted masks
-OUTPUT_DIR_STR = Path().resolve().parent / "output" / "350x350_200_test"
+OUTPUT_DIR_STR = Path().resolve().parent / "output" / RUN
 
 # Target image size (height and width) the model was trained for
 IMG_SIZE = 350
