@@ -8,7 +8,10 @@ import sys
 # import argparse # Removed argparse
 from tqdm import tqdm
 import torchvision
+# Import specific backbones and weights
 from torchvision.models import resnet18, ResNet18_Weights
+from torchvision.models import resnet34, ResNet34_Weights
+from torchvision.models import resnet50, ResNet50_Weights
 import torch.nn.functional as F
 from typing import List, Tuple, Dict # Added Dict for config type hint
 
@@ -16,27 +19,25 @@ from typing import List, Tuple, Dict # Added Dict for config type hint
 from torchmetrics import JaccardIndex, Precision, Recall, F1Score
 
 # --- Configuration Constants ---
-# *** SET THESE VALUES BEFORE RUNNING ***
+RUN_NAME = "50bb_20_test" 
+BACKBONE_NAME = "resnet50" 
 
-# Path to the trained model weights (.pth file)
-RUN = "normalized_augmented_120_test"
-################################################
-
-
-WEIGHTS_PATH_STR = Path().resolve().parent / "runs" / RUN / "best_weights.pth"
+# --- Construct Paths Based on Run Name ---
+RUN_DIR = Path().resolve().parent / "runs" / RUN_NAME
+WEIGHTS_PATH_STR = str(RUN_DIR / "best_weights.pth") # Use constant defined in train script
 
 # Path to the base directory containing the pre-split data folders
-# (test_sat, test_gt, etc.)
-DATA_DIR_STR = Path().resolve().parent / "data" / "cleaned"
+DATA_DIR_STR = str(Path().resolve().parent / "data" / "cleaned")
 
-# Directory to save the predicted masks
-OUTPUT_DIR_STR = Path().resolve().parent / "output" / RUN
+# Directory to save the predicted masks (use RUN_NAME for organization)
+OUTPUT_DIR_STR = str(Path().resolve().parent / "output" / RUN_NAME)
 
+# --- Other Testing Parameters ---
 # Target image size (height and width) the model was trained for
 IMG_SIZE = 350
 
 # Batch size for testing
-BATCH_SIZE = 16
+BATCH_SIZE = 16 # Adjust based on GPU memory
 
 # Number of workers for DataLoader
 NUM_WORKERS = 4 # Adjust based on your system
@@ -72,17 +73,47 @@ except FileNotFoundError as e:
 # --- Model and Dataset Class Definitions ---
 # !! IMPORTANT !! These MUST match the definitions used during training
 class KelpSegmentationModel(pl.LightningModule):
-    def __init__(self, target_size=(350, 350), learning_rate=1e-4):
+    # ============================================================================
+    # MODIFIED __init__ to accept backbone_name
+    # ============================================================================
+    def __init__(self,
+                 target_size=(350, 350),
+                 learning_rate=1e-4, # Not used for inference but needed for potential loading
+                 backbone_name="resnet18" # Default added
+                ):
         super().__init__()
+        # self.save_hyperparameters() # Not typically needed/used when loading state_dict directly
         self.target_size = target_size
-        base_encoder = torchvision.models.resnet18(weights=None)
+        self.backbone_name = backbone_name # Store backbone name
+
+        # --- Select Backbone ---
+        # No need for pretrained weights here as we load them from the file
+        if self.backbone_name == "resnet18":
+            base_encoder = torchvision.models.resnet18(weights=None)
+            encoder_out_channels = 512
+        elif self.backbone_name == "resnet34":
+            base_encoder = torchvision.models.resnet34(weights=None)
+            encoder_out_channels = 512
+        elif self.backbone_name == "resnet50":
+            base_encoder = torchvision.models.resnet50(weights=None)
+            encoder_out_channels = 2048
+        else:
+            raise ValueError(f"Unsupported backbone: {self.backbone_name}.")
+
+        # print(f"Initializing model structure with backbone: {self.backbone_name}") # Optional print
+
+        # --- Modify input layer ---
         base_encoder.conv1 = nn.Conv2d(7, 64, kernel_size=7, stride=2, padding=3, bias=False)
+
+        # --- Define Encoder ---
         self.encoder = nn.Sequential(
             base_encoder.conv1, base_encoder.bn1, base_encoder.relu, base_encoder.maxpool,
             base_encoder.layer1, base_encoder.layer2, base_encoder.layer3, base_encoder.layer4
         )
+
+        # --- Adjust Decoder Input ---
         self.decoder = nn.Sequential(
-            nn.ConvTranspose2d(512, 256, kernel_size=3, stride=2, padding=1, output_padding=1),
+            nn.ConvTranspose2d(encoder_out_channels, 256, kernel_size=3, stride=2, padding=1, output_padding=1),
             nn.BatchNorm2d(256), nn.ReLU(),
             nn.ConvTranspose2d(256, 128, kernel_size=3, stride=2, padding=1, output_padding=1),
             nn.BatchNorm2d(128), nn.ReLU(),
@@ -101,6 +132,7 @@ class KelpSegmentationModel(pl.LightningModule):
         output = F.interpolate(logits, size=self.target_size, mode='bilinear', align_corners=False)
         return output
 
+# Dataset class remains the same as the last training script version
 class KelpDataset(torch.utils.data.Dataset):
     def __init__(self, satellite_paths: List[str], mask_paths: List[str], return_filename=False):
         self.satellite_paths = satellite_paths
@@ -108,7 +140,6 @@ class KelpDataset(torch.utils.data.Dataset):
         self.return_filename = return_filename
         if len(satellite_paths) != len(mask_paths): raise ValueError("Path lists must have same length.")
         if not satellite_paths: raise ValueError("Satellite path list empty.")
-        # print(f"Initialized dataset with {len(satellite_paths)} samples.") # Less verbose
 
     def __len__(self): return len(self.satellite_paths)
 
@@ -116,12 +147,15 @@ class KelpDataset(torch.utils.data.Dataset):
         try:
             img = tifffile.imread(filename)
             if img is None: raise IOError(f"tifffile returned None for {filename}")
+            # --- Preprocessing (Must match data format saved by normalization script) ---
             if not is_mask:
                 if img.dtype != np.float32: img = img.astype(np.float32)
+                # NO division by 255/etc. if data is already Z-scored/normalized
             elif is_mask:
                  if img.ndim == 3: img = img.squeeze()
                  if img.dtype != np.uint8 or img.max() > 1: img = (img > 0).astype(np.uint8)
                  img = img.astype('float32')
+            # --- End Preprocessing ---
             return img
         except Exception as e:
             print(f"CRITICAL ERROR loading {filename}: {str(e)}"); raise
@@ -185,25 +219,32 @@ def run_testing(config: Dict):
         print(f"ERROR creating dataset/loader: {e}"); return
 
     # --- Initialize Model ---
-    print("Initializing model...")
-    model = KelpSegmentationModel(target_size=(config["img_size"], config["img_size"]))
+    # ============================================================================
+    # MODIFIED: Pass the correct backbone_name from config when initializing
+    # ============================================================================
+    print(f"Initializing model structure with backbone: {config['backbone_name']}...")
+    model = KelpSegmentationModel(
+        target_size=(config["img_size"], config["img_size"]),
+        backbone_name=config["backbone_name"] # Pass backbone name here
+    )
 
     # --- Load Weights ---
     print(f"Loading model weights from: {weights_path}")
     if not weights_path.exists():
         print(f"Error: Weights file not found at {weights_path}"); return
     try:
+        # Load state dict requires model instance to be correctly initialized first
         state_dict = torch.load(weights_path, map_location=device)
         model.load_state_dict(state_dict)
-        print("Weights loaded successfully.")
+        print("Weights loaded successfully into model structure.")
+    except RuntimeError as e:
+         print(f"ERROR loading state_dict: {e}")
+         print("This often means the loaded weights do not match the model structure.")
+         print(f"Ensure BACKBONE_NAME ('{config['backbone_name']}') in this script matches the backbone used for training run '{config['run_name']}'.")
+         return
     except Exception as e:
-        print(f"Error loading weights: {e}")
-        try:
-             print("Attempting to load as full checkpoint...")
-             model = KelpSegmentationModel.load_from_checkpoint(weights_path, map_location=device)
-             print("Loaded as full checkpoint instead.")
-        except Exception as e2:
-             print(f"Failed to load as full checkpoint: {e2}"); return
+        print(f"Generic error loading weights: {e}")
+        return # Stop if weights can't be loaded
 
     # --- Prepare for Evaluation ---
     model.to(device)
@@ -252,6 +293,9 @@ def run_testing(config: Dict):
     final_precision = precision_metric.compute()
     final_recall = recall_metric.compute()
     final_f1 = f1_metric.compute()
+    print(f"  Run:                           {config['run_name']}")
+    print(f"  Backbone:                      {config['backbone_name']}")
+    print(f"  Weights:                       {weights_path.name}")
     print(f"  Intersection over Union (IoU): {final_iou:.4f}")
     print(f"  Precision:                     {final_precision:.4f}")
     print(f"  Recall:                        {final_recall:.4f}")
@@ -266,6 +310,8 @@ def run_testing(config: Dict):
 if __name__ == "__main__":
     # Create a dictionary from the constants to pass to the function
     config = {
+        "run_name": RUN_NAME, # Add run name to config
+        "backbone_name": BACKBONE_NAME, # Add backbone name to config
         "weights_path_str": WEIGHTS_PATH_STR,
         "data_dir_str": DATA_DIR_STR,
         "output_dir_str": OUTPUT_DIR_STR,
