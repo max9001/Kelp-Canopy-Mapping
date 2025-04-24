@@ -20,7 +20,7 @@ from pytorch_lightning.callbacks import Callback, EarlyStopping, ModelCheckpoint
 
 # --- Configuration Constants ---
 BACKBONE = "resnet50" # Options: "resnet18", "resnet34", "resnet50"
-MAX_EPOCHS = 50     # Total epochs for cosine annealing cycle (can be stopped early)
+MAX_EPOCHS = 60     # Total epochs for cosine annealing cycle (can be stopped early)
 RUN_NAME = "50_changelr_test" # Updated run name
 
 WEIGHTS_FILENAME = "best_weights.pth"
@@ -278,15 +278,9 @@ def main():
 
     # --- Train the Model ---
     print(f"Starting Training (max_epochs={MAX_EPOCHS}, Cosine LR Decay, EarlyStopping patience={EARLY_STOPPING_PATIENCE})...")
-    try:
-        trainer.fit(model, train_loader, val_loader, ckpt_path=resume_checkpoint_path)
-        print("Training finished.")
-        # Check trainer state for stopped epoch
-        stopped_epoch = trainer.state.epoch
-        if stopped_epoch is not None and stopped_epoch < (trainer.max_epochs - 1):
-             print(f"Training stopped before max_epochs. Early stopping likely triggered around epoch {stopped_epoch}.")
 
-    except Exception as e: print(f"ERROR during training: {e}"); return
+    trainer.fit(model, train_loader, val_loader, ckpt_path=resume_checkpoint_path)
+    print("Training finished.")
 
     # --- Save the Best Model's Weights (Unchanged) ---
     print("\nSaving the best model weights...")
