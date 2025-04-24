@@ -8,22 +8,31 @@ import numpy as np
 from pathlib import Path
 import os
 import sys
+# Import specific backbones and weights
 from torchvision.models import resnet18, ResNet18_Weights, resnet34, ResNet34_Weights, resnet50, ResNet50_Weights
 import torch.nn.functional as F
 from torchmetrics import JaccardIndex
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 import warnings
+# Import Callback base class and specific callbacks used
+from pytorch_lightning.callbacks import Callback, EarlyStopping, ModelCheckpoint
 
 # --- Configuration Constants ---
-BACKBONE = "resnet18" # Options: "resnet18", "resnet34", "resnet50"
-MAX_EPOCHS = 3      # Total epochs desired
-RUN_NAME = "deleteme"
+BACKBONE = "resnet50" # Options: "resnet18", "resnet34", "resnet50"
+MAX_EPOCHS = 50     # Total epochs for cosine annealing cycle (can be stopped early)
+RUN_NAME = "50_changelr_test" # Updated run name
 
 WEIGHTS_FILENAME = "best_weights.pth"
-CHECKPOINT_BASENAME = "checkpoint" # Base name for checkpoint files saved by callback
+CHECKPOINT_BASENAME = "checkpoint"
+
 RUN_DIR = Path().resolve().parent / "runs" / RUN_NAME
-# --- End Configuration ---
+
+# --- Scheduling and Stopping Parameters ---
+EARLY_STOPPING_PATIENCE = 10 # Increase patience slightly for gradual decay?
+EARLY_STOPPING_MIN_DELTA = 0.001 # Maybe loosen min_delta if expecting slower final improvements
+COSINE_ETA_MIN = 1e-7 # Minimum LR for Cosine Annealing
+# --- End Configuration Constants ---
 
 
 # --- Imports ---
@@ -42,7 +51,29 @@ except ImportError: print("Warning: psutil not found."); psutil = None
 # --- End Imports ---
 
 
-# --- Model Definition (KelpSegmentationModel - Unchanged) ---
+# --- Learning Rate Monitor Callback Definition (Unchanged) ---
+class LearningRateMonitor(Callback):
+    """Logs the learning rate and prints a prominent message when it changes."""
+    def __init__(self):
+        super().__init__()
+        self.last_lr = {}
+    def on_train_epoch_start(self, trainer: "pl.Trainer", pl_module: "pl.LightningModule") -> None:
+        if not trainer.optimizers: return
+        for i, optimizer in enumerate(trainer.optimizers):
+            if not optimizer.param_groups: continue
+            current_lr = optimizer.param_groups[0]['lr']
+            optimizer_key = f"optimizer_{i}_group_0"
+            last_lr_group = self.last_lr.get(optimizer_key, None)
+            pl_module.log(f"lr-{optimizer_key}", current_lr, on_step=False, on_epoch=True, prog_bar=False, logger=True)
+            if last_lr_group is not None and not np.isclose(current_lr, last_lr_group, rtol=1e-6, atol=1e-9):
+                print("\n" + "="*60)
+                print(f"Epoch {trainer.current_epoch}: Learning rate for optimizer {i} changed from {last_lr_group:.4e} to {current_lr:.4e}")
+                print("="*60 + "\n")
+            self.last_lr[optimizer_key] = current_lr
+# --- End Callback Definition ---
+
+
+# --- Model Definition (KelpSegmentationModel - Unchanged Internally) ---
 class KelpSegmentationModel(pl.LightningModule):
     def __init__(self, target_size=(350, 350), learning_rate=1e-4, backbone_name="resnet18"):
         super().__init__()
@@ -100,14 +131,32 @@ class KelpSegmentationModel(pl.LightningModule):
         self.log('val_iou', iou, on_step=False, on_epoch=True, prog_bar=True, logger=True)
         return loss
 
+    # ============================================================================
+    # MODIFIED: Use CosineAnnealingLR scheduler
+    # ============================================================================
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.hparams.learning_rate)
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=5)
-        return {"optimizer": optimizer, "lr_scheduler": {"scheduler": scheduler, "monitor": "val_loss"}}
+        # Use CosineAnnealingLR
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+            optimizer,
+            T_max=MAX_EPOCHS,  # Number of epochs for one cycle (usually total epochs)
+            eta_min=COSINE_ETA_MIN # Minimum learning rate
+        )
+        return {
+            "optimizer": optimizer,
+            "lr_scheduler": {
+                "scheduler": scheduler,
+                # monitor is NOT needed for CosineAnnealingLR as it steps automatically
+                "interval": "epoch", # Step the scheduler every epoch
+                "frequency": 1,
+            }
+        }
+    # ============================================================================
 
 
 # --- Dataset Definition (KelpDataset - Unchanged) ---
 class KelpDataset(torch.utils.data.Dataset):
+    # ... (Keep KelpDataset class exactly as before) ...
     def __init__(self, satellite_paths: List[str], mask_paths: List[str],
                  transforms: Optional[A.Compose] = None, apply_noise: bool = False, noise_level: float = 0.01):
         self.satellite_paths = satellite_paths; self.mask_paths = mask_paths
@@ -170,28 +219,16 @@ def main():
         val_dataset = KelpDataset(val_sat, val_mask, transforms=val_transforms, apply_noise=False)
     except ValueError as e: print(f"ERROR: {e}"); return
 
-    # ============================================================================
-    # REVISED: Checkpoint Resuming Logic (Checks directory existence first)
-    # ============================================================================
+    # --- Checkpoint Resuming Logic (Unchanged) ---
     resume_checkpoint_path = None
     if RUN_DIR.exists():
-        # Directory exists, check for the checkpoint file
         potential_checkpoints = list(RUN_DIR.glob('*.ckpt'))
         if potential_checkpoints:
-            # Assuming only one checkpoint exists as per user guarantee
-            if len(potential_checkpoints) > 1:
-                 warnings.warn(f"Multiple checkpoints found in {RUN_DIR}. Using the first one: {potential_checkpoints[0]}")
+            if len(potential_checkpoints) > 1: warnings.warn(f"Multiple checkpoints found. Using: {potential_checkpoints[0]}")
             resume_checkpoint_path = potential_checkpoints[0]
-            print(f"Run directory exists. Found checkpoint, resuming training from: {resume_checkpoint_path}")
-        else:
-            # Directory exists but no checkpoint - unexpected based on guarantee, but handled
-            print(f"Run directory {RUN_DIR} exists, but no checkpoint found. Starting training from scratch.")
-            # No need to create directory here, it already exists
-    else:
-        # Directory does not exist - this is a new run
-        print(f"Run directory {RUN_DIR} does not exist. Starting training from scratch.")
-        RUN_DIR.mkdir(parents=True, exist_ok=True) # Create directory for the new run
-    # ============================================================================
+            print(f"Run directory exists. Resuming from: {resume_checkpoint_path}")
+        else: print(f"Run directory {RUN_DIR} exists, but no checkpoint. Starting fresh.")
+    else: print(f"Run directory {RUN_DIR} does not exist. Starting fresh."); RUN_DIR.mkdir(parents=True, exist_ok=True)
 
     # --- Create DataLoaders ---
     print("Creating DataLoaders...")
@@ -212,34 +249,46 @@ def main():
         target_size=(350, 350), learning_rate=1e-4, backbone_name=chosen_backbone
     )
 
-    # --- Checkpoint Callback ---
-    # save_last=False is fine as we are not specifically looking for 'last.ckpt' anymore
-    checkpoint_callback = pl.callbacks.ModelCheckpoint(
+    # --- Callbacks ---
+    print("Configuring Callbacks...")
+    checkpoint_callback = ModelCheckpoint(
         monitor='val_loss', dirpath=RUN_DIR,
         filename=f'{CHECKPOINT_BASENAME}-{{epoch:02d}}-{{val_loss:.4f}}',
         save_top_k=1, mode='min', save_last=False, verbose=True
     )
+    # EarlyStopping setup remains the same
+    early_stopping_callback = EarlyStopping(
+        monitor='val_loss', mode='min',
+        patience=EARLY_STOPPING_PATIENCE,
+        min_delta=EARLY_STOPPING_MIN_DELTA,
+        verbose=True
+    )
+    # LR Monitor callback remains useful for visualizing the cosine decay
+    lr_monitor_callback = LearningRateMonitor()
+
 
     # --- Trainer ---
     print("Initializing Trainer...")
     trainer = pl.Trainer(
         accelerator="gpu" if torch.cuda.is_available() else "cpu",
         devices=1, max_epochs=MAX_EPOCHS, log_every_n_steps=20,
-        callbacks=[checkpoint_callback],
+        callbacks=[checkpoint_callback, early_stopping_callback, lr_monitor_callback], # Keep all callbacks
         precision="16-mixed" if torch.cuda.is_available() else 32
     )
 
     # --- Train the Model ---
-    print("Starting Training...")
+    print(f"Starting Training (max_epochs={MAX_EPOCHS}, Cosine LR Decay, EarlyStopping patience={EARLY_STOPPING_PATIENCE})...")
     try:
         trainer.fit(model, train_loader, val_loader, ckpt_path=resume_checkpoint_path)
         print("Training finished.")
-    except Exception as e:
-         print(f"ERROR during training: {e}")
-         # Add OOM handling etc. if needed
-         return
+        # Check trainer state for stopped epoch
+        stopped_epoch = trainer.state.epoch
+        if stopped_epoch is not None and stopped_epoch < (trainer.max_epochs - 1):
+             print(f"Training stopped before max_epochs. Early stopping likely triggered around epoch {stopped_epoch}.")
 
-    # --- Save the Best Model's Weights ---
+    except Exception as e: print(f"ERROR during training: {e}"); return
+
+    # --- Save the Best Model's Weights (Unchanged) ---
     print("\nSaving the best model weights...")
     best_checkpoint_path_after_train = checkpoint_callback.best_model_path
     if best_checkpoint_path_after_train and Path(best_checkpoint_path_after_train).exists():
