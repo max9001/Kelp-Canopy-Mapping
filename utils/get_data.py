@@ -8,7 +8,7 @@ import warnings
 # or one level below (e.g., in a 'scripts' folder).
 try:
     # Assumes script is in a 'scripts' subdir relative to 'data'
-    BASE_DIR = Path().resolve().parent / "data" / "cleaned"
+    BASE_DIR = Path().resolve().parent / "data" / "original"
     if not BASE_DIR.exists():
         # If not found, assume script is in project root
         BASE_DIR = Path().resolve() / "data" / "cleaned"

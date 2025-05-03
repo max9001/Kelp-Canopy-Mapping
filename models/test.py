@@ -19,15 +19,17 @@ from typing import List, Tuple, Dict # Added Dict for config type hint
 from torchmetrics import JaccardIndex, Precision, Recall, F1Score
 
 # --- Configuration Constants ---
-RUN_NAME = "50bb_20_test" 
-BACKBONE_NAME = "resnet50" 
+RUN_NAME = "18_og_noaug" 
+BACKBONE_NAME = "resnet18" 
+DATA_DIR_STR = str(Path().resolve().parent / "data" / "original")
+THRESHOLD = 0.30
 
 # --- Construct Paths Based on Run Name ---
 RUN_DIR = Path().resolve().parent / "runs" / RUN_NAME
 WEIGHTS_PATH_STR = str(RUN_DIR / "best_weights.pth") # Use constant defined in train script
 
 # Path to the base directory containing the pre-split data folders
-DATA_DIR_STR = str(Path().resolve().parent / "data" / "cleaned")
+
 
 # Directory to save the predicted masks (use RUN_NAME for organization)
 OUTPUT_DIR_STR = str(Path().resolve().parent / "output" / RUN_NAME)
@@ -43,7 +45,7 @@ BATCH_SIZE = 16 # Adjust based on GPU memory
 NUM_WORKERS = 4 # Adjust based on your system
 
 # Probability threshold for converting logits to binary predictions
-THRESHOLD = 0.5
+
 
 # Random seed for reproducibility
 SEED = 42

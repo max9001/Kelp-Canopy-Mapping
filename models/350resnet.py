@@ -20,9 +20,10 @@ from pytorch_lightning.callbacks import Callback, EarlyStopping, ModelCheckpoint
 
 # --- Configuration Constants ---
 BACKBONE = "resnet18" # Options: "resnet18", "resnet34", "resnet50"
-MAX_EPOCHS = 60     # Total epochs for cosine annealing cycle (can be stopped early)
-RUN_NAME = "18_aug" # Updated run name
-APPLY_AUGMENTATIONS = True # <<< SET True or False to control augmentations
+MAX_EPOCHS = 400     # Total epochs for cosine annealing cycle (can be stopped early)
+RUN_NAME = "18_og_noaug" # Updated run name
+APPLY_AUGMENTATIONS = False # <<< SET True or False to control augmentations
+DATA_DIR = str(Path().resolve().parent / "data" / "cleaned")
 
 # --- Define Filenames --- (Base names used within RUN_DIR)
 WEIGHTS_FILENAME = "best_weights.pth"
@@ -32,8 +33,8 @@ CHECKPOINT_BASENAME = "checkpoint"
 RUN_DIR = Path().resolve().parent / "runs" / RUN_NAME
 
 # --- Scheduling and Stopping Parameters ---
-EARLY_STOPPING_PATIENCE = 20
-EARLY_STOPPING_MIN_DELTA = 0.001
+EARLY_STOPPING_PATIENCE = 100
+EARLY_STOPPING_MIN_DELTA = 0.00001
 COSINE_ETA_MIN = 1e-7 # Minimum LR for Cosine Annealing
 # --- End Configuration Constants ---
 
@@ -130,7 +131,7 @@ def main():
 
     # --- Prepare Filenames ---
     try:
-        print("Preparing filenames..."); filenames = prepare_filenames()
+        print("Preparing filenames..."); filenames = prepare_filenames(base_dir=DATA_DIR)
         train_sat, train_mask, val_sat, val_mask, _, _ = filenames
         print("Filenames prepared.")
     except (ValueError, FileNotFoundError) as e: print(f"ERROR: {e}"); return
@@ -202,7 +203,9 @@ def main():
 
     # --- Trainer ---
     print("Initializing Trainer...")
-    trainer = pl.Trainer(accelerator="gpu" if torch.cuda.is_available() else "cpu", devices=1, max_epochs=MAX_EPOCHS, log_every_n_steps=20, callbacks=[checkpoint_callback, early_stopping_callback, lr_monitor_callback], precision="16-mixed" if torch.cuda.is_available() else 32)
+    trainer = pl.Trainer(accelerator="gpu" if torch.cuda.is_available() else "cpu", devices=1, max_epochs=MAX_EPOCHS, log_every_n_steps=20, callbacks=[checkpoint_callback, early_stopping_callback, lr_monitor_callback], precision=32)
+
+    # precision="16-mixed" if torch.cuda.is_available() else 32
 
     # --- Train the Model ---
     print(f"Starting Training (max_epochs={MAX_EPOCHS}, Cosine LR Decay, EarlyStopping patience={EARLY_STOPPING_PATIENCE}, Augs={'ON' if APPLY_AUGMENTATIONS else 'OFF'})...") # Updated message
