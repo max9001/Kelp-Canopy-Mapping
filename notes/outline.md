@@ -216,12 +216,8 @@ Introduction (~1.5-2 pages)
 
 			- In satellite imaging, endmembers represent pure materials, such as kelp or water. Because water itself doesn't always look the same – it might be clear, cloudy with mud, or have bright sun reflections – there are many types of "pure water" endmembers. The correct endmember must be selected in order for the MESMA process to be accurate. the paper uses an automatic selection process to choose the correct endmember per image. This fixed, automated process could lead to an incorrect endmember selection due to noise or the sampling process not perfectly represent all water variations in that specific scene. 
 
-
-
-
 	- Bridging the Data Gap: Citizen Science:
 
-		
 		- Floating forests is difference as the entire dataset was labeled by humans. The study showed that accurate kelp labels could be constructed from the consensus of multiple untrained participants. 
 
 		- based on landsat 7 sattalite images of coastlines of claifornia and tasmania 
@@ -232,14 +228,12 @@ Introduction (~1.5-2 pages)
 
 		- Human-in-the-loop approach potentially offers different robustness characteristics to noise or visual variations compared to purely spectral methods like MESMA
 
-
 	- Remote Sensing as a Solution:
 
 		- I propose using Machine Learning, specifically Semantic Segmentation, to measure the area of surface level kelp on pre-existing satellite imagery
 
 		- It can then find areas in low ecosystem health, making it easier to allocate diver resources.
 
-	
 	- Known: 
 	
 		- landsat7 data is plentiful
@@ -252,7 +246,7 @@ Introduction (~1.5-2 pages)
 	
 		- Can modern deep learning techniques (specifically semantic segmentation) effectively automate *pixel-level* kelp mapping using landsat7 data
 
-		 - Your Contribution: State the objective clearly: "This study aims to develop, train, and evaluate a deep learning pipeline based on the UNet architecture with pre-trained ResNet backbones for semantic segmentation of kelp canopy in Landsat 7 imagery, using ground truth labels derived from the Floating Forests citizen science project."
+		- Your Contribution: State the objective clearly: "This study aims to develop, train, and evaluate a deep learning pipeline based on the UNet architecture with pre-trained ResNet backbones for semantic segmentation of kelp canopy in Landsat 7 imagery, using ground truth labels derived from the Floating Forests citizen science project."
 
 	- Preview of Approach and Findings: 
 	
@@ -281,9 +275,7 @@ Background (~2-3 pages)
 		
 			- First, Short Wave Infared measures wave lengths too small for us to see. Whata good about short wave infrared? water heavily absorbs these wavelengths and the land highly reflects this wavelength This Creates a high contrast between land and water
 
-    -   Briefly introduce common approaches:
-        -   *Vegetation Indices (VIs):* Mention indices like NDVI. Note their common use for terrestrial vegetation but limitations over water bodies due to water's strong influence on NIR/Red reflectance, often making them less reliable for floating algae without careful calibration or specific formulations.
--   Landsat 7 ETM+ Context
+	- Landsat 7 ETM+ Context
     -   Describe the relevant sensor characteristics: Specific bands used (mention SWIR, NIR, Red for the FF visualization), spatial resolution (30m), temporal revisit cycle.
     -   Address the Scan Line Corrector (SLC) failure (post-May 2003):
         -   Explain the resulting data gaps (stripes).
