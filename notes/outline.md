@@ -157,7 +157,9 @@ Introduction (~1.5-2 pages)
 
 	- The kelp crisis
 		
-		- In short, its due to an explosion of pacific purple sea urchin populations
+		- we are expierencing a large die-off of kelp in california
+
+		- due to an explosion of pacific purple sea urchin populations
 
 		- Their natural predator, the sunflower sea star  suffered from sea star wasting syndrome starting in 2013
 
@@ -200,7 +202,8 @@ Introduction (~1.5-2 pages)
 
 				- This raises the question, Can this task be automated?
 
-	- existing digital data for kelp maps
+
+	- existing digital data and automation techniques for kelp maps
 	
 		- California Department of Fish and Wildlife shapefiles derived from aerial surveys (https://wildlife.ca.gov/Conservation/Marine/Kelp/Aerial-Kelp-Surveys)
 
@@ -214,11 +217,13 @@ Introduction (~1.5-2 pages)
 		
 			- MESMA relies on spectral physics and pre-defined endmembers
 
-			- In satellite imaging, endmembers represent pure materials, such as kelp or water. Because water itself doesn't always look the same – it might be clear, cloudy with mud, or have bright sun reflections – there are many types of "pure water" endmembers. The correct endmember must be selected in order for the MESMA process to be accurate. the paper uses an automatic selection process to choose the correct endmember per image. This fixed, automated process could lead to an incorrect endmember selection due to noise or the sampling process not perfectly represent all water variations in that specific scene. 
+			- In satellite imaging, endmembers represent pure materials, such as kelp or water. Because water itself doesn't always look the same – it might be clear, cloudy with mud, or have bright sun reflections – there are many types of "pure water" endmembers. The correct endmember must be selected in order for the MESMA process to be accurate. the paper uses an automatic selection process to choose the correct set of endmembers per image. This fixed, automated process could lead to an incorrect endmember selection due to noise or the sampling process not perfectly represent all water variations in that specific scene. 
 
 	- Bridging the Data Gap: Citizen Science:
 
 		- Floating forests is difference as the entire dataset was labeled by humans. The study showed that accurate kelp labels could be constructed from the consensus of multiple untrained participants. 
+
+		- leveraging historical data from Earth-observing satellite programs like Landsat
 
 		- based on landsat 7 sattalite images of coastlines of claifornia and tasmania 
 			
@@ -263,50 +268,149 @@ Introduction (~1.5-2 pages)
 Background (~2-3 pages)
 =============================
 
-	- Remote Sensing Principles for Kelp Detection
-    	
-		- spectral properties of kelp enable aid in detection.
 
-        - Near-Infrared (NIR) 
+	- Benefits of Landsat 7 
 
-			- Near Infared measures wave lengths to large for us to see. This again is super advantageous, chlorophyll in vegetation reflects this wavelength super well. So, kelp, which is high in clorophyll, will be extremely visible. This will help the model “see” kelp easier than just by color
+		Rather than having the typical 3 Red and Green Blue channels, images captured by landsat7 contain 7 channels, which provide more spectral information beyond color
 
-		- Short-Wave Infrared (SWIR) 
+			Near-Infrared (NIR) 
+
+				- Near Infared measures wave lengths to large for us to see. This again is super advantageous, chlorophyll in vegetation reflects this wavelength super well. So, kelp, which is high in clorophyll, will be extremely visible. This will help the model “see” kelp easier than just by color
+
+			Short-Wave Infrared (SWIR) 
+			
+				- First, Short Wave Infared measures wave lengths too small for us to see. Whata good about short wave infrared? water heavily absorbs these wavelengths and the land highly reflects this wavelength. This Creates a high contrast between land and water
+
+			Red
+				
+				- Absorbed by chlorophyll in kelp for photosynthesis, providing contrast with NIR reflectance and contributing to vegetation indices.
+
+			Green
+			
+				- Reflects moderately from healthy vegetation (giving kelp its color) and can also indicate water column properties like sediment or phytoplankton.
+
+			Blue
+				
+				- Penetrates water deepest, potentially useful for submerged features (less so for surface canopy), but most affected by atmospheric scattering/haze.
+
+			Cloud Mask (binary)
+			
+				- A critical quality indicator used to identify and exclude pixels where clouds obscure the view of the surface, preventing misinterpretation.
+
+			Digital Elevation Model (DEM)
+			
+				- Provides elevation data used primarily to accurately mask out land areas, ensuring the analysis focuses only on water pixels where kelp could exist.
+
+		WRS - Nasa's landsat series of sattelite utilize the Worldwide Reference System, which allows us to translate image pixels to coordinates on earth's surface
+
+		- Landsat 7 Satellite photographs the same location on earth every 16 days, making measuring changes over time possible
+
+	
+	- Drawbacks of Landsat 7
+
+		- Scan Line Corrector (SLC) failure (post-May 2003):
+
+			The Scan Line Corrector (SLC) on the Landsat 7 satellite's Enhanced Thematic Mapper Plus (ETM+) sensor was a crucial electro-mechanical component designed to compensate for the satellite's continuous forward motion as the sensor scanned back and forth across the Earth's surface. Its purpose was to ensure that consecutive scan lines were parallel and adjacent, creating a complete, rectangular image without gaps.
+			On May 31, 2003, the SLC mechanism permanently failed. Without the corrector functioning, the sensor continued to scan side-to-side, but the satellite's forward movement caused the scan lines to follow a zig-zag pattern relative to the ground track.
+			The result is that all Landsat 7 ETM+ images acquired after this date (referred to as "SLC-off" data) contain wedge-shaped gaps of missing data between the scan lines. These gaps are narrowest near the center of the image (nadir) and become progressively wider towards the outer edges of the scene. Approximately 22% of the pixel data is missing in a typical SLC-off scene due to these gaps, significantly impacting the usability of the imagery for applications requiring complete spatial coverage unless specific gap-filling techniques are applied.
+
+			- floating forests mostly resolved this issue, but some artifcats are still present. 
+
+				ex VC433864 (?)
+
+
+
+	- Established Automated Method On Landsat Data
+	
+		- Spectral Mixture Analysis (SMA/MESMA)
+
+			- Model a pixel's spectrum as a linear combination of pure reference spectra ('endmembers').
+
+			- pure reference spectra could be water, kelp, land. Each pixel in the image is some combination of these pure materials
+
+			- Water is so volatile we can't represent it as a single endmember. We have endmembers for clear water, shallow water, reflective water, cloudy water... etc
+
+			- MESMA approach Uses a single, constant kelp endmember
+
+			- Uses a multiple water endmembers unique to each scene.
+        
+				- Spectra are extracted automatically from 30 pre-defined locations within each scene known to be consistently water-covered. This set of 30 scene-specific spectra forms the library for that image's MESMA run.
+
+			- pros
+
+				- Provides quantitative sub-pixel *fractional cover*
+				
+				- can be linked to biomass (citing Bell et al. 2020 validation), suitable for long-term, large-scale automated analysis.
+
+   			- cons  
+   
+   				- Accuracy depends heavily on the *representativeness* of the chosen endmembers (both the static kelp and the scene-specific water spectra extracted from fixed points).
+
+				- The automated extraction from fixed points might not always capture the *full range* of water variability
+
+				- could be affected by localized noise/haze at those points in a specific image
+
+				-  Known struggles with very low fractional cover (<~20%, citing Hamilton et al. 2020, Cavanaugh et al. 2023)
+
 		
-			- First, Short Wave Infared measures wave lengths too small for us to see. Whata good about short wave infrared? water heavily absorbs these wavelengths and the land highly reflects this wavelength This Creates a high contrast between land and water
+	
+	- A new Approach with an alternative Data Source: The Floating Forests Project
+    
+		- Floating Forests is a large-scale citizen science project on the Zooniverse platform, specifically designed to generate kelp labels for Landsat imagery.
 
-	- Landsat 7 ETM+ Context
-    -   Describe the relevant sensor characteristics: Specific bands used (mention SWIR, NIR, Red for the FF visualization), spatial resolution (30m), temporal revisit cycle.
-    -   Address the Scan Line Corrector (SLC) failure (post-May 2003):
-        -   Explain the resulting data gaps (stripes).
-        -   Crucially, state how the Floating Forests data you used handled this. (e.g., "The Floating Forests project processed both pre- and post-SLC-off imagery; how gaps were handled by volunteers or in subsequent processing before generating the labels used in this study is relevant context..." *OR* "This study utilized only pre-SLC-off data from Floating Forests..." *OR* "Floating Forests presented images with gaps, and volunteers classified around them...". Be specific based on your dataset's origin).
--   Established Automated Method: Spectral Mixture Analysis (SMA/MESMA)
-    -   Explain the core concept of SMA: Modeling a pixel's spectrum as a linear combination of pure reference spectra ('endmembers').
-    -   Introduce Multiple Endmember SMA (MESMA) as an advancement.
-        -   Explain the need for *multiple* endmembers, especially for variable components like water (clear, turbid, shallow, sun glint etc.), citing the Bell et al. (2020) approach.
-    -   Detail the specific MESMA implementation from Bell et al. (2020) as the state-of-the-art automated baseline:
-        -   Uses a single, constant kelp endmember.
-        -   Uses a library of water endmembers *unique to each scene*.
-        -   Clarify the process: Spectra are extracted *automatically* from 30 *pre-defined, fixed locations* within each scene known to be consistently water-covered. This set of 30 scene-specific spectra forms the library for that image's MESMA run.
-    -   Discuss Strengths: Provides quantitative sub-pixel *fractional cover*, can be linked to biomass (citing Bell et al. 2020 validation), suitable for long-term, large-scale automated analysis.
-    -   Discuss Limitations relevant to your framing:
-        -   Accuracy depends heavily on the *representativeness* of the chosen endmembers (both the static kelp and the scene-specific water spectra extracted from fixed points).
-        -   The automated extraction from fixed points might not always capture the *full range* of water variability or could be affected by localized noise/haze at those points in a specific image, potentially impacting unmixing accuracy.
-        -   Known struggles with very low fractional cover (<~20%, citing Hamilton et al. 2020, Cavanaugh et al. 2023).
--   Alternative Label Source: The Floating Forests Project
-    -   Introduce Floating Forests as a large-scale citizen science project on the Zooniverse platform, specifically designed to generate kelp labels for Landsat imagery.
-    -   Describe the volunteer task: Visually inspecting Landsat 7 image subsets (displayed using SWIR/NIR/Red bands) and manually tracing perceived kelp canopy borders.
-    -   Explain the Consensus Mechanism: Emphasize that data quality relies on agreement among multiple (up to 15) untrained volunteers. The final label for a pixel is derived from this consensus (e.g., requiring >=4 votes, as determined by Rosenthal et al.).
-    -   Summarize Validation Results: Cite the Rosenthal et al. study (preprint/report) confirming that this consensus approach yields kelp classifications with accuracy (measured by MCC) comparable to expert-derived methods, establishing the dataset's utility.
-    *   Frame its Distinct Nature: Highlight that it relies on human visual pattern recognition and consensus judgment, rather than spectral physics and automated endmember extraction. This makes it a fundamentally different type of label source, potentially capturing different information or having different sensitivities to noise/ambiguity compared to MESMA.
--   Deep Learning for Image Segmentation
-    -   Define Semantic Segmentation: The task of assigning a class label (e.g., kelp or background) to every pixel in an image.
-    -   Introduce the UNet Architecture: Briefly explain its encoder-decoder structure with skip connections. Mention its demonstrated success in biomedical imaging and increasingly in remote sensing for precise localization of features.
-    -   Explain Transfer Learning and Fine-Tuning:
-        -   Define transfer learning: Using models (like ResNet-18, -34, -50) pre-trained on large, general datasets (ImageNet).
-        -   Explain the benefit: Leverages powerful, pre-learned visual features, drastically reducing the need for labeled data specific to the target task, speeding up training, and often improving performance.
-        *   Clarify Fine-Tuning: Explain that in this context, it involves initializing the encoder with pre-trained weights and then *unfreezing* and updating *all* weights (encoder and decoder) during training on the target (kelp) dataset, allowing the model to adapt fully.
-    -   Explain Data Augmentation: Describe its purpose – artificially expanding the training dataset by applying random transformations (flips, rotations, brightness changes, etc.) to input images. Explain how this improves model robustness, generalization, and helps prevent overfitting, especially with limited or imbalanced datasets.
+    	- Volunteers visually inspected Landsat 7 images, displayed using SWIR/NIR/Red bands, and manually traced kelp canopy borders.
+    
+		- The Consensus Mechanism: ressulting Data relied on agreement among multiple (up to 15) untrained volunteers. The final label for a pixel is derived from this consensus (e.g., requiring >=4 votes, as determined by Rosenthal et al.).
+
+   		- Summarize Validation Results: The Rosenthal et al. study (preprint/report) confirmed that this consensus approach yields kelp classifications with accuracy (measured by MCC) comparable to expert-derived methods, establishing the dataset's utility.
+
+		- Distinct from other data: it relies on human visual pattern recognition and consensus judgment, rather than spectral physics and automated endmember extraction. 
+		
+			- This makes it a fundamentally different type of label source, potentially capturing different information or having different sensitivities to noise/ambiguity compared to MESMA.
+
+		
+	- Deep Learning for Image Segmentation
+
+    	- Semantic Segmentation: The task of assigning a class label (e.g., kelp or background) to every pixel in an image.
+    
+		- The UNet Architecture: encoder-decoder structure with skip connections. 
+		
+			A UNET is a CNN that has skip connections. 
+			
+			Normally, in a CNN, layers only exchange information with their neighbors. 
+
+			Skip connections allow layers to talk to more than its neighbors to combine coarse and fine-grained feature information.
+
+			its demonstrated success in biomedical imaging and increasingly in remote sensing for precise localization of features.
+
+
+
+    - Transfer Learning and Fine-Tuning:
+        
+		- Tranfer Learning:
+
+			-  Using models (like ResNet-18, -34, -50) pre-trained on large, general datasets (ImageNet).
+
+			-   Leverages powerful, pre-learned visual features, reducing the need for labeled data specific to the target task.
+			
+				- speeds up training and often improves performance.
+
+        - Fine-Tuning
+		
+			Allow pre-trained encoder/model weights to be updated during training
+
+			- model (specifically the encoder) adapt more precisely to the specific nuances and patterns of kelp photographed from orbit.
+    
+
+	- Data Augmentation: 
+	
+		- Data augmentation is crucial for heavily unnbalanced datasets. 
+		
+		- we can artificially expand the training dataset by applying random transformations (flips, rotations, brightness changes, etc.) to input images. 
+		
+		- while the difference is trivial to us, the model sees this as an entirely new image.
+		
+		- supplemental training data improves model robustness, generalization, and helps prevent overfitting
 
 
 
