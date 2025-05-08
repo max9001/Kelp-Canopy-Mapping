@@ -20,22 +20,27 @@ from torchmetrics import Metric, JaccardIndex, Precision, Recall, F1Score
 # --- Configuration Constants ---
 # *** SET THESE VALUES BEFORE RUNNING ***
 
-RUN_NAME = "18_og_noaug"
-BACKBONE_NAME = "resnet18"
+RUN_NAME = "50_og_noaug"
+BACKBONE_NAME = "resnet50"
 APPLY_LAND_MASK = True
+DATA_DIR_STR = str(Path().resolve().parent / "data" / "original") 
+RESULTS_FILENAME = "evaluation_results_2.txt"
 
-# --- Construct Paths Based on Run Name ---
+
 RUN_DIR = Path().resolve().parent / "runs" / RUN_NAME
 WEIGHTS_PATH_STR = str(RUN_DIR / "best_weights.pth")
-DATA_DIR_STR = str(Path().resolve().parent / "data" / "original")
 OUTPUT_DIR_STR = str(Path().resolve().parent / "output" / RUN_NAME)
 OPTIMAL_THRESHOLD_FILE = RUN_DIR / "optimal_threshold.txt"
+# ============================================================================
+# ADDED: Define output filename for results text file
+
+# ============================================================================
+
 
 # --- Other Testing Parameters ---
 IMG_SIZE = 350
 BATCH_SIZE = 16
 NUM_WORKERS = 4
-# THRESHOLD = 0.5 # Default, will be overwritten if optimal file exists
 SEED = 42
 # --- End Configuration ---
 
@@ -68,68 +73,33 @@ class KelpSegmentationModel(pl.LightningModule):
         features = self.encoder(x); logits = self.decoder(features)
         output = F.interpolate(logits, size=self.target_size, mode='bilinear', align_corners=False); return output
 
-# === Use MODIFIED KelpDataset Definition from Step 1 ===
 class KelpDataset(torch.utils.data.Dataset):
-    def __init__(self, satellite_paths: List[str], mask_paths: List[str],
-                 return_filename=False, return_dem=False): # Added return_dem flag
-        self.satellite_paths = satellite_paths
-        self.mask_paths = mask_paths
-        self.return_filename = return_filename
-        self.return_dem = return_dem # Store the flag
-        self.dem_band_index = 6 # Assuming DEM is the 7th band (index 6)
-
+    def __init__(self, satellite_paths: List[str], mask_paths: List[str], return_filename=False, return_dem=False):
+        self.satellite_paths=satellite_paths; self.mask_paths=mask_paths; self.return_filename=return_filename; self.return_dem=return_dem; self.dem_band_index=6
         if len(satellite_paths) != len(mask_paths): raise ValueError("Path lists length mismatch.")
         if not satellite_paths: raise ValueError("Satellite path list empty.")
-
     def __len__(self): return len(self.satellite_paths)
-
     def load_image(self, filename: str, is_mask: bool = False):
         try:
             img = tifffile.imread(filename); assert img is not None
-            if not is_mask: # Satellite Image (H, W, C)
-                if img.dtype != np.float32: img = img.astype(np.float32)
-                if img.ndim != 3 or img.shape[-1] != 7: raise ValueError(f"Sat shape: {img.shape}")
-            else: # Mask (H, W)
-                 img = img.squeeze() if img.ndim == 3 else img
-                 if img.dtype != np.uint8 or img.max() > 1: img = (img > 0).astype(np.uint8)
-                 img = img.astype('float32') # Return float mask
+            if not is_mask: assert img.ndim == 3 and img.shape[-1] == 7; img = img.astype(np.float32) if img.dtype != np.float32 else img
+            else: img = img.squeeze() if img.ndim == 3 else img; img = (img > 0).astype(np.uint8) if img.dtype != np.uint8 or img.max() > 1 else img; img = img.astype('float32')
             return img
         except Exception as e: print(f"ERROR loading {filename}: {str(e)}"); raise
-
     def __getitem__(self, idx):
-        sat_path = self.satellite_paths[idx]
-        mask_path = self.mask_paths[idx]
-        filename_stem = Path(sat_path).stem.replace("_satellite", "")
+        sat_path = self.satellite_paths[idx]; mask_path = self.mask_paths[idx]; filename_stem = Path(sat_path).stem.replace("_satellite", "")
         try:
-            sat_img_np = self.load_image(sat_path, is_mask=False) # Loads H, W, C
-            mask_np = self.load_image(mask_path, is_mask=True)   # Loads H, W float
-
-            if sat_img_np.shape[0]!= mask_np.shape[0] or sat_img_np.shape[1]!= mask_np.shape[1]:
-                raise ValueError(f"Dims mismatch Sat ({sat_img_np.shape[:2]}) vs Mask ({mask_np.shape})")
-
+            sat_img_np = self.load_image(sat_path, is_mask=False); mask_np = self.load_image(mask_path, is_mask=True)
+            if sat_img_np.shape[0]!= mask_np.shape[0] or sat_img_np.shape[1]!= mask_np.shape[1]: raise ValueError(f"Dims mismatch Sat/Mask idx {idx}")
             dem_band_np = None
             if self.return_dem:
-                if sat_img_np.shape[2] > self.dem_band_index:
-                    dem_band_np = sat_img_np[:, :, self.dem_band_index].copy() # H, W
-                else:
-                    warnings.warn(f"DEM band index {self.dem_band_index} out of bounds for {Path(sat_path).name}.")
-                    dem_band_np = np.full(sat_img_np.shape[:2], -1, dtype=np.float32) # Dummy
-
-            # Convert main data to tensors
-            sat_tensor = torch.from_numpy(sat_img_np).permute(2, 0, 1) # C, H, W
-            mask_tensor = torch.from_numpy(mask_np).unsqueeze(0) # 1, H, W
-
-            # --- Prepare return tuple ---
+                if sat_img_np.shape[2] > self.dem_band_index: dem_band_np = sat_img_np[:, :, self.dem_band_index].copy()
+                else: warnings.warn(f"DEM index out of bounds: {Path(sat_path).name}"); dem_band_np = np.full(sat_img_np.shape[:2], -1, dtype=np.float32)
+            sat_tensor = torch.from_numpy(sat_img_np).permute(2, 0, 1); mask_tensor = torch.from_numpy(mask_np).unsqueeze(0)
             return_items = [sat_tensor, mask_tensor]
-            if self.return_dem:
-                 # Return DEM as a tensor (1, H, W) for easier batching
-                 dem_tensor = torch.from_numpy(dem_band_np).unsqueeze(0)
-                 return_items.append(dem_tensor)
-            if self.return_filename:
-                return_items.append(filename_stem)
-
+            if self.return_dem: return_items.append(torch.from_numpy(dem_band_np).unsqueeze(0))
+            if self.return_filename: return_items.append(filename_stem)
             return tuple(return_items)
-
         except Exception as e: print(f"Error processing idx {idx}: {e}"); raise
 # --- End Class Definitions ---
 
@@ -139,56 +109,39 @@ def run_testing(config: Dict):
     pl.seed_everything(config["seed"])
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
-    apply_land_mask = config["apply_land_mask"] # Get boolean flag from config
-    if apply_land_mask:
-        print("Land mask post-processing: ENABLED")
-    else:
-        print("Land mask post-processing: DISABLED")
-
+    apply_land_mask = config["apply_land_mask"]
+    if apply_land_mask: print("Land mask post-processing: ENABLED")
+    else: print("Land mask post-processing: DISABLED")
 
     # --- Read Optimal Threshold ---
-    threshold = 0.5 # Default
+    threshold = 0.5
     optimal_threshold_file = Path(config["run_dir_str"]) / "optimal_threshold.txt"
     if optimal_threshold_file.exists():
         try:
-            with open(optimal_threshold_file, 'r') as f:
-                threshold = float(f.readline().strip())
+            with open(optimal_threshold_file, 'r') as f: threshold = float(f.readline().strip())
             print(f"Using optimal threshold read from file: {threshold:.4f}")
-        except Exception as e:
-            print(f"Warning: Could not read threshold file {optimal_threshold_file}. Using default 0.5. Error: {e}")
-            threshold = 0.5
-    else:
-         print(f"Warning: Optimal threshold file not found at {optimal_threshold_file}. Using default 0.5.")
-         threshold = 0.5
-    config["threshold"] = threshold # Update config with the threshold actually used
+        except Exception as e: print(f"Warning: Could not read {optimal_threshold_file}. Using default 0.5. Error: {e}"); threshold = 0.5
+    else: print(f"Warning: {optimal_threshold_file} not found. Using default 0.5."); threshold = 0.5
+    config["threshold"] = threshold
 
     # --- Convert Paths ---
     weights_path = Path(config["weights_path_str"]).resolve()
     data_dir = Path(config["data_dir_str"]).resolve()
     output_dir = Path(config["output_dir_str"]).resolve()
+    run_dir = Path(config["run_dir_str"]).resolve() # Define run_dir for saving results
 
     # --- Load Data ---
     try:
         print(f"Loading test filenames from base directory: {data_dir}")
-        filenames = prepare_filenames(base_dir=data_dir)
-        test_sat_paths = filenames[4]; test_gt_paths = filenames[5]
+        filenames = prepare_filenames(base_dir=data_dir); test_sat_paths = filenames[4]; test_gt_paths = filenames[5]
         if not test_sat_paths or not test_gt_paths: raise ValueError("Test set paths are empty.")
         print(f"Found {len(test_sat_paths)} test samples.")
     except (ValueError, FileNotFoundError) as e: print(f"ERROR: {e}"); return
 
     # --- Create Dataset and DataLoader ---
     try:
-        # ============================================================================
-        # MODIFIED: Request DEM and filename from dataset
-        # ============================================================================
-        test_dataset = KelpDataset(test_sat_paths, test_gt_paths,
-                                   return_filename=True,
-                                   return_dem=apply_land_mask) # Only load DEM if needed
-        # ============================================================================
-        test_loader = torch.utils.data.DataLoader(
-            test_dataset, batch_size=config["batch_size"], shuffle=False,
-            num_workers=config["num_workers"], pin_memory=True
-        )
+        test_dataset = KelpDataset(test_sat_paths, test_gt_paths, return_filename=True, return_dem=apply_land_mask)
+        test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=config["batch_size"], shuffle=False, num_workers=config["num_workers"], pin_memory=True)
     except ValueError as e: print(f"ERROR: {e}"); return
 
     # --- Initialize Model ---
@@ -201,7 +154,7 @@ def run_testing(config: Dict):
     try:
         state_dict = torch.load(weights_path, map_location=device)
         model.load_state_dict(state_dict); print("Weights loaded successfully.")
-    except RuntimeError as e: print(f"ERROR loading state_dict: {e}\nEnsure BACKBONE_NAME ('{config['backbone_name']}') matches training."); return
+    except RuntimeError as e: print(f"ERROR loading state_dict: {e}\nEnsure BACKBONE_NAME matches training."); return
     except Exception as e: print(f"Generic error loading weights: {e}"); return
 
     # --- Prepare for Evaluation ---
@@ -210,79 +163,71 @@ def run_testing(config: Dict):
     print(f"Saving predictions to: {output_dir}")
 
     # Initialize metrics
-    iou_metric = JaccardIndex(task="binary").to(device)
-    precision_metric = Precision(task="binary").to(device)
-    recall_metric = Recall(task="binary").to(device)
-    f1_metric = F1Score(task="binary").to(device)
+    iou_metric = JaccardIndex(task="binary").to(device); precision_metric = Precision(task="binary").to(device)
+    recall_metric = Recall(task="binary").to(device); f1_metric = F1Score(task="binary").to(device)
 
     # --- Inference Loop ---
     print("Running inference on test set...")
     with torch.no_grad():
         for batch in tqdm(test_loader, desc="Testing"):
-            # --- Unpack batch (might include DEM now) ---
-            if apply_land_mask:
-                images, masks, dems, filename_stems = batch # Unpack DEM
-                dems = dems.to(device) # Move DEM to device for masking
-            else:
-                images, masks, filename_stems = batch # Original unpacking
+            if apply_land_mask: images, masks, dems, filename_stems = batch; dems = dems.to(device)
+            else: images, masks, filename_stems = batch
+            images = images.to(device); masks = masks.to(device)
+            logits = model(images); preds_prob = torch.sigmoid(logits)
+            preds_binary = (preds_prob > config["threshold"]).byte()
 
-            images = images.to(device)
-            masks = masks.to(device) # Ground truth
+            if apply_land_mask: land_mask_gpu = (dems > 0); preds_binary_masked = preds_binary * (~land_mask_gpu)
+            else: preds_binary_masked = preds_binary
 
-            # --- Forward pass ---
-            logits = model(images)
-            preds_prob = torch.sigmoid(logits)
-            preds_binary = (preds_prob > config["threshold"]).byte() # Initial binary preds
+            iou_metric.update(preds_binary_masked, masks.int()); precision_metric.update(preds_binary_masked, masks.int())
+            recall_metric.update(preds_binary_masked, masks.int()); f1_metric.update(preds_binary_masked, masks.int())
 
-            # ============================================================================
-            # ADDED: Apply Land Mask conditionally before metrics
-            # ============================================================================
-            if apply_land_mask:
-                # Create land mask (DEM > 0 indicates land) on the same device
-                # Ensure DEM has channel dim (1, H, W) like preds_binary
-                land_mask_gpu = (dems > 0)
-                # Zero out predictions where land_mask is True
-                # Use bitwise NOT (~) on the boolean mask and multiply
-                preds_binary_masked = preds_binary * (~land_mask_gpu)
-            else:
-                preds_binary_masked = preds_binary # Use original preds if not masking
-            # ============================================================================
-
-            # --- Update Metrics using potentially masked predictions ---
-            iou_metric.update(preds_binary_masked, masks.int())
-            precision_metric.update(preds_binary_masked, masks.int())
-            recall_metric.update(preds_binary_masked, masks.int())
-            f1_metric.update(preds_binary_masked, masks.int())
-
-            # --- Save Predictions (Save the MASKED version) ---
-            # Move the potentially masked predictions to CPU for saving
             preds_to_save = preds_binary_masked.cpu().numpy().astype(np.uint8)
-
-            for i in range(preds_to_save.shape[0]): # Iterate through batch
-                pred_array = preds_to_save[i].squeeze() # (H, W)
-                stem = filename_stems[i]
+            for i in range(preds_to_save.shape[0]):
+                pred_array = preds_to_save[i].squeeze(); stem = filename_stems[i]
                 save_path = output_dir / f"{stem}_pred.tif"
                 try:
                     if pred_array.ndim != 2: continue
                     tifffile.imwrite(save_path, pred_array)
                 except Exception as e: print(f"Error saving prediction {save_path.name}: {e}")
 
-    # --- Compute and Print Final Metrics ---
-    print("\n--- Evaluation Metrics ---")
+    # --- Compute Metrics ---
     final_iou = iou_metric.compute()
     final_precision = precision_metric.compute()
     final_recall = recall_metric.compute()
     final_f1 = f1_metric.compute()
-    print(f"  Run:                           {config['run_name']}")
-    print(f"  Backbone:                      {config['backbone_name']}")
-    print(f"  Weights:                       {weights_path.name}")
-    print(f"  Threshold Used:                {config['threshold']:.4f}")
-    print(f"  Land Mask Applied:             {'Yes' if apply_land_mask else 'No'}") # Indicate if mask applied
-    print(f"  Intersection over Union (IoU): {final_iou:.4f}")
-    print(f"  Precision:                     {final_precision:.4f}")
-    print(f"  Recall:                        {final_recall:.4f}")
-    print(f"  F1-Score:                      {final_f1:.4f}")
-    print("--------------------------")
+
+    # ============================================================================
+    # MODIFIED: Consolidate results printing and file writing
+    # ============================================================================
+    # --- Prepare Results String ---
+    results_lines = []
+    results_lines.append("--- Evaluation Metrics ---")
+    results_lines.append(f"  Run:                           {config['run_name']}")
+    results_lines.append(f"  Backbone:                      {config['backbone_name']}")
+    results_lines.append(f"  Weights:                       {weights_path.name}")
+    results_lines.append(f"  Threshold Used:                {config['threshold']:.4f}")
+    results_lines.append(f"  Land Mask Applied:             {'Yes' if apply_land_mask else 'No'}")
+    results_lines.append("-" * 30) # Separator
+    results_lines.append(f"  Intersection over Union (IoU): {final_iou:.4f}")
+    results_lines.append(f"  Precision:                     {final_precision:.4f}")
+    results_lines.append(f"  Recall:                        {final_recall:.4f}")
+    results_lines.append(f"  F1-Score:                      {final_f1:.4f}")
+    results_lines.append("--------------------------")
+    results_string = "\n".join(results_lines)
+
+    # --- Print to Console ---
+    print("\n" + results_string) # Print the consolidated string
+
+    # --- Write to File ---
+    results_file_path = run_dir / config["results_filename"] # Use filename from config
+    try:
+        with open(results_file_path, 'w') as f:
+            f.write(results_string + "\n") # Add trailing newline
+        print(f"Results successfully saved to: {results_file_path}")
+    except Exception as e:
+        print(f"Error saving results to file {results_file_path}: {e}")
+    # ============================================================================
 
     # Reset metrics
     iou_metric.reset(); precision_metric.reset(); recall_metric.reset(); f1_metric.reset()
@@ -297,13 +242,14 @@ if __name__ == "__main__":
         "weights_path_str": WEIGHTS_PATH_STR,
         "data_dir_str": DATA_DIR_STR,
         "output_dir_str": OUTPUT_DIR_STR,
-        "run_dir_str": str(RUN_DIR), # Pass run dir for reading threshold file
+        "run_dir_str": str(RUN_DIR),
+        "results_filename": RESULTS_FILENAME, # Pass results filename
         "img_size": IMG_SIZE,
         "batch_size": BATCH_SIZE,
         "num_workers": NUM_WORKERS,
-        # "threshold": THRESHOLD, # Initial value, might be overwritten
+        # "threshold": THRESHOLD, # Threshold loaded/set inside run_testing
         "seed": SEED,
-        "apply_land_mask": APPLY_LAND_MASK # Pass the flag
+        "apply_land_mask": APPLY_LAND_MASK
     }
     # Run the main testing function
     run_testing(config)

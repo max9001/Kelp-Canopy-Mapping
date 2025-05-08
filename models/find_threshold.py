@@ -24,12 +24,8 @@ from torchmetrics import Metric, JaccardIndex, F1Score
 
 # --- Identify the Run ---
 # Define the name of the training run whose results you want to evaluate
-RUN_NAME = "18_og_noaug" # <<< CHANGE THIS TO MATCH THE DESIRED RUN
-
-# --- Determine Backbone Used for the Run ---
-# !! IMPORTANT !! Set this to match the backbone used for the RUN_NAME
-# Options: "resnet18", "resnet34", "resnet50"
-BACKBONE_NAME = "resnet18" # <<< SET THIS TO MATCH THE RUN
+RUN_NAME = "50_og_noaug" 
+BACKBONE_NAME = "resnet50"
 DATA_DIR_STR = str(Path().resolve().parent / "data" / "original")
 
 # --- Construct Paths Based on Run Name ---
@@ -44,7 +40,7 @@ WEIGHTS_PATH_STR = str(RUN_DIR / "best_weights.pth") # Assumes this naming conve
 # Choose Metric: JaccardIndex (IoU) or F1Score
 OPTIMIZE_THRESHOLD_METRIC: Type[Metric] = JaccardIndex
 # Define the range and granularity of thresholds to search
-THRESHOLD_SEARCH_RANGE = np.linspace(0.1, 0.9, 81) # e.g., 0.1 to 0.9 in steps of 0.01
+THRESHOLD_SEARCH_RANGE = np.linspace(0.2, 0.6, 100) # e.g., 0.1 to 0.9 in steps of 0.01
 # Output file name for the threshold
 THRESHOLD_FILENAME = "optimal_threshold.txt"
 
