@@ -48,7 +48,7 @@ background
 		
 		their method vs Landsat: R² = 0.49
 
-			 a decision tree to identify potential kelp pixels, and Multiple Endmember Spectral Mixture Analysis (MESMA) to estimate the fraction of each 30m pixel covered by kelp canopy. (not binary)
+			a decision tree to identify potential kelp pixels, and Multiple Endmember Spectral Mixture Analysis (MESMA) to estimate the fraction of each 30m pixel covered by kelp canopy. (not binary)
 		
 		their method vs CDFW: R² = 0.38
 
