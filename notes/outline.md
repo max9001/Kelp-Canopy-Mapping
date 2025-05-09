@@ -221,11 +221,13 @@ Introduction (~1.5-2 pages)
 
 	- Bridging the Data Gap: Citizen Science:
 
-		- Floating forests is difference as the entire dataset was labeled by humans. The study showed that accurate kelp labels could be constructed from the consensus of multiple untrained participants. 
+		Floating Forests offers a distinct approach, as its labels are derived from human visual interpretation
+		
+		The study showed that accurate kelp labels could be constructed from the consensus of multiple untrained participants. 
 
 		- leveraging historical data from Earth-observing satellite programs like Landsat
 
-		- based on landsat 7 sattalite images of coastlines of claifornia and tasmania 
+		- based on landsat 7 sattalite images of falkand islands 
 			
 		- Studies (https://doi.org/10.48550/arXiv.1801.08522) show this consensus method produces accurate kelp maps.
 			
@@ -271,7 +273,7 @@ Background (~2-3 pages)
 
 	- Benefits of Landsat 7 
 
-		Rather than having the typical 3 Red and Green Blue channels, images captured by landsat7 contain 7 channels, which provide more spectral information beyond color
+		Rather than having the typical 3 Red and Green Blue channels, The Landsat 7 ETM+ derived data product used in this study comprised seven distinct channels, which provide more spectral information beyond color
 
 			Near-Infrared (NIR) 
 
@@ -301,7 +303,7 @@ Background (~2-3 pages)
 			
 				- Provides elevation data used primarily to accurately mask out land areas, ensuring the analysis focuses only on water pixels where kelp could exist.
 
-		WRS - Nasa's landsat series of sattelite utilize the Worldwide Reference System, which allows us to translate image pixels to coordinates on earth's surface
+		WRS - Nasa's landsat series of sattelite utilize the Worldwide Reference System, which poses the potential for us to translate image pixels to coordinates on earth's surface
 
 		- Landsat 7 Satellite photographs the same location on earth every 16 days, making measuring changes over time possible
 
@@ -310,15 +312,19 @@ Background (~2-3 pages)
 
 		- Scan Line Corrector (SLC) failure (post-May 2003):
 
-			The Scan Line Corrector (SLC) on the Landsat 7 satellite's Enhanced Thematic Mapper Plus (ETM+) sensor was a crucial electro-mechanical component designed to compensate for the satellite's continuous forward motion as the sensor scanned back and forth across the Earth's surface. Its purpose was to ensure that consecutive scan lines were parallel and adjacent, creating a complete, rectangular image without gaps.
-			On May 31, 2003, the SLC mechanism permanently failed. Without the corrector functioning, the sensor continued to scan side-to-side, but the satellite's forward movement caused the scan lines to follow a zig-zag pattern relative to the ground track.
-			The result is that all Landsat 7 ETM+ images acquired after this date (referred to as "SLC-off" data) contain wedge-shaped gaps of missing data between the scan lines. These gaps are narrowest near the center of the image (nadir) and become progressively wider towards the outer edges of the scene. Approximately 22% of the pixel data is missing in a typical SLC-off scene due to these gaps, significantly impacting the usability of the imagery for applications requiring complete spatial coverage unless specific gap-filling techniques are applied.
+			The SLC was an electro-mechanical component designed to compensate for the satellite's forward motion, ensuring complete image coverage without gaps between scan lines.
 
-			- floating forests mostly resolved this issue, but some artifcats are still present. 
+			On May 31, 2003, the SLC mechanism permanently failed.
 
-				ex VC433864 (?)
+			All Landsat 7 ETM+ images acquired after this date ("SLC-off" data) exhibit a zig-zag scan pattern, resulting in wedge-shaped gaps of missing data.
 
+			These gaps are narrowest at the image center (nadir) and widen towards the edges, causing approximately 22% of pixel data to be missing in a typical SLC-off scene.
 
+			this significantly impacts the usability of SLC-off imagery for applications requiring complete spatial coverage unless specific gap-filling techniques are applied.
+
+			The dataset used in this study included Landsat 7 imagery which was affected by the SLC failure, presenting an additional challenge for consistent feature extraction and labeling.
+			
+			https://www.usgs.gov/landsat-missions/landsat-collection-2-known-issues
 
 	- Established Automated Method On Landsat Data
 	
@@ -326,7 +332,7 @@ Background (~2-3 pages)
 
 			- Model a pixel's spectrum as a linear combination of pure reference spectra ('endmembers').
 
-			- pure reference spectra could be water, kelp, land. Each pixel in the image is some combination of these pure materials
+			- pure reference spectra could be 'water' or 'kelp'. Each pixel in the image is some combination of these pure materials
 
 			- Water is so volatile we can't represent it as a single endmember. We have endmembers for clear water, shallow water, reflective water, cloudy water... etc
 
@@ -334,7 +340,7 @@ Background (~2-3 pages)
 
 			- Uses a multiple water endmembers unique to each scene.
         
-				- Spectra are extracted automatically from 30 pre-defined locations within each scene known to be consistently water-covered. This set of 30 scene-specific spectra forms the library for that image's MESMA run.
+				- As described by Bell et al. (2020), Spectra are extracted automatically from 30 pre-defined locations within each scene known to be consistently water-covered. This set of 30 scene-specific spectra forms the library for that image's MESMA run.
 
 			- pros
 
@@ -402,7 +408,7 @@ Background (~2-3 pages)
 
 	- Data Augmentation: 
 	
-		- Data augmentation is crucial for heavily unnbalanced datasets. 
+		- Data augmentation is crucial for  increasing data diversity. 
 		
 		- we can artificially expand the training dataset by applying random transformations (flips, rotations, brightness changes, etc.) to input images. 
 		
@@ -450,7 +456,7 @@ Methods (~3-4 pages) - *Needs high detail for reproducibility*
 
 				Filename schema: <tile_id>_kelp.tif.
 
-			My data source for this compilation was missing validation ground truth data so we will treat the "train" section as our entire dataset
+			data source provided a 'train' set with features and labels, and a 'test' set with only features (labels withheld). For this study, the provided 'train' set was further subdivided into our own training, validation, and test partitions."
 
 			should be saved in .../data/cleaned/
 
@@ -462,8 +468,6 @@ Methods (~3-4 pages) - *Needs high detail for reproducibility*
 
 			the script:
 
-				performs Shape Standardization: Images were transposed to a consistent internal format (Channels, Height, Width) for processing.
-			
 				Identifies Invalid Pixels: Pixels were marked as invalid based on:
 				
 					A specific marker value (-32768) is used as a no-data value in the original Landsat processing
@@ -556,7 +560,7 @@ Methods (~3-4 pages) - *Needs high detail for reproducibility*
 							
 							RMSProp, (Root Mean Squared Propagation) computes a moving average of squared gradients to scale parameter updates, preventing drastic fluctuations and promoting faster convergence. 
 							
-						By computing adaptive learning rates for each parameter from estimates of first and second momentums of the gradients, Adam often achieves efficient convergence and robust performance across a variety of deep learning architectures and datasets, making it a common default choice.
+						By computing adaptive learning rates for each parameter from estimates of first and second moments of the gradients, Adam often achieves efficient convergence and robust performance across a variety of deep learning architectures and datasets, making it a common default choice.
 
 					A Cosine Annealing learning rate scheduler (CosineAnnealingLR) was employed to gradually reduce the learning rate over MAX_EPOCHS down to a minimum of 1e-7.
 
@@ -576,6 +580,8 @@ Methods (~3-4 pages) - *Needs high detail for reproducibility*
 
 
 		Finding threshold
+
+			The model outputs continuous probability scores (or logits that are converted to probabilities via sigmoid) for each pixel representing the likelihood of it being kelp. A threshold is necessary to convert these probabilities into a definitive binary decision (kelp or not-kelp) for evaluation and practical application.
 
 			A dedicated script was used to determine the optimal probability threshold for converting model logits to binary (kelp/no-kelp) predictions.
 
@@ -624,13 +630,13 @@ Results (~2-3 pages) - *Focus on objective findings*
 
 		the main experimental variables tested:
 
-			How will Data preprocessing effect accuracy?
+			The effect of data preprocessing (cleaned vs. original) on model accuracy.
 
-			Will applying random Data augmentation during training increase accuracy?
+			The impact of applying random data augmentation during training on model accuracy.
 
-			Which ResNet backbone (ResNet18, ResNet34, ResNet50) Performs the best?	
+			A comparison of performance across different ResNet backbones (ResNet18, ResNet34, ResNet50).
 
-			Does our models predict kelp being on land, and can we correct these mistakes with the land mask?
+			Evaluation of the land mask post-processing step on correcting potential misclassifications over land.
 
 	
 
@@ -706,72 +712,203 @@ Results (~2-3 pages) - *Focus on objective findings*
 
 	Qualitative Results 
 	
-		To visually assess the model's performance, representative examples of predictions from the best-performing model (ResNet34, cleaned, augmented) on test set images are presented in Figure X."
-Describe what the figures will show (input, ground truth, prediction).
-Select examples that illustrate:
-Successful segmentation of clear kelp patches.
-Performance on sparse or complex kelp.
-Common error types (e.g., missed detections of small patches, false positives on sun glint/foam if any, edge inaccuracies).
-Refer to these figures in your Discussion section when interpreting the results.
+		To visually assess the model's performance, representative examples of predictions from the best-performing model (ResNet34, cleaned, augmented) on test set images are presented below
+
+			*Successful segmentation of clear kelp patches*
+
+				*Even works on SLC failure images!*
+
+			*Poor Performance & missed detections of small patches of kelp*
 
 
-
-
-
--	4.1. Dataset Characteristics: Provide summary statistics of your final training, validation, and test sets (number of tiles, approximate percentage of kelp pixels overall – highlighting the imbalance).
--	4.2. Model Performance Comparison:
--	-	Present a table comparing the performance metrics (IoU, Dice, etc.) of the UNets with ResNet-18, -34, and -50 backbones on the test set. Clearly identify the best-performing model.
--	-	Mention the performance (or failure to converge) of the UNet trained from scratch for contrast.
--	4.3. Impact of Data Augmentation:
--	-	Present a table or graph comparing the best ResNet model trained *with* versus *without* data augmentations, showing the improvement in key metrics (IoU, Dice).
--	4.4. Impact of Data Imbalance Strategy (if tested on final model):
--	-	If you tested the impact of removing no-kelp tiles on the final trained ResNet model, report the results here. Did it help, hurt, or make no difference compared to training on all tiles (perhaps with a suitable loss function like Dice)?
--	4.5. Qualitative Results:
--	-	Include several figures. Each figure should show:
--	-	-	(a) The input Landsat 7 tile (SWIR/NIR/Red).
--	-	-	(b) The ground truth mask derived from Floating Forests.
--	-	-	(c) The predicted mask from your best-performing model.
--	-	Select examples that showcase:
--	-	-	Good agreement / successful segmentation.
--	-	-	Segmentation of complex or sparse kelp patches.
--	-	-	Typical failure modes (e.g., missed detections, false positives, edge inaccuracies, confusion with clouds/glint if applicable).
--	4.6. Testing Pipeline: Briefly state the pipeline was successfully implemented and show one visual example of its input and output.
-
+===================================================================
 Discussion (~2-3 pages) - *Interpret and contextualize*
+===================================================================
 
-- My proposed solution removes the need for planes, image collection, and human annotators.
+	Summary of Key Findings and Performance
 
-		- The money saved from this automation could be used to fund more divers to combat urchin populations
+		Successful development of a deep learning pipeline (ResNet-UNet) for kelp segmentation using Landsat 7 and Floating Forests data.
+		
+		ResNet34 with cleaned, augmented data achieved an IoU of 0.5028
 
--	5.1. Summary of Key Findings: Restate the main outcomes – successful training of ResNet-UNet, identification of the best backbone, quantified improvement from augmentations, confirmation of transfer learning necessity.
--	5.2. Interpretation of Results:
--	-	Why was transfer learning crucial? Discuss how features learned on ImageNet likely provide a useful starting point for identifying textures/patterns relevant to kelp detection, even in satellite imagery, overcoming the limitations of the specific training dataset size.
--	-	Why were augmentations effective? Discuss how they helped the model generalize better and become robust to variations in appearance, orientation, and illumination within the satellite data, especially given potential inconsistencies in citizen science labels.
--	-	Discuss the performance trade-offs between ResNet-18, 34, 50 (e.g., did the largest model always perform best, or was there a plateau?).
--	-	Discuss the data imbalance issue. How well did your chosen loss function and/or augmentations handle it? If removing empty tiles didn't help, speculate why (maybe context from surrounding water is important?).
--	5.3. Comparison with Existing Methods:
--	-	Compare your deep learning approach conceptually to MESMA (Bell et al.) and the direct Floating Forests consensus map (Rosenthal et al.).
--	-	Advantages: Automation, potential for consistent pixel-level output across large areas once trained, ability to learn complex spatial patterns.
--	-	Disadvantages: Requires curated training data (dependent on Floating Forests quality), computationally intensive training, potential for 'black box' behavior, output is binary (unlike MESMA's fraction unless you modify the output).
--	5.4. Limitations of the Study:
--	-	Ground Truth Quality: Acknowledge the reliance on citizen science data (Floating Forests consensus) as ground truth, which has inherent variability and isn't perfect field validation (cite Rosenthal's MCC scores as context for its quality).
--	-	Landsat 7 Data: Mention limitations of the input data (30m resolution might miss small/thin kelp, SLC-off issues if relevant and not fully handled).
--	-	Model Generalization: Note that the model was trained and tested on a specific geographic region/time period; performance might vary elsewhere without retraining or fine-tuning.
--	-	Temporal Aspect: Acknowledge that this approach treats each image independently and doesn't incorporate temporal information, which could potentially improve results.
--	5.5. Future Work:
--	-	Applying the model to Landsat 8/9 or Sentinel-2 data (different spectral bands, higher resolution for S2).
--	-	Expanding the training dataset (more regions, longer time series).
--	-	Testing different model architectures or loss functions.
--	-	Incorporating temporal context (e.g., using LSTMs or Transformers alongside the CNN).
--	-	Validating model outputs against independent, high-resolution data (e.g., UAV data like in Cavanaugh et al. 2023, if available) or recent field data.
--	-	Investigating specific failure cases identified in qualitative results.
--	5.6. Broader Implications: Conclude by emphasizing the potential of combining deep learning with large-scale citizen science datasets for efficient, automated monitoring of critical ecosystems like kelp forests, contributing to ecological research and conservation efforts.
+		Data cleaning, normalization, and augmentation proved crucial to acheiving a high accuracy. 
+
+		early findings showed training a model from scratch was not feasible on such little labeled data; Transfer learning and find tuning a pre-trained encoder was key to creating accurate kelp masks.
+
+		there was a negligible impact of the land mask post-processing on the best models, suggesting good specificity regarding land.
+
+	
+	
+	Interpretation of Results: Why did it work?
+
+		Stabilizing Input Distributions: 
+		
+			Normalization (Z-score standardization) rescales input features to have zero mean and unit variance. 
+			
+			This helps stabilize the learning process, preventing certain features with larger numerical ranges from disproportionately influencing weight updates during backpropagation, leading to faster and more stable convergence.
+
+			Clipping extreme values (1st/99th percentiles) before normalization reduces the skewing effect of sensor artifacts or rare environmental conditions
+
+			replacing specific marker values (-32768) and negative values (often indicative of errors or no-data in reflectance) with a neutral value (0.0 post-standardization) ensures these pixels don't introduce NaNs or extreme values into calculations, allowing the model to learn more effectively from valid data points.
+
+			Satellite imagery inherently contains noise from sensor imperfections, atmospheric interference, and bi-directional reflectance effects. Cleaning steps help reduce this noise, allowing the model to learn more meaningful underlying features related to kelp presence rather than spurious artifacts.
+
+		Power of Data Augmentation:
+
+			Augmentations (flips, rotations, noise injection) artificially expand the training dataset by creating modified but still plausible versions of existing images. This exposes the model to a wider range of visual variations without needing to collect more raw labeled data.
+
+			By training on these varied examples, the model learns to become invariant to such transformations. This helps it generalize better to unseen test data, which may exhibit similar variations in kelp orientation, illumination, or minor sensor noise.
+
+			Citizen science labels (even consensus-based) can have slight inconsistencies in exact boundary placement. Augmentations that slightly shift or rotate features might make the model less sensitive to these minor label variations, forcing it to learn more fundamental features of kelp.
+
+			With a limited dataset, models can easily overfit (memorize the training data). Augmentations act as a form of regularization, making it harder for the model to overfit and encouraging it to learn more generalizable representations.
+
+		Importance of Transfer Learning (Pre-trained ResNet Backbones):
+
+			ResNet backbones pre-trained on ImageNet (a massive dataset of diverse natural images) have already learned robust hierarchical features – edges, textures, shapes, and object parts – in their early and mid-level layers. These low-level visual primitives are often transferable and useful even for very different domains like satellite imagery.
+
+			Training a deep network from scratch (randomly initialized weights) requires a very large amount of domain-specific labeled data to learn meaningful features. With a specialized and smaller dataset like the Floating Forests project, starting from pre-trained weights provides a much better initialization, helping the model converge faster and to a better solution.
+
+			Because the backbone already understands basic visual concepts, the model needs fewer examples from the target domain (kelp images) to learn the specific features that distinguish kelp from water, compared to learning everything from scratch.
+
+		Backbone Choice (ResNet34 as a Sweet Spot):
+
+			Sufficient Capacity for the Task: ResNet34 likely offered enough model capacity (depth and number of parameters) to learn the complex features needed to distinguish kelp in 30m Landsat imagery from the Floating Forests labels.
+
+			While ResNet50 is deeper and theoretically more powerful, the additional complexity might not have translated to significantly better performance on this specific dataset and task. The subtle differences it could learn might have been outweighed by the increased risk of overfitting to the training data
+
+			ResNet18, while still effective due to transfer learning, might have had slightly insufficient capacity to capture all the necessary nuances compared to ResNet34, leading to slightly lower performance.
+
+		Thresholding:
+
+			The optimal threshold is typically chosen to maximize a specific evaluation metric (like IoU or F1-score) on a validation set. This ensures the binary predictions are as aligned as possible with the ground truth according to that metric.
+
+			The ideal threshold value is not universal; it often varies depending on the specific model architecture, the training data characteristics (e.g., class imbalance), and the loss function used. This was evident in the results where different runs had different optimal thresholds.
+
+			Changing the threshold directly impacts the trade-off between precision (minimizing false positives) and recall (minimizing false negatives). A lower threshold increases recall but may decrease precision, and vice-versa. The optimal threshold finds a good balance for the chosen metric, IOU.
+
+	
+	The Developed End-to-End Solution and its Significance
+
+		This study successfully developed and demonstrated an end-to-end pipeline for automated kelp canopy segmentation, from raw satellite image tile input to final binary prediction masks. 
+		
+		This automated approach offers significant advancements over traditional kelp monitoring methods.
+		
+		Unlike aerial surveys (e.g., CDFW), our method utilizes pre-existing, freely available historical Landsat imagery, eliminating the substantial costs and logistical complexities associated with dedicated aerial image acquisition campaigns. 
+		
+		The model automates the segmentation process, removing the need for ongoing, time-consuming manual delineation of kelp by experts for each new satellite image—a major bottleneck in methods like the traditional CDFW aerial survey processing. 
+		
+		This automated, model-based approach is inherently scalable, capable of processing large archives of satellite imagery much more rapidly than manual methods. 
+		
+		The consistent revisit cycle of satellites like Landsat further opens possibilities for tracking changes in kelp extent over time, which could aid in identifying areas undergoing stress.
+
+		By reducing the expenditure on image acquisition and manual annotation, resources can be reallocated to more direct conservation efforts.
+		
+		Specifically, the money saved from these prior expenses could be used to fund more diver-based interventions, such as targeted urchin removal in areas identified by the model as having low kelp cover or being at risk. 
+		
+		Our solution can therefore contribute to a more cost-effective and responsive cycle of monitoring and management, enabling more efficient allocation of limited conservation funds to where they are most needed on the seafloor.
+
+		
+	Comparison with Existing Remote Sensing Methods
+
+		MESMA (Bell et al.) as an established automated method providing valuable fractional cover.
+
+			Our deep learning approach, trained on human-consensus labels from Floating Forests, differs fundamentally from MESMA's reliance on spectral unmixing and pre-defined endmembers. It learns spatial patterns and visual cues directly.
+
+			Potential advantages:
+			
+				maybe different robustness to certain atmospheric/water conditions if visual patterns remain distinct, no need for per-scene endmember refinement once trained.
+
+				Our deep learning model, trained on Floating Forest labels which included SLC-off imagery, demonstrated an ability to produce segmentations on corrupted data.
+
+			Disadvantage: 
+			
+				Produces binary output (vs. fractional)
+				
+				reliant on the quality and nature of FF labels.
+
+		Floating Forests
+
+			Acknowledge FF provides validated labels (Rosenthal et al.).
+
+			While FF provides historical labels, our work automates the process for new imagery, leveraging the past citizen science effort to build a predictive tool. 
+			
+			It also provides a consistent, algorithmic interpretation rather than relying on ongoing volunteer consensus for every new image."
+
+		CDFW Aerial / UAV:
+
+			While CDFW aerial surveys and UAVs provide valuable high-resolution snapshots, our satellite-based automated pipeline offers superior scalability for consistent, large-area regional monitoring due to the systematic and broad coverage of Landsat imagery.
+
+	 		Our approach significantly lowers operational costs by eliminating the need for dedicated aircraft/drone flights, field crew deployment, and extensive manual image processing inherent in CDFW aerial and UAV-based mapping efforts.
+			
+			Leveraging the regular revisit cycle of satellites like Landsat, our automated method has the potential for more frequent assessments across broad areas compared to the often intermittent and logistically constrained survey schedules of aerial and UAV campaigns.
+
+	
+	Limitations of the Study
+
+		The model's performance is inherently tied to the quality and characteristics of the Floating Forests labels. While validated, these citizen-science-derived consensus labels may contain inconsistencies or differ from expert delineations in some cases.
+
+		The 30m resolution of Landsat 7 limits the ability to detect very small or sparse kelp patches.
+
+		The current model provides a binary (presence/absence) output, which does not quantify sub-pixel kelp density or biomass like MESMA.
+
+		The model was trained and tested on data from the Falkland Islands; its performance on other geographic regions with different kelp species, water conditions, or image characteristics would require further validation and potential retraining.
+
+		The current model processes each image independently, without leveraging temporal information from sequential satellite passes, which could potentially improve accuracy and consistency.
+
+	Future Work
+
+		Applying and evaluating the pipeline on Landsat 8/9 or Sentinel-2 imagery (different spectral characteristics, higher resolution for S2).
+
+		Expanding the training dataset with more diverse geographic regions and temporal coverage from Floating Forests or other sources.
+
+		Exploring modifications to output fractional cover or a confidence score rather than just binary.
+
+		Investigating the integration of temporal information into the model.
+
+		Direct comparison of model outputs with contemporaneous high-resolution UAV or field data for more granular validation.
+
+		Operationalizing the pipeline for near real-time monitoring in specific regions of management interest.
+
+	
+	Broader Implications and Conclusion
+
+		This research successfully demonstrates the development and viability of an automated, end-to-end deep learning pipeline for segmenting kelp canopy from satellite imagery, transforming raw image inputs into actionable map outputs.
+	
+		The study highlights the powerful synergy achieved by combining large-scale, human-generated labels from citizen science initiatives like Floating Forests with the sophisticated pattern recognition capabilities of modern deep learning techniques, creating a valuable resource from crowdsourced effort.
+
+		Ultimately, this approach has the significant potential to enhance the efficiency, scalability, and cost-effectiveness of kelp forest monitoring, thereby supporting more timely and targeted conservation and restoration strategies by enabling the reallocation of resources towards direct, on-the-ground interventions.
 
 Conclusion (~1 paragraph)
--	Summarize the core problem (large-scale kelp mapping), the approach taken (deep learning on Floating Forests/Landsat 7 data), the key finding (success via transfer learning and augmentation), and the main implication (automated mapping is feasible and promising).
+
+	todo
 
 References
--	List all cited works (Bell, Cavanaugh, Rosenthal, UNet paper, ResNet paper, etc.). Use a consistent citation style.
+
+	todo
 
 Appendices (Optional)
--	Detailed hyperparameters, more qualitative result figures, code snippets.
+
+
+Table A1: Comprehensive Evaluation Metrics for All Experimental Configurations on the Test Set.
+All models are UNet architectures with the specified ResNet backbone. "Cleaned" data refers to preprocessed and normalized imagery. "Augmented" refers to the application of random data augmentations during training. IoU = Intersection over Union.
+
+Run Name	Backbone	Data Preprocessing	Augmentation	Land Mask Applied	Optimal Threshold	IoU	Precision	Recall	F1-Score
+18_og_noaug	ResNet18	Original	No	No	0.2929	0.3043	0.4192	0.5261	0.4666
+18_og_noaug	ResNet18	Original	No	Yes	0.2929	0.3091	0.4286	0.5258	0.4723
+18_clean_noaug	ResNet18	Cleaned	No	No	0.2404	0.4437	0.5874	0.6446	0.6147
+18_clean_noaug	ResNet18	Cleaned	No	Yes	0.2404	0.4437	0.5874	0.6446	0.6147
+18_clean_aug	ResNet18	Cleaned	Yes	No	0.2929	0.4983	0.6387	0.6939	0.6652
+18_clean_aug	ResNet18	Cleaned	Yes	Yes	0.2929	0.4983	0.6387	0.6939	0.6652
+34_og_noaug	ResNet34	Original	No	No	0.3091	0.3239	0.4645	0.5168	0.4893
+34_og_noaug	ResNet34	Original	No	Yes	0.3091	0.3277	0.4727	0.5165	0.4936
+34_clean_noaug	ResNet34	Cleaned	No	No	0.2768	0.4492	0.5827	0.6622	0.6200
+34_clean_noaug	ResNet34	Cleaned	No	Yes	0.2768	0.4492	0.5828	0.6622	0.6200
+34_clean_aug	ResNet34	Cleaned	Yes	No	0.3414	0.5028	0.6355	0.7066	0.6692
+34_clean_aug	ResNet34	Cleaned	Yes	Yes	0.3414	0.5028	0.6355	0.7066	0.6692
+50_og_noaug	ResNet50	Original	No	No	0.2485	0.3656	0.5178	0.5543	0.5354
+50_og_noaug	ResNet50	Original	No	Yes	0.2485	0.3691	0.5252	0.5540	0.5392
+50_clean_noaug	ResNet50	Cleaned	No	No	0.3293	0.4419	0.5782	0.6521	0.6130
+50_clean_noaug	ResNet50	Cleaned	No	Yes	0.3293	0.4419	0.5782	0.6521	0.6130
+50_clean_aug	ResNet50	Cleaned	Yes	No	0.3106	0.5010	0.6386	0.6993	0.6676
+50_clean_aug	ResNet50	Cleaned	Yes	Yes	0.3106	0.5010	0.6386	0.6993	0.6676
