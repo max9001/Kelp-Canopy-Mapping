@@ -8,7 +8,22 @@ import os
 from pathlib import Path
 import warnings
 
+OUTPUT_RUN = "34_clean_aug"
+
 # --- Helper Functions ---
+
+def get_overlay(image_GT):
+    rgba_overlay = np.zeros((image_GT.shape[0], image_GT.shape[1], 4), dtype=np.float32)
+
+    cmap = plt.get_cmap('Wistia')
+    kelp_color = cmap(1.0)  # Get the color for the 'highest' value in Wistia (fully opaque kelp)
+
+    # Set the RGBA values where kelp is present
+    rgba_overlay[image_GT == 1, :3] = kelp_color[:3]  # Set RGB from colormap
+    rgba_overlay[image_GT == 1, 3] = 1.0  # Set alpha to 1 (fully opaque) for kelp
+    rgba_overlay[image_GT == 0, 3] = 0.0 #Set alpha to 0 where there is no kelp.
+
+    return rgba_overlay
 
 def normalize_band(band):
     """Normalizes a band to the range [0, 1], handling potential division by zero."""
@@ -26,8 +41,7 @@ def main():
     root_dir = Path().resolve().parent
     # --- Define Directories ---
     # Use the output directory specified in test.py constants
-    pred_mask_dir = root_dir / "output" / "350_test" # Updated to match test script output
-    # Assuming 'data/cleaned' is the location of the split test data
+    pred_mask_dir = root_dir / "output" / OUTPUT_RUN
     satellite_dir = root_dir / "data" / "cleaned" / "test_satellite"
     gt_mask_dir = root_dir / "data" / "cleaned" / "test_kelp"
 
@@ -163,12 +177,16 @@ def main():
 
     # 2) Predicted Mask (Directly)
     # Use vmin/vmax for binary images to ensure correct color mapping
-    axes[1].imshow(pred_mask_array, cmap='gray', vmin=0, vmax=1)
+    axes[1].imshow(rgb_image)
+    predicted_overlay = get_overlay(pred_mask_array)
+    axes[1].imshow(predicted_overlay)
     axes[1].set_title("Predicted Kelp Mask")
     axes[1].axis('off')
 
     # 3) Ground Truth Mask (Directly)
-    axes[2].imshow(gt_mask_array, cmap='gray', vmin=0, vmax=1)
+    axes[2].imshow(rgb_image)
+    gt_overlay = get_overlay(gt_mask_array)
+    axes[2].imshow(gt_overlay)
     axes[2].set_title("Ground Truth Kelp Mask")
     axes[2].axis('off')
 

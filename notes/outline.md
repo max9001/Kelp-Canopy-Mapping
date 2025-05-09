@@ -381,7 +381,7 @@ Background (~2-3 pages)
 
 			Skip connections allow layers to talk to more than its neighbors to combine coarse and fine-grained feature information.
 
-			its demonstrated success in biomedical imaging and increasingly in remote sensing for precise localization of features.
+			
 
 
 
@@ -392,8 +392,6 @@ Background (~2-3 pages)
 			-  Using models (like ResNet-18, -34, -50) pre-trained on large, general datasets (ImageNet).
 
 			-   Leverages powerful, pre-learned visual features, reducing the need for labeled data specific to the target task.
-			
-				- speeds up training and often improves performance.
 
         - Fine-Tuning
 		
@@ -414,52 +412,312 @@ Background (~2-3 pages)
 
 
 
-
-
-
-
-
-
-
-
-
-
+===============================================================
 Methods (~3-4 pages) - *Needs high detail for reproducibility*
+===============================================================
 
-- since we know the pixel resolution where 1 pixel is 900 square meters in the real world we can now calculate the kelp ecosystems area in square meters.
+	flowchart diagram illustrating this entire pipeline (Data Download -> Clean -> Split -> Train -> Threshold -> Test)
 
--	3.1. Data Source and Study Area:
--	-	Dataset: Specify "Landsat 7 ETM+ data processed and classified by the Floating Forests citizen science project."
--	-	Region(s) & Time Period: Clearly define the geographic area(s) (e.g., specific coastlines in California, Tasmania?) and the date range of the images used in your study.
--	-	Input Data Format: Describe the satellite image inputs: Were they the 3-band JPEGs (SWIR/NIR/Red) used in the FF interface? What was the spatial resolution effectively used?
--	-	Ground Truth Generation: CRITICAL: Explain *exactly* how you created the binary ground truth masks for training/evaluation from the Floating Forests output. Did you use the raw volunteer polygons? Did you rasterize them? Did you apply the consensus threshold (e.g., pixels marked by >= 4 volunteers = kelp)? Justify your choice.
--	3.2. Data Preprocessing:
--	-	Image Tiling: Describe how the initial (potentially large) image subsets from Floating Forests were tiled for input into the UNet (e.g., 256x256 pixels, 512x512 pixels? Any overlap?).
--	-	Normalization: Detail how pixel values were normalized (e.g., scaled to [0, 1], standardized using mean/std dev?).
--	-	Data Cleaning: Mention any steps taken to remove problematic images/tiles (e.g., based on cloud cover flags from FF, visual inspection?).
--	-	Addressing Data Imbalance (Attempt): Describe the experiment of removing tiles with zero kelp pixels. Explain the rationale (reduce class imbalance). State clearly whether this subsetting was used in the *final* successful model training or just an initial experiment.
--	-	Train/Validation/Test Split: Clearly state how the tiles were divided. Was it random split? Percentage for each set? Was care taken to ensure spatial or temporal independence if necessary (e.g., putting tiles from the same original large image entirely in one set)? Provide the number of tiles in each set.
--	3.3. Model Architecture:
--	-	Base Architecture: State you used the UNet architecture.
--	-	Backbones: Specify you replaced the standard UNet encoder with pre-trained ResNet-18, ResNet-34, and ResNet-50 backbones. Mention weights were initialized from ImageNet pre-training.
--	-	Modifications: Explain any necessary modifications (e.g., adjusting the final convolutional layer to output a single channel for binary segmentation).
--	-	Comparison Model: Briefly mention the baseline UNet trained from scratch that was attempted.
--	3.4. Model Training:
--	-	Framework: Specify the deep learning framework used (e.g., PyTorch, TensorFlow/Keras).
--	-	Loss Function: State the loss function (e.g., Binary Cross-Entropy (BCE), Dice Loss, Focal Loss, or a combination like BCE + Dice). Justify the choice, especially if related to data imbalance (Dice/Focal are often better for this than plain BCE).
--	-	Optimizer: Specify the optimizer (e.g., Adam, AdamW, SGD) and the learning rate used (mention if a learning rate scheduler was employed, e.g., ReduceLROnPlateau).
--	-	Data Augmentations: List *all* augmentations applied during training (e.g., horizontal/vertical flips, rotations, scaling, brightness/contrast adjustments, elastic distortions). Specify the library used (e.g., Albumentations) and the probability of each augmentation being applied.
--	-	Training Setup: Mention batch size, number of epochs trained for. Briefly describe the hardware used (e.g., "trained on an NVIDIA RTX 3090 GPU").
--	3.5. Evaluation:
--	-	Metrics: Define the metrics used:
--	-	-	Intersection over Union (IoU) / Jaccard Index (Explain calculation: TP / (TP + FP + FN)). Standard for segmentation.
--	-	-	Dice Coefficient (Explain calculation: 2*TP / (2*TP + FP + FN)). Also standard, sensitive to positive class.
--	-	-	Pixel Accuracy, Precision, Recall (Optional but useful context).
--	-	Procedure: Explain that models were evaluated on the held-out test set after training converged based on validation set performance.
--	3.6. Testing Pipeline Implementation:
--	-	Describe the script developed for inference. Explain its inputs (directory of images, model weights file) and outputs (predicted binary masks saved as image files). Briefly mention key steps (loading model, image preprocessing identical to training validation, running inference, applying threshold if necessary, saving output).
+	intro
 
+		The methodology involved several key stages: data acquisition and preprocessing from the Floating Forests dataset, model architecture design based on a UNet with a ResNet backbone, a detailed training procedure incorporating data augmentation and learning rate scheduling, determination of an optimal prediction threshold, and finally, evaluation on an unseen test set."
+
+	pipeline
+
+		floating forests data
+
+			Feature Data (Satellite Imagery):
+		
+				Imagery was derived from the Landsat satellite missions (Landsat 5, 7, and 8) and provided as 350 x 350 pixel, unreferenced GeoTIFF tiles. Each tile corresponded to coastal waters around the Falkland Islands.
+
+				Each GeoTIFF contained seven co-referenced bands at a 30-meter spatial resolution:
+
+				Bands 0-4: Spectral bands representing surface reflectance, rescaled to 16-bit integers. These included Short-Wave Infrared 1 (SWIR1), Near-Infrared (NIR), Red, Green, and Blue. A value of -32768 indicated missing data.
+				
+				Band 5: A binary cloud mask (1 = cloud, 0 = no cloud).
+
+				Band 6: A Digital Elevation Model (DEM) in meters above sea-level, derived from ASTER data.
+
+				Filename schema: <tile_id>_satellite.tif.
+
+			Label Data (Ground Truth Masks):
+
+				Binary segmentation masks indicating the presence (1) or absence (0) of kelp canopy.
+
+				These labels were generated by citizen scientists on the Floating Forests platform through visual interpretation and tracing of kelp in the corresponding Landsat imagery.
+
+				The masks were provided as single-band, 350 x 350 pixel TIFF images.
+
+				Filename schema: <tile_id>_kelp.tif.
+
+			My data source for this compilation was missing validation ground truth data so we will treat the "train" section as our entire dataset
+
+			should be saved in .../data/cleaned/
+
+		cleaning data
+
+			to address potential missing values, noise, and outliers inherent in the raw data, data cleaning was necessary
+
+			data clean script reads in the sattelite train folder (no processign needed for ground truth)
+
+			the script:
+
+				performs Shape Standardization: Images were transposed to a consistent internal format (Channels, Height, Width) for processing.
+			
+				Identifies Invalid Pixels: Pixels were marked as invalid based on:
+				
+					A specific marker value (-32768) is used as a no-data value in the original Landsat processing
+			
+					Negative values (< 0) in spectral bands (Bands 0-4).
+			
+					Cloud & Water Masking: Pixels corresponding to clouds (using Band 5) and water bodies (using DEM Band 6 <= 0) were identified.
+			
+				performs Statistics Calculation: Dataset-wide mean and standard deviation were calculated for each band designated for normalization (Bands 0-4 and 6). 
+				
+					Invalid pixels (marker, negative, cloud, water) were excluded from these statistical calculations.
+			
+				Prior to normalization, pixel values in the target bands were clipped based on pre-defined global thresholds (corresponding to approximate 1st and 99th percentiles) to mitigate the impact of extreme outliers.
+
+					percentiles were derived from derived from an initial exploratory analysis of the entire dataset
+
+			Standardization (Z-score): Spectral bands (0-4) and the DEM band (6) were standardized by subtracting the calculated dataset mean and dividing by the dataset standard deviation for that band.
+			
+			Handling Missing Data Post-Normalization: Pixels originally identified as invalid (marker value or negative) were replaced with 0.0 after standardization.
+
+				0.0 was chosen as zero represents the mean after Z-score standardization, this minimizes its impact on subsequent layers"
+			
+			Cloud Mask Preservation: The original Cloud Mask band (Band 5) was preserved without numerical normalization or clipping.
+			
+			Output Format: Processed images, with normalized bands and the original cloud mask, were saved back in-place as 32-bit floating-point TIFF files in (Height, Width, Channels) format.
+
+
+		split data 
+
+			rename original train folders, add 1 to end "train_satellite1", "train_kelp1"
+
+			run split data script
+
+			creates a 70 15 15 split (train, val, test)
+
+				train -> model trains from this folder
+
+				val-> used for balidation after each epoch. also used to calculate the threshold for assiging a given pixel as kelp.
+
+				tets-> model never sees this until after training and acts as the hold out test set. is kept seperated so data is truly never seen before
+
+			resulting 6 folders (sattelite/gt for train, for val, for test.)
+
+			Images were randomly assigned to train, validation, and test sets
+
+
+		model training
+
+			Model Architecture: 
+			
+				A U-Net like segmentation model was employed, utilizing a pre-trained ResNet (configurable to ResNet18, ResNet34, or ResNet50) as its encoder backbone. 
+
+					The UNet architecture was selected due to its demonstrated effectiveness in biomedical image segmentation and its increasing application in remote sensing. 
+			
+					Its encoder-decoder structure with skip connections allows for the capture of both contextual information and precise localization of features, making it well-suited for pixel-wise kelp canopy segmentation."
+
+					ResNet encoders are known for their strong performance on image recognition tasks, and using their pre-trained weights allows for effective transfer learning, often leading to better generalization and faster convergence, especially with limited domain-specific training data."
+				
+				The ResNet's initial convolutional layer was modified to accept 7 input channels corresponding to the hyperspectral satellite bands. 
+				
+				A custom decoder composed of sequential ConvTranspose2d, BatchNorm2d, and ReLU layers was used to upsample features and produce a single-channel output for binary segmentation.
+
+				The decoder comprised four upsampling blocks. Each block consisted of a 2D transposed convolution to double the spatial resolution, followed by batch normalization and a ReLU activation. This architecture progressively reduced the channel depth from the encoder's output (512 for ResNet18/34 or 2048 for ResNet50) through intermediate channel depths of 256, 128, and 64, down to 32 channels before a final 1x1 convolutional layer produced the single-channel logit output."
+
+			Data Handling:
+
+				Training data was subjected to on-the-fly augmentations, including horizontal flips, vertical flips, random 90-degree rotations, and the addition of small Gaussian noise to spectral bands 0-4. any given transformation had a 50% probability of being appied to the input image.
+				
+				Validation data was not augmented.
+
+				Data was loaded using PyTorch DataLoaders, with a batch size of 8 for training and 16 for validation.
+
+			Training Setup:
+
+				The model was trained using PyTorch Lightning.
+
+				The loss function was Binary Cross-Entropy with Logits (BCEWithLogitsLoss).
+
+				During validation, Intersection over Union (IoU) for the "kelp" class was calculated and logged.
+
+					Intersection over Union (IoU), also known as the Jaccard Index, was selected as it is a standard metric for assessing the accuracy of semantic segmentation models. It measures the overlap between the predicted and ground truth regions.
+
+				Learning Rate 
+					
+					The Adam optimizer was used with an initial learning rate of 1e-4.
+
+						The Adam (Adaptive Moment Estimation) optimizer combines the advantages of two other extensions of stochastic gradient descent:
+						
+							AdaGrad, (Adaptive Gradient) dynamically adjusts the learning rate for each parameter based on its gradient history
+							
+							RMSProp, (Root Mean Squared Propagation) computes a moving average of squared gradients to scale parameter updates, preventing drastic fluctuations and promoting faster convergence. 
+							
+						By computing adaptive learning rates for each parameter from estimates of first and second momentums of the gradients, Adam often achieves efficient convergence and robust performance across a variety of deep learning architectures and datasets, making it a common default choice.
+
+					A Cosine Annealing learning rate scheduler (CosineAnnealingLR) was employed to gradually reduce the learning rate over MAX_EPOCHS down to a minimum of 1e-7.
+
+						A custom LearningRateMonitor callback logged and printed learning rate changes.
+
+					Training was performed for a maximum of MAX_EPOCHS or until early stopping criteria were met.
+
+						An EarlyStopping callback monitored the validation loss, halting training if the loss did not improve by at least EARLY_STOPPING_MIN_DELTA (e.g., 0.001) for EARLY_STOPPING_PATIENCE (e.g., 10) consecutive epochs.
+
+				A ModelCheckpoint callback saved the model checkpoint corresponding to the best validation loss observed during training.
+
+			Resuming Training: The script includes functionality to resume training from the latest available checkpoint if a previous run in the same output directory was interrupted.
+
+			Hardware & Precision: Training utilized a GPU if available. For GPU training, 32-bit precision was specified
+
+			Final Model: After training, the state dictionary of the model that achieved the best validation loss was saved as a .pth file.
+
+
+		Finding threshold
+
+			A dedicated script was used to determine the optimal probability threshold for converting model logits to binary (kelp/no-kelp) predictions.
+
+			The script loaded the best model weights (best_weights.pth) saved from a specific training run, identified by RUN_NAME and BACKBONE_NAME.
+
+			A range of potential thresholds (0.2 to 0.6 in steps of 0.004) was tested.
+
+			The optimal threshold was determined by applying the fully trained model (using the weights corresponding to the best validation loss achieved during the entire training process) to the complete validation set after training was complete. 
+			
+				The sigmoid output probabilities from the model for every pixel in the validation set were first collected. 
+				
+				Then, a range of potential thresholds was applied to these pre-computed probabilities to generate binary masks, and the threshold that maximized the IOU score on the validation set was selected."
+
+			The threshold that maximized the IOU on the validation set was selected as the optimal threshold.
+
+		test phase
+
+			Purpose: A dedicated script was used for evaluating the trained segmentation model on an unseen test dataset and for generating final prediction masks.
+
+			loads the appropriate trained model weights and associated optimal threshold.
+
+			the test dataset was loaded, consisting of satellite images and corresponding ground truth kelp masks from pre-defined split directories. 
+
+			The optimal probability threshold, previously determined on the validation was used to convert the model's sigmoid output probabilities into binary (kelp/no-kelp) predictions.
+
+			The model performed inference on the entire test set, generating raw probability outputs for each pixel.
+
+			optional Land Mask Post-processing is available to post-process the binary predictions. If enabled, any pixels predicted as kelp that corresponded to land areas (DEM band value > 0) were set to no-kelp (0).
+
+			Four standard segmentation metrics were calculated between the (potentially land-masked) binary predictions and the ground truth test masks:
+				
+				Intersection over Union (IoU) / Jaccard Index
+				Precision
+				Recall
+				F1-Score
+
+			The final binary prediction masks (after thresholding and optional land masking) were saved as TIFF files.
+
+
+
+===============================================================
 Results (~2-3 pages) - *Focus on objective findings*
+===============================================================
+
+	Overview of Experimental Setup
+
+		the main experimental variables tested:
+
+			How will Data preprocessing effect accuracy?
+
+			Will applying random Data augmentation during training increase accuracy?
+
+			Which ResNet backbone (ResNet18, ResNet34, ResNet50) Performs the best?	
+
+			Does our models predict kelp being on land, and can we correct these mistakes with the land mask?
+
+	
+
+		performance was evaluated using Intersection over Union (IoU), Precision, Recall, and F1-Score on the held-out test set.
+
+	
+	Impact of Data Preprocessing (Cleaning)
+
+		Backbone	Preprocessing	Augmentation	IoU	Precision	Recall	F1-Score
+		ResNet18	Original	No	0.3043	0.4192	0.5261	0.4666
+		ResNet18	Cleaned	No	0.4437	0.5874	0.6446	0.6147
+		ResNet34	Original	No	0.3239	0.4645	0.5168	0.4893
+		ResNet34	Cleaned	No	0.4492	0.5827	0.6622	0.6200
+		ResNet50	Original	No	0.3656	0.5178	0.5543	0.5354
+		ResNet50	Cleaned	No	0.4419	0.5782	0.6521	0.6130
+
+		The application of data cleaning and normalization procedures consistently improved model performance across all ResNet backbones when augmentations were not used.
+
+		For instance, with the ResNet18 backbone, IoU increased from 0.3043 (original data) to 0.4437 (cleaned data), representing a substantial improvement of 45%. Similarly, ResNet34 saw an improvement of 38%, and Resnet50 saw 20%.
+	
+		data cleaning was a crucial step for achieving better baseline performance.
+
+	Impact of Data Augmentation
+
+		Backbone	Preprocessing	Augmentation	IoU	Precision	Recall	F1-Score
+		ResNet18	Cleaned	No	0.4437	0.5874	0.6446	0.6147
+		ResNet18	Cleaned	Yes	0.4983	0.6387	0.6939	0.6652
+		ResNet34	Cleaned	No	0.4492	0.5827	0.6622	0.6200
+		ResNet34	Cleaned	Yes	0.5028	0.6355	0.7066	0.6692
+		ResNet50	Cleaned	No	0.4419	0.5782	0.6521	0.6130
+		ResNet50	Cleaned	Yes	0.5010	0.6386	0.6993	0.6676
+
+		Data augmentation applied during training on the cleaned dataset further enhanced model performance for all backbones.
+	
+		With the ResNet18 backbone, IoU improved from 0.4437 (no augmentation) to 0.4983 (with augmentation).
+
+		The ResNet34 backbone showed the highest overall performance when combined with cleaned data and augmentations, achieving an IoU of 0.5028 and an F1-Score of 0.6692. Resnet50 saw a very similar increase in performance.
+
+		data augmentation provided a significant boost to the models trained on cleaned data.
+
+	Comparison of ResNet Backbones
+
+		Backbone	Preprocessing	Augmentation	IoU	Precision	Recall	F1-Score
+		ResNet18	Cleaned	Yes	0.4983	0.6387	0.6939	0.6652
+		ResNet34	Cleaned	Yes	0.5028	0.6355	0.7066	0.6692
+		ResNet50	Cleaned	Yes	0.5010	0.6386	0.6993	0.6676
+
+		When comparing the performance of different ResNet backbones using cleaned data and augmentations, the ResNet34 backbone achieved the highest IoU (0.5028) and F1-Score (0.6692).
+
+		The ResNet50 backbone performed comparably (IoU: 0.5010, F1: 0.6676), while the ResNet18 backbone was slightly lower (IoU: 0.4983, F1: 0.6652).
+
+		This suggests that while deeper models offered a slight advantage, the gains diminished beyond ResNet34 for this specific task and dataset.
+
+	Effect of Land Mask Post-processing
+
+		The application of a land mask as a post-processing step, designed to remove any kelp predictions over land areas (DEM > 0), was evaluated.
+
+		Across all experimental conditions (different backbones, preprocessing, and augmentation strategies), the land mask had a negligible or no impact on the reported evaluation metrics (IoU, Precision, Recall, F1-Score). 
+		
+		For example, for the best performing model (ResNet34, cleaned data, augmentations), the IoU remained 0.5028 both with and without the land mask."
+
+		Minor variations (e.g., an increase in IoU from 0.3043 to 0.3091 for the ResNet18 original data no-augmentation run) were observed in some lower-performing models, potentially due to the model incorrectly predicting kelp on land pixels which were then corrected. 
+		
+		However, for the higher-performing models, this effect was not apparent.
+
+		for the primary test set evaluation, the land mask did not significantly alter the overall segmentation performance on kelp itself, suggesting the models were largely not predicting kelp over land areas. 
+		
+		it is possible that such predictions were being made, however they did not substantially impact the metrics calculated.
+
+	Summary of Best Performing Model
+
+		The best overall performance was achieved using a UNet with a ResNet34 backbone, trained on cleaned and normalized data with data augmentations applied. This configuration yielded an Intersection over Union (IoU) of 0.5028, a Precision of 0.6355, a Recall of 0.7066, and an F1-Score of 0.6692 on the held-out test set, using an prediction threshold of 0.3414.
+
+	Qualitative Results 
+	
+		To visually assess the model's performance, representative examples of predictions from the best-performing model (ResNet34, cleaned, augmented) on test set images are presented in Figure X."
+Describe what the figures will show (input, ground truth, prediction).
+Select examples that illustrate:
+Successful segmentation of clear kelp patches.
+Performance on sparse or complex kelp.
+Common error types (e.g., missed detections of small patches, false positives on sun glint/foam if any, edge inaccuracies).
+Refer to these figures in your Discussion section when interpreting the results.
+
+
+
+
+
 -	4.1. Dataset Characteristics: Provide summary statistics of your final training, validation, and test sets (number of tiles, approximate percentage of kelp pixels overall – highlighting the imbalance).
 -	4.2. Model Performance Comparison:
 -	-	Present a table comparing the performance metrics (IoU, Dice, etc.) of the UNets with ResNet-18, -34, and -50 backbones on the test set. Clearly identify the best-performing model.

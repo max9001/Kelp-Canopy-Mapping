@@ -20,11 +20,11 @@ from torchmetrics import Metric, JaccardIndex, Precision, Recall, F1Score
 # --- Configuration Constants ---
 # *** SET THESE VALUES BEFORE RUNNING ***
 
-RUN_NAME = "50_og_noaug"
-BACKBONE_NAME = "resnet50"
+RUN_NAME = "34_clean_aug"
+BACKBONE_NAME = "resnet34"
 APPLY_LAND_MASK = True
-DATA_DIR_STR = str(Path().resolve().parent / "data" / "original") 
-RESULTS_FILENAME = "evaluation_results_2.txt"
+DATA_DIR_STR = str(Path().resolve().parent / "data" / "cleaned") 
+RESULTS_FILENAME = "DELETE.txt"
 
 
 RUN_DIR = Path().resolve().parent / "runs" / RUN_NAME
