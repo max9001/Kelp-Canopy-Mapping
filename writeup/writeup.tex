@@ -7,7 +7,8 @@
 
 
 % ready for submission
-\usepackage[final]{neurips_2023}
+\usepackage[nonatbib]{neurips_2023}
+
 
 
 % to compile a preprint version, e.g., for submission to arXiv, add add the
@@ -32,6 +33,7 @@
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
 \usepackage{xcolor}         % colors
+\usepackage{adjustbox}
 
 \usepackage{graphicx} % For \includegraphics
 \usepackage{subcaption} % For subfigures and subcaptions
@@ -156,7 +158,7 @@ Furthermore, the Landsat 7 satellite has a revisit period of 16 days, meaning it
 
 \subsection{Drawbacks of Landsat 7: The Scan Line Corrector (SLC) Failure} 
 
-Despite its many advantages, a significant drawback of Landsat 7 imagery acquired after May 2003 is the permanent failure of its Scan Line Corrector (SLC). The SLC was an electro-mechanical component designed to compensate for the satellite's forward motion, ensuring that the sensor captured a complete, gap-free image swath with each pass. However, on May 31, 2003, this crucial mechanism permanently malfunctioned (USGS, n.d.). Consequently, all Landsat 7 ETM+ images collected after this date, referred to as "SLC-off" data, exhibit a characteristic zig-zag scan pattern. This pattern results in wedge-shaped gaps of missing data across each scene, with these gaps being narrowest at the image center (nadir) and widening towards the edges. In a typical SLC-off scene, approximately 22\% of the pixel data is missing due to these gaps. It is important to note that the dataset utilized in this study included Landsat 7 imagery affected by this SLC failure, presenting an additional challenge for consistent feature extraction by the model and for the original human labeling process.
+Despite its many advantages, a significant drawback of Landsat 7 imagery acquired after May 2003 is the permanent failure of its Scan Line Corrector (SLC). The SLC was an electro-mechanical component designed to compensate for the satellite's forward motion, ensuring that the sensor captured a complete, gap-free image swath with each pass. However, on May 31, 2003, this crucial mechanism permanently malfunctioned (U.S. Geological Survey, n.d.). Consequently, all Landsat 7 ETM+ images collected after this date, referred to as "SLC-off" data, exhibit a characteristic zig-zag scan pattern. This pattern results in wedge-shaped gaps of missing data across each scene, with these gaps being narrowest at the image center (nadir) and widening towards the edges. In a typical SLC-off scene, approximately 22\% of the pixel data is missing due to these gaps. It is important to note that the dataset utilized in this study included Landsat 7 imagery affected by this SLC failure, presenting an additional challenge for consistent feature extraction by the model and for the original human labeling process.
 
 \begin{figure}[htbp] % Figure placement options: h=here, t=top, b=bottom, p=page of floats
   \centering % Centers the figure content
@@ -301,13 +303,66 @@ This section presents the quantitative outcomes of the experiments conducted to 
 
 \subsection{Impact of Data Preprocessing}
 
+\begin{table}[htbp] % Figure placement options: h=here, t=top, b=bottom, p=page of floats
+  \caption{Impact of Data Preprocessing (Cleaning) on Model Performance. All models trained without data augmentation.}
+  \label{table:preprocessing_impact}
+  \centering
+  \begin{tabular}{lllllll}
+    \toprule
+    Backbone & Preprocessing & Augmentation & IoU    & Precision & Recall & F1-Score \\
+    \midrule
+    ResNet18 & Original      & No           & 0.3043 & 0.4192    & 0.5261 & 0.4666   \\
+    ResNet18 & Cleaned       & No           & 0.4437 & 0.5874    & 0.6446 & 0.6147   \\
+    ResNet34 & Original      & No           & 0.3239 & 0.4645    & 0.5168 & 0.4893   \\
+    ResNet34 & Cleaned       & No           & 0.4492 & 0.5827    & 0.6622 & 0.6200   \\
+    ResNet50 & Original      & No           & 0.3656 & 0.5178    & 0.5543 & 0.5354   \\
+    ResNet50 & Cleaned       & No           & 0.4419 & 0.5782    & 0.6521 & 0.6130   \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 The application of data cleaning and normalization procedures consistently improved model performance across all ResNet backbones when augmentations were not used. For instance, with the ResNet18 backbone, IoU increased from 0.3043 (original data) to 0.4437 (cleaned data), representing a substantial improvement of 45\%. Similarly, ResNet34 saw an improvement of 38\%, and ResNet50 saw 20\%. Data cleaning was a crucial step for achieving better baseline performance.
 
 \subsection{Impact of Data Augmentation} % Assuming this was meant to be 4.3, renumbering for consistency. If 4.3 was different, please let me know.
 
+\begin{table}[htbp] % Figure placement options: h=here, t=top, b=bottom, p=page of floats
+  \caption{Impact of Data Augmentation on Model Performance. All models trained with cleaned data.}
+  \label{table:augmentation_impact}
+  \centering
+  \begin{tabular}{lllllll}
+    \toprule
+    Backbone & Preprocessing & Augmentation & IoU    & Precision & Recall & F1-Score \\
+    \midrule
+    ResNet18 & Cleaned       & No           & 0.4437 & 0.5874    & 0.6446 & 0.6147   \\
+    ResNet18 & Cleaned       & Yes          & 0.4983 & 0.6387    & 0.6939 & 0.6652   \\
+    ResNet34 & Cleaned       & No           & 0.4492 & 0.5827    & 0.6622 & 0.6200   \\
+    ResNet34 & Cleaned       & Yes          & 0.5028 & 0.6355    & 0.7066 & 0.6692   \\
+    ResNet50 & Cleaned       & No           & 0.4419 & 0.5782    & 0.6521 & 0.6130   \\
+    ResNet50 & Cleaned       & Yes          & 0.5010 & 0.6386    & 0.6993 & 0.6676   \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 Data augmentation applied during training on the cleaned dataset further enhanced model performance for all backbones. With the ResNet18 backbone, IoU improved from 0.4437 (no augmentation) to 0.4983 (with augmentation). The ResNet34 backbone showed the highest overall performance when combined with cleaned data and augmentations, achieving an IoU of 0.5028 and an F1-Score of 0.6692. ResNet50 saw a very similar increase in performance. Data augmentation provided a significant boost to the models trained on cleaned data.
 
+\newpage
+
 \subsection{Comparison of ResNet Backbones} % Renumbering from 4.5
+
+\begin{table}[htbp] % Figure placement options: h=here, t=top, b=bottom, p=page of floats
+  \caption{Comparison of ResNet Backbones. All models trained with cleaned data and data augmentation.}
+  \label{table:backbone_comparison}
+  \centering
+  \begin{tabular}{lllllll}
+    \toprule
+    Backbone & Preprocessing & Augmentation & IoU    & Precision & Recall & F1-Score \\
+    \midrule
+    ResNet18 & Cleaned       & Yes          & 0.4983 & 0.6387    & 0.6939 & 0.6652   \\
+    ResNet34 & Cleaned       & Yes          & 0.5028 & 0.6355    & 0.7066 & 0.6692   \\
+    ResNet50 & Cleaned       & Yes          & 0.5010 & 0.6386    & 0.6993 & 0.6676   \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 When comparing the performance of different ResNet backbones using cleaned data and augmentations, the ResNet34 backbone achieved the highest IoU (0.5028) and F1-Score (0.6692). The ResNet50 backbone performed comparably (IoU: 0.5010, F1: 0.6676), while the ResNet18 backbone was slightly lower (IoU: 0.4983, F1: 0.6652). This suggests that while deeper models offered a slight advantage, the gains diminished beyond ResNet34 for this specific task and dataset.
 
@@ -319,17 +374,37 @@ The impact of applying a land mask as a post-processing step—designed to elimi
 
 The best overall performance was achieved using a UNet with a ResNet34 backbone, trained on cleaned and normalized data with data augmentations applied. This configuration yielded an Intersection over Union (IoU) of 0.5028, a Precision of 0.6355, a Recall of 0.7066, and an F1-Score of 0.6692 on the held-out test set, using a prediction threshold of 0.3414.
 
+\newpage
+
 \subsection{Qualitative Results} % Renumbering from 4.8
 
-To visually assess the model's performance, representative examples of predictions from the best-performing model (ResNet34, cleaned, augmented) on test set images are presented below:
-% LaTeX Note: For images, you'll use \includegraphics within a figure environment.
-% The text below should be captions or descriptive text accompanying figures.
+To visually assess the model's performance, representative examples of predictions from the best-performing model (ResNet34, cleaned, augmented) on test set images are presented below.
 
-\begin{itemize}
-    \item Successful segmentation of clear kelp patches
-    \item Even works on SLC failure images!
-    \item Poor Performance \& missed detections of small patches of kelp
-\end{itemize}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{good2.png} % Adjust width as needed
+    \includegraphics[width=0.8\textwidth]{good3.png}
+    \includegraphics[width=0.8\textwidth]{good1.png}
+    \caption{Successful segmentation of clear kelp patches. These examples illustrate the model's ability to accurately delineate well-defined kelp canopy under favorable conditions.}
+    \label{fig:good_segmentation}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{goodslc.png} % Adjust width as needed
+    \caption{Example of model performance on an image affected by Landsat 7 SLC-off data gaps. Even with missing data strips, the model demonstrates an ability to identify kelp in the visible portions.}
+    \label{fig:slc_performance}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{bad1.png} % Adjust width as needed
+    \includegraphics[width=0.8\textwidth]{bad2.png}
+    \includegraphics[width=0.8\textwidth]{bad3.png}
+    \caption{Examples of poor performance and missed detections, particularly for small or sparse patches of kelp. These highlight instances where the model struggled, potentially due to the 30m resolution limit or less distinct kelp signatures.}
+    \label{fig:poor_segmentation}
+\end{figure}
+
 
 \section{Discussion}
 
@@ -386,16 +461,109 @@ Building upon the findings of this study, several avenues for future research an
 In conclusion, this research successfully demonstrates the development and operational viability of an automated, end-to-end deep learning pipeline capable of segmenting kelp canopy from satellite imagery, effectively transforming raw image inputs into map outputs. A key highlight of this study is the powerful synergy achieved by integrating large-scale, human-generated labels from citizen science initiatives like Floating Forests with the sophisticated pattern recognition capabilities of modern deep learning techniques. This combination not only validates the immense value of crowdsourced efforts in scientific research but also provides a robust foundation for training complex models. Ultimately, the approach presented here holds significant potential to enhance the efficiency, scalability, and cost-effectiveness of kelp forest monitoring. By reducing reliance on expensive and time-consuming manual methods, this technology can support more timely and targeted conservation and restoration strategies. The continued refinement and adoption of such automated systems are therefore encouraged, as they can free up critical resources, enabling their reallocation towards direct, on-the-ground interventions like urchin removal, which are essential for the recovery and long-term health of these vital coastal ecosystems. This work serves as a compelling example of how innovative computational tools, fueled by community engagement, can contribute meaningfully to addressing pressing environmental challenges.
 
 % End of content
+\newpage
+
+\section*{}
+\begingroup % Start a group to keep font size change local
+\small % Optional: Reduce font size to 9 point
+
+\begin{thebibliography}{99} % The {99} is a placeholder for the widest label, affects indentation
+
+\bibitem{Hohman2023}
+Hohman, R., Bell, T., Cavanaugh, K., Contolini, G., Elsmore, K., FloresMiller, R., Garza, C., Hewerdine, W., Iampietro, P., Nickels, A., Saccomanno, V., \& Tezak, S. (2023).
+\textit{Remote sensing tools for mapping and monitoring kelp forests along the West Coast.}
+National Marine Sanctuaries Conservation Series ONMS-23-10. U.S. Department of Commerce, National Oceanic and Atmospheric Administration, Office of National Marine Sanctuaries.
+
+\bibitem{Zuckerman2023}
+Zuckerman, C. (2023, May 26).
+The vanishing kelp forest.
+\textit{The Nature Conservancy}.
+Retrieved from \url{https://www.nature.org/en-us/magazine/magazine-articles/kelp-forest/}
+
+\bibitem{Saccomanno2022}
+Saccomanno, V. R., Bell, T., Pawlak, C., Stanley, C. K., Cavanaugh, K. C., Hohman, R., Klausmeyer, K. R., Cavanaugh, K., Nickels, A., Hewerdine, W., Garza, C., Fleener, G., \& Gleason, M. (2022).
+Using unoccupied aerial vehicles to map and monitor changes in emergent kelp canopy after an ecological regime shift.
+\textit{Remote Sensing in Ecology and Conservation, 9}(1), 62--75.
+\url{https://doi.org/10.1002/rse2.295}
+
+\bibitem{MBC2017}
+MBC Applied Environmental Sciences. (2017, August 14).
+\textit{Status of the Kelp Beds in 2016: Ventura, Los Angeles, Orange, and San Diego Counties.}
+Prepared for: Central Region Kelp Survey Consortium and Region Nine Kelp Survey Consortium. MBC Applied Environmental Sciences, Costa Mesa, California.
+
+\bibitem{Bell2018_RSE} % Changed key to be more specific if you resolve year discrepancy
+Bell, T. W., Cavanaugh, K. C., \& Siegel, D. A. (2020).
+Three decades of variability in California's giant kelp forests from the Landsat satellites.
+\textit{Remote Sensing of Environment, 218}, 26--38.
+\url{https://doi.org/10.1016/j.rse.2018.06.039}
+% Note: Your text cited this as Bell et al. (2020), but the DOI corresponds to a 2018 publication.
+
+\bibitem{Rosenthal2018}
+Rosenthal, I. S., Byrnes, J. E. K., Cavanaugh, K. C., Bell, T. W., Harder, B., Haupt, A. J., Rassweiler, A. T. W., Pérez-Matus, A., Assis, J., Swanson, A., Boyer, A., McMaster, A., \& Trouille, L. (2018).
+Floating Forests: Quantitative Validation of Citizen Science Data Generated From Consensus Classifications (Version 1).
+\textit{arXiv preprint arXiv:1801.08522}.
+\url{https://doi.org/10.48550/ARXIV.1801.08522}
+
+\bibitem{USGS_SLC}
+U.S. Geological Survey. (n.d.).
+Landsat Collection 2 Known Issues.
+Retrieved from \url{https://www.usgs.gov/landsat-missions/landsat-collection-2-known-issues}
+% Note: Consider adding an access date here.
+
+\end{thebibliography}
+\endgroup % End the group for font size
 
 
 
 
+\newpage
+
+\appendix % This command starts the appendix section(s)
+
+\section*{Appendices} % Optional: A general title for all appendices
+                     % \appendix usually handles the "Appendix A" titling below
+
+\section{Comprehensive Evaluation Metrics} % This will be titled "Appendix A Comprehensive Evaluation Metrics"
+\label{appendix:all_metrics}
+
+\begin{table}[htbp] % Make it [H] from float package if you need it exactly here
+  \centering
+  \caption*{Table A: Comprehensive Evaluation Metrics for All Experimental Configurations on the Test Set.} % Using \caption* for unnumbered caption since it's already in the text
+  \vspace{0.5em}
+  \begin{adjustbox}{width=\textwidth} % Or just width=\textwidth if you know it's wider
+  \label{table:appendix_all_results} % You can still label it for internal reference
+  \small % Optional: make table font smaller if it's very wide
+  \begin{tabular}{llllllllll}
+    \toprule
+    Run Name & Backbone & Data          & Augmen- & Land Mask & Optimal   & IoU    & Precision & Recall & F1-Score \\
+             &          & Preprocessing & tation  & Applied   & Threshold &        &           &        &          \\
+    \midrule
+    18\_og\_noaug    & ResNet18 & Original & No  & No  & 0.2929 & 0.3043 & 0.4192 & 0.5261 & 0.4666 \\
+    18\_og\_noaug    & ResNet18 & Original & No  & Yes & 0.2929 & 0.3091 & 0.4286 & 0.5258 & 0.4723 \\
+    18\_clean\_noaug & ResNet18 & Cleaned  & No  & No  & 0.2404 & 0.4437 & 0.5874 & 0.6446 & 0.6147 \\
+    18\_clean\_noaug & ResNet18 & Cleaned  & No  & Yes & 0.2404 & 0.4437 & 0.5874 & 0.6446 & 0.6147 \\
+    18\_clean\_aug   & ResNet18 & Cleaned  & Yes & No  & 0.2929 & 0.4983 & 0.6387 & 0.6939 & 0.6652 \\
+    18\_clean\_aug   & ResNet18 & Cleaned  & Yes & Yes & 0.2929 & 0.4983 & 0.6387 & 0.6939 & 0.6652 \\
+    34\_og\_noaug    & ResNet34 & Original & No  & No  & 0.3091 & 0.3239 & 0.4645 & 0.5168 & 0.4893 \\
+    34\_og\_noaug    & ResNet34 & Original & No  & Yes & 0.3091 & 0.3277 & 0.4727 & 0.5165 & 0.4936 \\
+    34\_clean\_noaug & ResNet34 & Cleaned  & No  & No  & 0.2768 & 0.4492 & 0.5827 & 0.6622 & 0.6200 \\
+    34\_clean\_noaug & ResNet34 & Cleaned  & No  & Yes & 0.2768 & 0.4492 & 0.5828 & 0.6622 & 0.6200 \\
+    34\_clean\_aug   & ResNet34 & Cleaned  & Yes & No  & 0.3414 & 0.5028 & 0.6355 & 0.7066 & 0.6692 \\
+    34\_clean\_aug   & ResNet34 & Cleaned  & Yes & Yes & 0.3414 & 0.5028 & 0.6355 & 0.7066 & 0.6692 \\
+    50\_og\_noaug    & ResNet50 & Original & No  & No  & 0.2485 & 0.3656 & 0.5178 & 0.5543 & 0.5354 \\
+    50\_og\_noaug    & ResNet50 & Original & No  & Yes & 0.2485 & 0.3691 & 0.5252 & 0.5540 & 0.5392 \\
+    50\_clean\_noaug & ResNet50 & Cleaned  & No  & No  & 0.3293 & 0.4419 & 0.5782 & 0.6521 & 0.6130 \\
+    50\_clean\_noaug & ResNet50 & Cleaned  & No  & Yes & 0.3293 & 0.4419 & 0.5782 & 0.6521 & 0.6130 \\
+    50\_clean\_aug   & ResNet50 & Cleaned  & Yes & No  & 0.3106 & 0.5010 & 0.6386 & 0.6993 & 0.6676 \\
+    50\_clean\_aug   & ResNet50 & Cleaned  & Yes & Yes & 0.3106 & 0.5010 & 0.6386 & 0.6993 & 0.6676 \\
+    \bottomrule
+  \end{tabular}
+  \end{adjustbox}
+\end{table}
 
 
 
-
-
-
+\end{document}
 
 
 
@@ -794,4 +962,3 @@ In conclusion, this research successfully demonstrates the development and opera
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\end{document}
