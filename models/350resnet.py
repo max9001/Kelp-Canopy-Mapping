@@ -81,9 +81,34 @@ class KelpSegmentationModel(pl.LightningModule):
         elif self.hparams.backbone_name == "resnet50": base_encoder = torchvision.models.resnet50(weights=ResNet50_Weights.DEFAULT); encoder_out_channels = 2048
         else: raise ValueError(f"Unsupported backbone: {self.hparams.backbone_name}.")
         print(f"Using backbone: {self.hparams.backbone_name} with {encoder_out_channels} output channels.")
+        
         base_encoder.conv1 = nn.Conv2d(7, 64, kernel_size=7, stride=2, padding=3, bias=False)
-        self.encoder = nn.Sequential(base_encoder.conv1, base_encoder.bn1, base_encoder.relu, base_encoder.maxpool, base_encoder.layer1, base_encoder.layer2, base_encoder.layer3, base_encoder.layer4)
-        self.decoder = nn.Sequential(nn.ConvTranspose2d(encoder_out_channels, 256, 3, 2, 1, 1), nn.BatchNorm2d(256), nn.ReLU(), nn.ConvTranspose2d(256, 128, 3, 2, 1, 1), nn.BatchNorm2d(128), nn.ReLU(), nn.ConvTranspose2d(128, 64, 3, 2, 1, 1), nn.BatchNorm2d(64), nn.ReLU(), nn.ConvTranspose2d(64, 32, 3, 2, 1, 1), nn.BatchNorm2d(32), nn.ReLU(), nn.Conv2d(32, 1, 1))
+        
+        self.encoder = nn.Sequential(
+            base_encoder.conv1, 
+            base_encoder.bn1, 
+            base_encoder.relu, 
+            base_encoder.maxpool, 
+            base_encoder.layer1, 
+            base_encoder.layer2, 
+            base_encoder.layer3, 
+            base_encoder.layer4
+        )
+        
+        self.decoder = nn.Sequential(
+            nn.ConvTranspose2d(encoder_out_channels, 256, 3, 2, 1, 1), 
+            nn.BatchNorm2d(256), 
+            nn.ReLU(), 
+            nn.ConvTranspose2d(256, 128, 3, 2, 1, 1), 
+            nn.BatchNorm2d(128), nn.ReLU(), 
+            nn.ConvTranspose2d(128, 64, 3, 2, 1, 1), 
+            nn.BatchNorm2d(64), nn.ReLU(), 
+            nn.ConvTranspose2d(64, 32, 3, 2, 1, 1),
+            nn.BatchNorm2d(32), 
+            nn.ReLU(), 
+            nn.Conv2d(32, 1, 1)
+        )
+        
         self.criterion = nn.BCEWithLogitsLoss(); self.val_iou = JaccardIndex(task="binary")
     def forward(self, x):
         if x.ndim != 4 or x.shape[1] != 7:

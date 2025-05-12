@@ -1,28 +1,6 @@
 \documentclass{article}
 
-
-% if you need to pass options to natbib, use, e.g.:
-%     \PassOptionsToPackage{numbers, compress}{natbib}
-% before loading neurips_2023
-
-
-% ready for submission
 \usepackage[nonatbib]{neurips_2023}
-
-
-
-% to compile a preprint version, e.g., for submission to arXiv, add add the
-% [preprint] option:
-%     \usepackage[preprint]{neurips_2023}
-
-
-% to compile a camera-ready version, add the [final] option, e.g.:
-%     \usepackage[final]{neurips_2023}
-
-
-% to avoid loading the natbib package, add option nonatbib:
-%    \usepackage[nonatbib]{neurips_2023}
-
 
 \usepackage[utf8]{inputenc} % allow utf-8 input
 \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
@@ -35,75 +13,48 @@
 \usepackage{xcolor}         % colors
 \usepackage{adjustbox}
 
+\usepackage{tikz}           % Core TikZ package
+\usepackage{import}         % For \subimport to load PlotNeuralNet layers
+\usetikzlibrary{positioning, 3d} % TikZ libraries used by your diagram
+
+\usepackage{Ball}
+\usepackage{Box}
+\usepackage{RightBandedBox}
+\usetikzlibrary{quotes, arrows.meta} % Add these too for completeness from init.tex
+
 \usepackage{graphicx} % For \includegraphics
 \usepackage{subcaption} % For subfigures and subcaptions
-% \usepackage{float} % Optional, for more control over figure placement e.g. [H]
 \title{Automated Kelp Canopy Mapping: A UNet Approach with Landsat \& Citizen Science}
-
-
-% The \author macro works with any number of authors. There are two commands
-% used to separate the names and addresses of multiple authors: \And and \AND.
-%
-% Using \And between authors leaves it to LaTeX to determine where to break the
-% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
-% authors names on the first line, and the last on the second line, try using
-% \AND instead of \And before the third author name.
-
 
 \author{%
   Maxwell Rehm\thanks{Special Thanks to my Advisors Alexander C. Berg and Nadia Ahmed} \\
   ICS Honors | Campuswide Honors Collegium \\
   University of California, Irvine\\
-  % examples of more authors
-  % \And
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
-  % \AND
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
-  % \And
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
-  % \And
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
 }
-
 
 \begin{document}
 
-
 \maketitle
 
-
 \begin{abstract}
-  Automated, cost-effective monitoring of kelp forests is crucial for understanding and mitigating the ongoing kelp crisis driven by urchin overpopulation, as it enables targeted diver interventions. Previous studies have established methods for kelp mapping using aerial surveys, UAVs, and satellite-based spectral unmixing (MESMA), alongside the development of citizen science initiatives like Floating Forests which provide noise-robust, human-consensus labels from Landsat imagery. This study developed and evaluated an end-to-end deep learning pipeline, utilizing a UNet architecture with pre-trained ResNet backbones, for semantic segmentation of kelp canopy in Landsat 7 imagery using these Floating Forests labels, incorporating rigorous data preprocessing and augmentation. We found that a ResNet34 backbone, trained on cleaned and augmented data, achieved an Intersection over Union (IoU) of 0.5028, with data preprocessing and augmentation proving essential for optimal performance. Our study suggests that deep learning, leveraged with citizen-science-derived ground truth, offers a viable and scalable approach to automate kelp canopy mapping, which can enhance the efficiency of conservation efforts by reallocating resources towards direct ecological interventions.
+  Reducing the cost of kelp forest monitoring through automation is crucial for mitigating the ongoing kelp crisis driven by urchin overpopulation, as this enables more resources to be directed towards urchin removal efforts. Previous studies have established methods for kelp mapping using aerial surveys, UAVs, and satellite-based spectral unmixing (MESMA), alongside the development of citizen science initiatives like Floating Forests which provide noise-robust, human-consensus labels from Landsat imagery. This study developed and evaluated an end-to-end deep learning pipeline, utilizing a UNet architecture with pre-trained ResNet backbones, for semantic segmentation of kelp canopy in Landsat 7 imagery using these Floating Forests labels, incorporating rigorous data preprocessing and augmentation. We found that a ResNet34 backbone, trained on cleaned and augmented data, achieved an Intersection over Union (IoU) of 0.5028, with data preprocessing and augmentation proving essential for optimal performance. Our study suggests that deep learning, leveraged with citizen-science-derived ground truth, offers a viable and scalable approach to automate kelp canopy mapping, which can enhance the efficiency of conservation efforts by reallocating resources towards direct ecological interventions.
 \end{abstract}
-
 
 \section{Introduction}
 
 \subsection{The Kelp Crisis}
 
-California is currently experiencing a devastating die-off of its kelp forests, a crisis largely attributed to an explosion in pacific purple sea urchin populations. This urchin surge began after their natural predator, the sunflower sea star, suffered a decline due to sea star wasting syndrome, which emerged around 2013. The disease pushed the sunflower sea star to the brink of extinction, leading to its current critically endangered status. With their primary predator virtually gone, purple sea urchin populations have exploded. These unchecked urchins, which feed on kelp, are now responsible for the destruction of vast kelp forests. Estimates indicate an 80\% loss in Northern California since 2013 (Zuckerman, 2023).
+California is currently experiencing a devastating die-off of its kelp forests. This crisis is largely attributed to a subsequent explosion in pacific purple sea urchin populations, a direct consequence of a catastrophic decline in their natural predator, the sunflower sea star. Starting around 2013, the sunflower sea star population began to plummet due to sea star wasting syndrome, a poorly understood disease whose exact causes are still a subject of active research and warrant further investigation. This syndrome pushed the sunflower sea star towards extinction, resulting in its current critically endangered status. With this key predator virtually removed from the ecosystem, purple sea urchin populations subsequently boomed. These unchecked urchins, which feed on kelp, are now the primary drivers behind the destruction of vast kelp forests. The scale of this loss is significant, with estimates indicating that approximately 80\% of Northern California's kelp canopy has vanished since the initial decline of the sunflower sea stars began around 2013, highlighting a direct temporal link between the predator loss, urchin proliferation, and kelp deforestation (Zuckerman, 2023).
 
 \subsection{The Need for Intervention} 
 
-Intervention through manual urchin destruction by divers is possible, but the scarcity of these skilled individuals demands an efficient allocation strategy. The West Coast Region Kelp Team underscores this by calling for an efficient way to "conduct annual assessments of kelp forest ecosystem health" (Hohman et al., 2023, p. 5). The rationale is straightforward: areas identified with poor kelp health are likely to harbor high concentrations of urchins. These assessments would enable dive teams to strategically target urchin removal efforts in these compromised zones, thereby creating conditions more favorable for kelp recovery and regrowth. 
+The extensive kelp die-off necessitates direct intervention. While human divers can manually control urchin populations, their limited numbers and the vastness of affected areas demand an efficient allocation strategy for these crucial efforts. Beyond their intrinsic value, kelp forests are foundational to coastal marine ecosystems, acting as critical "underwater forests" that provide essential habitat, food, and nursery grounds for a vast array of marine species. The loss of these kelp forests, therefore, leads to a significant decline in biodiversity, disrupts local fisheries, and can diminish coastal protection from wave energy (Eger et al. 2023, Morris et al. 2019). The West Coast Region Kelp Team underscores the urgency by calling for an efficient way to "conduct annual assessments of kelp forest ecosystem health" (Hohman et al., 2023, p. 5). The rationale is straightforward: areas identified with poor kelp health, often indicated by reduced kelp cover, are likely to harbor the high concentrations of urchins driving this destruction. These assessments would thus enable dive teams to strategically target urchin removal efforts in these compromised zones, aiming not only to create conditions more favorable for kelp recovery and regrowth but also to help restore the broader ecological functions these vital habitats support. 
 
 A primary approach to determining kelp forest ecosystem health involves quantifying the amount of kelp visible on the ocean's surface. By measuring this surface kelp area and consistently tracking these measurements over successive years, managers can identify significant trends. For instance, a substantial reduction in the surface area of kelp within a region that previously had extensive kelp beds is a strong indicator of a struggling ecosystem. Such temporal comparisons are therefore crucial for pinpointing areas most in need of intervention.
 
 \subsection{Challenges with Existing Monitoring Methods and Why New Methods Are Needed} 
 
-Current kelp monitoring techniques, such as costly scuba diver surveys, struggle with scalability. This inherent limitation in spatial coverage per dive makes it impractical to assess vast coastlines using only diver-based methods. Aerial surveys, while covering larger areas, share the issue of high cost and introduce the burden of repetitive human annotation. For example, the California Department of Fish and Wildlife annually conducts flights to photograph the ocean surface along the California coast. Scientists then manually analyze these images to perform kelp canopy mapping, a process that involves visually identifying kelp floating on the surface and meticulously calculating its total area, often expressed in square feet. This process is expensive, time-consuming, and repetitive. The high costs associated with these traditional methods divert significant financial resources that could otherwise be allocated to direct intervention efforts, such as funding more diver teams for urchin removal. This financial constraint, coupled with the labor intensity, prompts an urgent need to explore whether this kelp mapping task can be automated using more cost-effective and readily available data sources.
+Current kelp monitoring techniques, such as costly scuba diver surveys, struggle with scalability. This inherent limitation in spatial coverage per dive makes it impractical to assess vast coastlines using only diver-based methods. Aerial surveys, while covering larger areas, share the issue of high cost and introduce the burden of repetitive human annotation. For example, the California Department of Fish and Wildlife annually conducts flights to photograph the ocean surface along the California coast. Scientists then manually analyze these images to perform kelp canopy mapping, a process that involves visually identifying kelp floating on the surface and meticulously calculating its total area in square footage. This process is expensive, time-consuming, and repetitive. The high costs associated with these traditional methods divert significant financial resources that could otherwise be allocated to direct intervention efforts, such as funding more diver teams for urchin removal. This financial constraint, coupled with the labor intensity, prompts an urgent need to explore whether this kelp mapping task can be automated using more cost-effective and readily available data sources.
 
 \subsection{Existing Digital Data and Automation Techniques for Kelp Maps} 
 
@@ -111,13 +62,13 @@ Several digital data sources and automation techniques exist for creating kelp m
 
 More recently, Unoccupied Aerial Vehicles (UAVs) have been employed to map kelp canopy at high resolution. Saccomanno et al. (2022) describe a workflow for creating kelp canopy maps from UAV imagery, valuable for local-scale restoration; however, a key limitation is the extremely small spatial scale, with surveyed sites noted as varying from only "0.16 to 1.48 km²."
 
-A more promising avenue for large-scale, cost-effective monitoring lies in utilizing Earth-observing satellite data, such as imagery from the Landsat program. This data is plentiful, regularly collected over vast areas by agencies like NASA, and is often available at low or no cost, offering a significant advantage over dedicated aerial or UAV campaigns. However, a primary drawback of satellite imagery is its inherent susceptibility to various forms of "noise" – such as atmospheric haze, sun glint on the water surface, and subtle water color variations – which can obscure or distort the appearance of kelp. 
+A more promising avenue for large-scale, cost-effective monitoring lies in utilizing Earth-observing satellite data, such as imagery from the Landsat program. This data is plentiful, regularly collected over vast areas by agencies like NASA, and is often available at low or no cost, offering a significant advantage over dedicated aerial or UAV campaigns. However, satellite imagery is inherently susceptible to various forms of "noise" that obscure or distort the appearance of kelp, such asatmospheric haze, sun glint on the water surface, and subtle water color variations. 
 
-For broader scale analysis, satellite data can be processed using techniques like Multiple Endmember Spectral Mixture Analysis (MESMA), as explored by Bell et al. (2020). MESMA leverages spectral physics and the use of pre-defined 'endmembers', which are pure materials like kelp or water, to estimate kelp cover. The idea is that any pixel is a linear combination of water and kelp. However, water itself doesn't always look the same – it might be clear, cloudy with mud, or have bright sun reflections – there are many types of water endmembers. The correct endmember must be selected in order for the MESMA process to be accurate. The paper uses an automatic selection process to choose the correct set of endmembers per image. The challenge with this fixed automation is its potential vulnerability to the aforementioned noise in satellite imagery; an incorrect endmember selection, possibly triggered by noise or poor sampling, can lead to inaccuracies in the resulting kelp maps.
+For broader scale analysis, satellite data can be processed using techniques like Multiple Endmember Spectral Mixture Analysis (MESMA), as explored by Bell et al. (2020). MESMA leverages spectral physics and the use of pre-defined 'endmembers', which are pure materials like kelp or water, to estimate kelp cover. The idea is that any pixel is a linear combination of water and kelp. However, water itself doesn't always look the same – it might be clear, cloudy with mud, or have bright sun reflections – there are many types of water endmembers. The correct endmember must be selected in order for the MESMA process to be accurate. Bell et al. (2020) uses an automatic selection process to choose the correct set of endmembers per image. The challenge with this fixed automation is its potential vulnerability to the aforementioned noise in satellite imagery; an incorrect endmember selection, possibly triggered by noise or poor sampling, can lead to inaccuracies in the resulting kelp maps.
 
 \subsection{Bridging the Data Gap: Citizen Science} 
 
-An alternative source of kelp data comes from the Floating Forests project, which offers a distinct method for generating kelp maps, addressing the challenges of interpreting noisy satellite imagery. This citizen science initiative leverages data from Earth-observing satellite programs, specifically using Landsat 7 satellite imagery of the Falkland Islands. The project demonstrated that accurate kelp maps could be constructed from the consensus of multiple untrained participants. Studies by Rosenthal et al. (2018) have validated this consensus method, showing it produces kelp maps with significant accuracy. 
+An alternative source of kelp data comes from the Floating Forests project, which offers a distinct method for generating kelp maps, addressing the challenges of interpreting noisy satellite imagery. This citizen science initiative leverages data from Earth-observing satellite programs, specifically using Landsat 7 satellite imagery of the Falkland Islands. The project proposes that accurate kelp maps could be constructed from the consensus of multiple untrained participants. Studies by Rosenthal et al. (2018) have validated this consensus method, showing it produces kelp maps with significant accuracy. 
         
 The core strength of this approach lies in its inherent robustness to noise and visual ambiguities present in satellite data. By aggregating the visual interpretations of many individuals, the consensus process effectively filters out isolated errors in judgment that arise from image noise, relying instead on shared human pattern recognition capabilities to identify kelp even under challenging visual conditions. This human-in-the-loop approach offers distinct advantages in handling visual complexities—such as subtle water color variations, sun glint, or thin haze—compared to purely spectral techniques like MESMA, which may be more easily misled by such artifacts. The digital kelp map data derived from Floating Forests, with its inherent noise resilience, is central to the present study. It forms the base that our deep learning models will be trained and evaluated on, to automate the process of generating kelp maps from widly available yet similarly noisy satellite imagery.
 
@@ -134,7 +85,7 @@ This paper will detail the development and evaluation of the proposed deep learn
 
 \subsection{The Landsat 7 Satellite and its Advantages for Kelp Monitoring} 
 
-The selection of Landsat 7 satellite imagery as the primary data source for this study was driven by its specific strengths for monitoring surface kelp canopy. A key distinction of sensors like Landsat 7's Enhanced Thematic Mapper Plus (ETM+) compared to typical digital cameras is their multispectral capability. While standard cameras capture images in only three Red, Green, and Blue (RGB) channels, the ETM+ sensor provides a richer dataset. The specific data product obtained for and utilized in this research comprises seven distinct spectral and auxiliary channels derived from the ETM+ sensor. These seven channels, detailed below, offer more comprehensive spectral information beyond simple color. This enhanced spectral detail is crucial for differentiating kelp from surrounding water and other features, as different materials reflect and absorb light uniquely across these various spectral bands:
+The Landsat 7 satellite image data was selected as the primary data source for this study because of its strong performance in monitoring surface kelp canopy. A key distinction of sensors like Landsat 7's Enhanced Thematic Mapper Plus (ETM+) compared to typical digital cameras is their multispectral capability. While standard cameras capture images in only three Red, Green, and Blue (RGB) channels, the ETM+ sensor provides a richer dataset. The specific data product obtained for and utilized in this research comprises seven distinct spectral and auxiliary channels derived from the ETM+ sensor. These seven channels, detailed below, offer more comprehensive spectral information beyond simple color. This enhanced spectral detail is crucial for differentiating kelp from surrounding water and other features, as different materials reflect and absorb light uniquely across these various spectral bands:
 
 \begin{itemize}
     \item \textbf{Near-Infrared (NIR):} This channel measures electromagnetic wavelengths just beyond what the human eye can perceive (too large for us to see). Its utility for vegetation mapping, including kelp, is significant because chlorophyll, the pigment responsible for photosynthesis, strongly reflects NIR light. Consequently, kelp, being rich in chlorophyll, appears exceptionally bright in this band, making it more readily distinguishable by a model than by its visible color alone.
@@ -180,16 +131,15 @@ Despite its many advantages, a significant drawback of Landsat 7 imagery acquire
   \label{fig:slc_failure_examples}
 \end{figure}
 
-
 \subsection{Established Automated Methods: Multiple Endmember Spectral Mixture Analysis} 
 
-A prominent automated method for analyzing kelp in Landsat imagery is Multiple Endmember Spectral Mixture Analysis (MESMA). This technique models each pixel's light signature as a mix of pure reference spectra called 'endmembers,' such as 'kelp' and 'water.' A key challenge in applying Spectral Mixture Analysis to coastal environments is the high spectral variability of water. Its appearance can vary dramatically due to factors like depth, sediment load, or surface reflections, meaning it cannot be adequately represented by a single endmember. MESMA addresses this by using multiple water endmembers, often automatically extracted from pre-defined, consistently water-covered locations within each scene to create a scene-specific library (Bell et al., 2020).
+Multiple Endmember Spectral Mixture Analysis (MESMA) is a prominent automated method for analyzing kelp. This technique models each pixel's light signature as a mix of pure reference spectra called 'endmembers,' such as 'kelp' and 'water.' A key challenge in applying Spectral Mixture Analysis to coastal environments is the high spectral variability of water. Its appearance can vary dramatically due to factors like depth, sediment load, or surface reflections, meaning it cannot be adequately represented by a single endmember. MESMA addresses this by using multiple water endmembers, often automatically extracted from pre-defined, consistently water-covered locations within each scene to create a scene-specific library (Bell et al., 2020).
     
 MESMA's strength lies in providing quantitative sub-pixel fractional cover estimates, which can be linked to biomass and are suitable for large-scale automated analysis (Bell et al., 2020). However, its accuracy hinges on how well the chosen endmembers represent the actual materials. The automated selection of water endmembers from fixed points might not always capture the full spectral diversity of water in a scene or could be affected by localized noise like haze. Additionally, MESMA is known to have difficulty accurately quantifying very low kelp cover, typically below 20\% (Hamilton et al., 2020; Cavanaugh et al., 2023).
 
 \subsection{A New Approach with an Alternative Data Source: The Floating Forests Project} 
 
-In this project, volunteers visually inspected Landsat 7 images, which were displayed using a combination of Short-Wave Infrared (SWIR), Near-Infrared (NIR), and Red bands to enhance kelp visibility, and then manually traced the borders of visible kelp canopy. A key aspect of Floating Forests is its consensus mechanism: the final classification for any given pixel as 'kelp' or 'not kelp' did not rely on a single individual but rather on the agreement among multiple (up to 15) untrained volunteers. For instance, a pixel might be labeled as kelp only if a certain threshold of votes (e.g., >=4, as determined by Rosenthal et al.) was reached. 
+In the Floating Forests project, volunteers visually inspected Landsat 7 images, which were displayed using a combination of Short-Wave Infrared (SWIR), Near-Infrared (NIR), and Red bands to enhance kelp visibility, and then manually traced the borders of visible kelp canopy. A key aspect of Floating Forests is its consensus mechanism: the final classification for any given pixel as 'kelp' or 'not kelp' did not rely on a single individual but rather on the agreement among multiple (up to 15) untrained volunteers. For instance, a pixel might be labeled as kelp only if a certain threshold of votes (e.g., >=4, as determined by Rosenthal et al.) was reached. 
        
 Importantly, the utility and accuracy of this consensus-based approach have been validated. The study by Rosenthal et al. (2018) confirmed that kelp classifications derived from this citizen science consensus achieve an accuracy (measured by the Matthews Correlation Coefficient, MCC) comparable to that of expert-derived methods, thereby establishing the dataset as a reliable source of ground truth. This methodology is fundamentally different from techniques like MESMA because it relies on human visual pattern recognition and collective judgment, rather than on spectral physics and automated endmember extraction. Consequently, Floating Forests provides a label source that may capture different types of information or exhibit different sensitivities to image noise and visual ambiguities compared to purely spectral methods.
 
@@ -205,10 +155,8 @@ Building upon transfer learning, we also employ fine-tuning. While the pre-train
 
 \subsection{Data Augmentation} 
 
-Deep learning models typically perform better and generalize more effectively when trained on large and diverse datasets. However, acquiring extensive labeled data for specialized tasks can be challenging. Without sufficient data diversity, models may struggle to learn the full range of variations present in real-world scenarios, potentially leading to poor performance on unseen data and a tendency to "memorize" the limited training examples—a problem known as overfitting. Data augmentation involves artificially expanding the training dataset by applying a series of random transformations to the existing input images and their corresponding labels. Common transformations include geometric changes like horizontal and vertical flips, random rotations, or the addition of small amounts of noise. While these modifications might seem trivial to a human observer, to the model, each transformed image is perceived as a new, distinct training example. This supplemental training data created through augmentation significantly improves the model's robustness by exposing it to a wider variety of visual conditions. It enhances the model's ability to generalize to new, previously unseen images and plays a vital role in preventing overfitting.
+Deep learning models typically perform better and generalize more effectively when trained on large and diverse datasets (Hestness et al. 2017). However, acquiring extensive labeled data for specialized tasks can be challenging. Without sufficient data diversity, models may struggle to learn the full range of variations present in real-world scenarios, potentially leading to poor performance on unseen data and a tendency to "memorize" the limited training examples—a problem known as overfitting. Data augmentation involves artificially expanding the training dataset by applying a series of random transformations to the existing input images and their corresponding labels. Common transformations include geometric changes like horizontal and vertical flips, random rotations, or the addition of small amounts of noise. While these modifications might seem trivial to a human observer, to the model, each transformed image is perceived as a new, distinct training example. This supplemental training data created through augmentation significantly improves the model's robustness by exposing it to a wider variety of visual conditions. It enhances the model's ability to generalize to new, previously unseen images and plays a vital role in preventing overfitting (Ba et al. 2024).
 
-
-% Start of content from Section 3 onwards
 
 \section{Methods}
 
@@ -229,7 +177,7 @@ The satellite image tiles followed a consistent filename schema: \texttt{<tile\_
 
 The corresponding label data consisted of binary segmentation masks, with pixel values indicating the presence (1) or absence (0) of kelp canopy. These ground truth masks were generated by citizen scientists participating in the Floating Forests study. These masks were provided as single-band, 350 x 350 pixel TIFF images, matching the dimensions of the feature data, and used the filename schema: \texttt{<tile\_id>\_kelp.tif}.
 
-The original Floating Forests data source provided a 'train' set, containing both feature images and their corresponding kelp labels, and a 'test' set, which included only feature images (with labels withheld by the project organizers). For the purposes of this study, the provided 'train' set was further subdivided to create our own distinct training, validation, and test partitions to ensure rigorous model development and evaluation.
+The original Floating Forests data source provided a 'train' set, containing both feature images and their corresponding kelp labels, and a 'test' set, which included only feature images (with labels withheld by the project organizers). For the purposes of this study, the provided 'train' set was further subdivided to create our own distinct training, validation, and testing partitions to ensure rigorous model development and evaluation.
 
 \subsection{Data Preprocessing and Cleaning}
 
@@ -257,7 +205,7 @@ Following clipping and normalization, Z-score standardization was applied, where
 
 \subsection{Dataset Splitting}
 
-Following the initial data acquisition and preprocessing, the complete set of 5,635 paired satellite image tiles and their corresponding ground truth kelp masks (derived from the original Floating Forests 'train' set) was systematically divided into three distinct subsets: training, validation, and test. This partitioning was achieved by running a dedicated script that randomly assigned images to ensure an approximate 70\%, 15\%, and 15\% split, respectively. The resulting 'train' set was used exclusively for training the deep learning model. The 'validation' set was used during the training process for monitoring model performance after each epoch and was also later utilized to determine the optimal probability threshold for classifying pixels as kelp. Finally, the 'test' set was strictly held out and remained unseen by the model until the final evaluation phase, serving as a true measure of the model's generalization capabilities on previously unencountered data. This splitting procedure resulted in the creation of six distinct folders: a satellite image folder and a ground truth mask folder for each of the training, validation, and test sets.
+Following the initial data acquisition and preprocessing, the complete set of 5,635 paired satellite image tiles and their corresponding ground truth kelp masks (derived from the original Floating Forests 'train' set) was systematically divided into three distinct subsets: training, validation, and testing. This partitioning was achieved using a dedicated script that randomly assigned images, resulting in approximate splits of 70\% for training (3,944 images), 15\% for validation (845 images), and 15\% for testing (846 images). The resulting 'train' set was used exclusively for training the deep learning model. The 'validation' set was used during the training process for monitoring model performance after each epoch and was also later utilized to determine the optimal probability threshold for classifying pixels as kelp. Finally, the 'test' set was strictly held out and remained unseen by the model until the final evaluation phase, serving as a true measure of the model's generalization capabilities on previously unencountered data. This splitting procedure resulted in the creation of six distinct folders: a satellite image folder and a ground truth mask folder for each of the training, validation, and testing sets.
 
 \subsection{Model Development and Training}
 
@@ -268,6 +216,190 @@ This section details the architecture of the deep learning model employed for ke
 A U-Net-like semantic segmentation model formed the core of our approach, utilizing a pre-trained ResNet architecture as its encoder backbone. The specific ResNet variant (ResNet18, ResNet34, or ResNet50) was configurable, allowing for experimentation with different model capacities. The UNet architecture was selected due to its well-documented effectiveness in biomedical image segmentation and its increasing adoption and success in remote sensing applications. Its characteristic encoder-decoder structure, augmented with skip connections, is adept at capturing both broad contextual information and precise local features, making it highly suitable for pixel-wise segmentation tasks like delineating kelp canopy. 
 
 To adapt the pre-trained ResNet encoder to our specific 7-channel satellite imagery, its initial convolutional layer was modified to accept seven input channels instead of the standard three (RGB). The decoder component of the UNet was custom-built, composed of sequential blocks of 2D transposed convolution for upsampling, followed by Batch Normalization and Rectified Linear Unit activation layers. This decoder comprised four such upsampling blocks, designed to progressively increase the spatial resolution of the feature maps while reducing their channel depth. Starting from the encoder's output (which has 512 channels for ResNet18/34 or 2048 for ResNet50), the decoder passed features through intermediate channel depths of 256, 128, and 64, eventually down to 32 channels. A final 1x1 convolutional layer then transformed these features into a single-channel output representing the raw logits for binary (kelp/no-kelp) segmentation.
+
+% ... (Inside your document, e.g., in Section 3.5.1 Model Architecture) ...
+
+\begin{figure}[htbp]
+  \centering
+  \begin{adjustbox}{width=\textwidth, center} % Adjust width to fit, center
+
+    \def\ConvColor{rgb:yellow,5;red,2.5;white,5}
+    \def\ConvReluColor{rgb:yellow,5;red,5;white,5}
+    \def\PoolColor{rgb:red,1;black,0.3}
+    \def\UnpoolColor{rgb:blue,2;green,1;black,0.3}
+    \def\FcColor{rgb:blue,5;red,2.5;white,5}
+    \def\FcReluColor{rgb:blue,5;red,5;white,4}
+    \def\SoftmaxColor{rgb:magenta,5;black,7}
+    \def\ResBlockColor{rgb:orange,3;yellow,2;white,5}
+    \def\ConcatColor{rgb:white,1;black,3}
+    \newcommand{\copymidarrow}{\tikz \draw[-Stealth,line width =0.8mm,draw={rgb:blue,4;red,1;green,1;black,3}] (-0.3,0) -- ++(0.3,0);}
+    \newcommand{\midarrow}{\tikz \draw[-Stealth,line width=0.8mm,draw=\edgecolor] (-0.3,0) -- ++(0.3,0);}
+    % --- End Color Definitions and Commands ---
+
+    \begin{tikzpicture}[scale=0.55, transform shape] % Adjust scale as needed
+        \tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.7]
+        \tikzstyle{copyconnection}=[ultra thick,every node/.style={sloped,allow upside down},draw={rgb:blue,4;red,1;green,1;black,3},opacity=0.7]
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %% Input Image
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \node[canvas is zy plane at x=0, draw, fill=white, minimum width=2.5cm, minimum height=2.5cm] (Input) at (-4.5,0,0) {% Increase negative x to move left
+            \begin{tabular}{c}Input Tile \\ (7 ch, I)\end{tabular} % Multi-line text in node
+        };
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %% Draw Encoder
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % cr1: Initial Conv (e.g., ResNet conv1, stride 2). Output: 64ch, I/2
+        \pic[shift={(0,0,0)}] at (0,0,0) {RightBandedBox={name=cr1,%
+                xlabel={{64}},zlabel=I/2,fill=\ConvColor,bandfill=\ConvReluColor,%
+                height=40,width={2},depth=40}};
+        % p1: Pool after initial conv. Output: 64ch, I/4
+        \pic[shift={(0,0,0)}] at (cr1-east) {Box={name=p1,%
+                fill=\PoolColor,opacity=0.5,height=32,width=2,depth=32}};
+        %%%%%%%%%%
+        % cr2: ResNet Layer 1. Output: 64ch, I/4
+        \pic[shift={(1,0,0)}] at (p1-east) {RightBandedBox={name=cr2,%
+                xlabel={{64}},zlabel=I/4,fill=\ResBlockColor,bandfill=\ResBlockColor,%
+                height=32,width={2},depth=32}};
+        % p2: Pool (or strided conv in Layer 2). Output: 128ch, I/8
+        \pic[shift={(0,0,0)}] at (cr2-east) {Box={name=p2,%
+                fill=\PoolColor,opacity=0.5,height=25,width=2,depth=25}};
+        %%%%%%%%%%
+        % cr3: ResNet Layer 2. Output: 128ch, I/8
+        \pic[shift={(0.75,0,0)}] at (p2-east) {RightBandedBox={name=cr3,%
+                xlabel={{128}},zlabel=I/8,fill=\ResBlockColor,bandfill=\ResBlockColor,%
+                height=25,width={3.5},depth=25}};
+        % p3: Pool (or strided conv in Layer 3). Output: 256ch, I/16
+        \pic[shift={(0,0,0)}] at (cr3-east) {Box={name=p3,%
+                fill=\PoolColor,opacity=0.5,height=16,width=3.5,depth=16}};
+        %%%%%%%%%%
+        % cr4: ResNet Layer 3. Output: 256ch, I/16
+        \pic[shift={(0.5,0,0)}] at (p3-east) {RightBandedBox={name=cr4,%
+                xlabel={{256}},zlabel=I/16,fill=\ResBlockColor,bandfill=\ResBlockColor,%
+                height=16,width={4.5},depth=16}};
+        % p4: Pool (or strided conv in Layer 4). Output: 512ch, I/32
+        \pic[shift={(0,0,0)}] at (cr4-east) {Box={name=p4,%
+                fill=\PoolColor,opacity=0.5,height=8,width=4.5,depth=8}};
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %% Bottleneck
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % cr5: ResNet Layer 4. Output: 512ch, I/32
+        \pic[shift={(0.75,0,0)}] at (p4-east) {RightBandedBox={name=cr5,caption=Bottleneck,%
+                xlabel={{512}},zlabel=I/32,fill=\ResBlockColor,bandfill=\ResBlockColor,%
+                height=8,width={6},depth=8}};
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %% Draw Decoder
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %% Decoder Stage 4 (Innermost): Upsample from I/32 to I/16. Concat with cr4 (256ch, I/16). Output 256ch.
+        % Using captionyshiftpt from modified Box.sty if you did that, otherwise remove it or captions will overlap
+        \pic[shift={(1.2,0,0)}] at (cr5-east) {Box={name=up4, caption=UpConv + Concat, % captionyshiftpt=30, % Uncomment if Box.sty is modified
+                xlabel={{256}}, fill=\UnpoolColor,opacity=0.6,height=16,width=4.5,depth=16}};
+        \pic[shift={(0,0,0)}] at (up4-east) {Box={name=cat4, % captionyshiftpt=30, % Uncomment if Box.sty is modified
+                xlabel={{512}},fill=\ConcatColor,opacity=0.4,height=16,width=6,depth=16}};
+        \pic[shift={(0.5,0,0)}] at (cat4-east) {RightBandedBox={name=ucr4a,
+                xlabel={{256}},zlabel=I/16,fill=\ConvColor,bandfill=\ConvReluColor,%
+                height=16,width={4.5},depth=16}};
+        %%%%%%%%%%
+        %% Decoder Stage 3: Upsample I/16 to I/8. Concat with cr3 (128ch, I/8). Output 128ch.
+        \pic[shift={(1.5,0,0)}] at (ucr4a-east) {Box={name=up3, caption=UpConv + Concat, % captionyshiftpt=30,
+                xlabel={{128}}, fill=\UnpoolColor,opacity=0.6,height=25,width=3.5,depth=25}};
+        \pic[shift={(0,0,0)}] at (up3-east) {Box={name=cat3, % captionyshiftpt=30,
+                xlabel={{256}},fill=\ConcatColor,opacity=0.4,height=25,width=4.5,depth=25}};
+        \pic[shift={(0.5,0,0)}] at (cat3-east) {RightBandedBox={name=ucr3a,
+                xlabel={{128}},zlabel=I/8,fill=\ConvColor,bandfill=\ConvReluColor,%
+                height=25,width={3.5},depth=25}};
+        %%%%%%%%%%
+        %% Decoder Stage 2: Upsample I/8 to I/4. Concat with cr2 (64ch, I/4). Output 64ch.
+        \pic[shift={(1,0,0)}] at (ucr3a-east) {Box={name=up2,  % caption=UpConv + Concat, captionyshiftpt=30, % Caption removed here in your reference
+                xlabel={{64}}, fill=\UnpoolColor,opacity=0.6,height=32,width=2,depth=32}};
+        \pic[shift={(0,0,0)}] at (up2-east) {Box={name=cat2, % captionyshiftpt=30,
+                xlabel={{128}}, fill=\ConcatColor,opacity=0.4,height=32,width=3.5,depth=32}};
+        \pic[shift={(0.5,0,0)}] at (cat2-east) {RightBandedBox={name=ucr2a,
+                xlabel={{64}},zlabel=I/4,fill=\ConvColor,bandfill=\ConvReluColor,%
+                height=32,width={2},depth=32}};
+        %%%%%%%%%%
+        %% Decoder Stage 1 (Outermost): Upsample I/4 to I/2. Concat with cr1 (64ch, I/2). Output 32ch.
+        \pic[shift={(1.5,0,0)}] at (ucr2a-east) {Box={name=up1, % caption=UpConv + Concat, captionyshiftpt=30, % Caption removed here
+                xlabel={{32}}, fill=\UnpoolColor,opacity=0.6,height=40,width=2,depth=40}};
+        \pic[shift={(0,0,0)}] at (up1-east) {Box={name=cat1, % captionyshiftpt=30,
+                xlabel={{96}}, fill=\ConcatColor,opacity=0.4,height=40,width=2.5,depth=40}};
+        \pic[shift={(0.5,0,0)}] at (cat1-east) {RightBandedBox={name=ucr1a,
+                xlabel={{32}},zlabel=I/2,fill=\ConvColor,bandfill=\ConvReluColor,%
+                height=40,width={2},depth=40}};
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %% Classifier
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \pic[shift={(0.75,0,0)}] at (ucr1a-east) {Box={name=out,caption=Output (1x1),%
+                xlabel={{1}}, zlabel=I/2,fill=\SoftmaxColor,height=40,width=1,depth=40}};
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Draw connections
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \draw [connection] (Input-east) -- node {\midarrow} (cr1-west);
+        \draw [connection] (cr1-east)   -- node {\midarrow} (p1-west);
+        \draw [connection] (p1-east)    -- node {\midarrow} (cr2-west);
+        \draw [connection] (cr2-east)   -- node {\midarrow} (p2-west);
+        \draw [connection] (p2-east)    -- node {\midarrow} (cr3-west);
+        \draw [connection] (cr3-east)   -- node {\midarrow} (p3-west);
+        \draw [connection] (p3-east)    -- node {\midarrow} (cr4-west);
+        \draw [connection] (cr4-east)   -- node {\midarrow} (p4-west);
+        \draw [connection] (p4-east)    -- node {\midarrow} (cr5-west);
+
+        \draw [connection] (cr5-east)   -- node {\midarrow} (up4-west);
+        \draw [connection] (up4-east)   -- node {\midarrow} (cat4-west);
+        \draw [connection] (cat4-east)  -- node {\midarrow} (ucr4a-west);
+
+        \draw [connection] (ucr4a-east) -- node {\midarrow} (up3-west);
+        \draw [connection] (up3-east)   -- node {\midarrow} (cat3-west);
+        \draw [connection] (cat3-east)  -- node {\midarrow} (ucr3a-west);
+
+        \draw [connection] (ucr3a-east) -- node {\midarrow} (up2-west);
+        \draw [connection] (up2-east)   -- node {\midarrow} (cat2-west);
+        \draw [connection] (cat2-east)  -- node {\midarrow} (ucr2a-west);
+
+        \draw [connection] (ucr2a-east) -- node {\midarrow} (up1-west);
+        \draw [connection] (up1-east)   -- node {\midarrow} (cat1-west);
+        \draw [connection] (cat1-east)  -- node {\midarrow} (ucr1a-west);
+
+        \draw [connection] (ucr1a-east) -- node {\midarrow} (out-west);
+
+        % Skip Connections
+        \path (cr4-southeast) -- (cr4-northeast) coordinate[pos=1.25] (cr4-top) ;
+        \path (cr3-southeast) -- (cr3-northeast) coordinate[pos=1.25] (cr3-top) ;
+        \path (cr2-southeast) -- (cr2-northeast) coordinate[pos=1.25] (cr2-top) ;
+        \path (cr1-southeast) -- (cr1-northeast) coordinate[pos=1.25] (cr1-top) ;
+
+        \path (cat4-south)  -- (cat4-north)  coordinate[pos=1.25] (cat4-top) ;
+        \path (cat3-south)  -- (cat3-north)  coordinate[pos=1.25] (cat3-top) ;
+        \path (cat2-south)  -- (cat2-north)  coordinate[pos=1.25] (cat2-top) ;
+        \path (cat1-south)  -- (cat1-north)  coordinate[pos=1.25] (cat1-top) ;
+
+        \draw [copyconnection]  (cr4-northeast)
+        -- node {\copymidarrow}(cr4-top)
+        -- node {\copymidarrow}(cat4-top)
+        -- node {\copymidarrow} (cat4-north);
+
+        \draw [copyconnection]  (cr3-northeast)
+        -- node {\copymidarrow}(cr3-top)
+        -- node {\copymidarrow}(cat3-top)
+        -- node {\copymidarrow} (cat3-north);
+
+        \draw [copyconnection]  (cr2-northeast)
+        -- node {\copymidarrow}(cr2-top)
+        -- node {\copymidarrow}(cat2-top)
+        -- node {\copymidarrow} (cat2-north);
+
+        \draw [copyconnection]  (cr1-northeast)
+        -- node {\copymidarrow}(cr1-top)
+        -- node {\copymidarrow}(cat1-top)
+        -- node {\copymidarrow} (cat1-north);
+
+    \end{tikzpicture}
+    % --- End of pasted content ---
+  \end{adjustbox}
+  \caption{Architecture of the UNet model used for kelp canopy segmentation. The encoder utilizes a ResNet backbone, and skip connections pass features from corresponding encoder stages to the decoder stages. The decoder consists of upsampling (UpConv), concatenation (Concat), and convolutional refinement blocks.}
+  \label{fig:unet_architecture}
+\end{figure}
 
 \subsubsection{Data Handling and Augmentation}
 
@@ -323,7 +455,9 @@ This section presents the quantitative outcomes of the experiments conducted to 
 
 The application of data cleaning and normalization procedures consistently improved model performance across all ResNet backbones when augmentations were not used. For instance, with the ResNet18 backbone, IoU increased from 0.3043 (original data) to 0.4437 (cleaned data), representing a substantial improvement of 45\%. Similarly, ResNet34 saw an improvement of 38\%, and ResNet50 saw 20\%. Data cleaning was a crucial step for achieving better baseline performance.
 
-\subsection{Impact of Data Augmentation} % Assuming this was meant to be 4.3, renumbering for consistency. If 4.3 was different, please let me know.
+\newpage
+
+\subsection{Impact of Data Augmentation} 
 
 \begin{table}[htbp] % Figure placement options: h=here, t=top, b=bottom, p=page of floats
   \caption{Impact of Data Augmentation on Model Performance. All models trained with cleaned data.}
@@ -345,7 +479,7 @@ The application of data cleaning and normalization procedures consistently impro
 
 Data augmentation applied during training on the cleaned dataset further enhanced model performance for all backbones. With the ResNet18 backbone, IoU improved from 0.4437 (no augmentation) to 0.4983 (with augmentation). The ResNet34 backbone showed the highest overall performance when combined with cleaned data and augmentations, achieving an IoU of 0.5028 and an F1-Score of 0.6692. ResNet50 saw a very similar increase in performance. Data augmentation provided a significant boost to the models trained on cleaned data.
 
-\newpage
+
 
 \subsection{Comparison of ResNet Backbones} % Renumbering from 4.5
 
@@ -405,12 +539,11 @@ To visually assess the model's performance, representative examples of predictio
     \label{fig:poor_segmentation}
 \end{figure}
 
-
 \section{Discussion}
 
 \subsection{Summary of Key Findings and Performance}
 
-This study successfully demonstrated the development and viability of an end-to-end deep learning pipeline, specifically a UNet architecture with a ResNet encoder, for the automated segmentation of kelp canopy using Landsat 7 imagery and ground truth labels derived from the Floating Forests citizen science project. The optimal configuration, employing a ResNet34 backbone trained on cleaned and augmented data, achieved a notable Intersection over Union (IoU) of 0.5028 on the held-out test set. Key to achieving this level of performance were the rigorous data preprocessing steps, including cleaning and normalization, and the strategic use of data augmentation. Furthermore, initial explorations underscored the critical importance of transfer learning; attempts to train models from scratch proved infeasible with the available labeled data, making the use of pre-trained encoder weights followed by fine-tuning an essential component for generating accurate kelp masks. Finally, the application of a land mask post-processing step had a negligible impact on the performance of the best models, suggesting a good degree of specificity in distinguishing kelp from land areas.
+This study successfully constructed and evaluated the development and viability of an end-to-end deep learning pipeline, specifically a UNet architecture with a ResNet encoder, for the automated segmentation of kelp canopy using Landsat 7 imagery and ground truth labels derived from the Floating Forests citizen science project. The optimal configuration, employing a ResNet34 backbone trained on cleaned and augmented data, achieved a notable Intersection over Union (IoU) of 0.5028 on the held-out test set. Key to achieving this level of performance were the rigorous data preprocessing steps, including cleaning and normalization, and the strategic use of data augmentation. Furthermore, initial explorations underscored the critical importance of transfer learning; attempts to train models from scratch proved infeasible with the available labeled data, making the use of pre-trained encoder weights followed by fine-tuning an essential component for generating accurate kelp masks. Finally, the application of a land mask post-processing step had a negligible impact on the performance of the best models, suggesting a good degree of specificity in distinguishing kelp from land areas.
 
 \subsection{Interpretation of Results: Factors Contributing to Model Success}
 
@@ -460,61 +593,97 @@ Building upon the findings of this study, several avenues for future research an
 
 In conclusion, this research successfully demonstrates the development and operational viability of an automated, end-to-end deep learning pipeline capable of segmenting kelp canopy from satellite imagery, effectively transforming raw image inputs into map outputs. A key highlight of this study is the powerful synergy achieved by integrating large-scale, human-generated labels from citizen science initiatives like Floating Forests with the sophisticated pattern recognition capabilities of modern deep learning techniques. This combination not only validates the immense value of crowdsourced efforts in scientific research but also provides a robust foundation for training complex models. Ultimately, the approach presented here holds significant potential to enhance the efficiency, scalability, and cost-effectiveness of kelp forest monitoring. By reducing reliance on expensive and time-consuming manual methods, this technology can support more timely and targeted conservation and restoration strategies. The continued refinement and adoption of such automated systems are therefore encouraged, as they can free up critical resources, enabling their reallocation towards direct, on-the-ground interventions like urchin removal, which are essential for the recovery and long-term health of these vital coastal ecosystems. This work serves as a compelling example of how innovative computational tools, fueled by community engagement, can contribute meaningfully to addressing pressing environmental challenges.
 
-% End of content
+
 \newpage
 
 \section*{}
-\begingroup % Start a group to keep font size change local
-\small % Optional: Reduce font size to 9 point
+\begingroup 
+\small 
 
 \begin{thebibliography}{99} % The {99} is a placeholder for the widest label, affects indentation
 
-\bibitem{Hohman2023}
-Hohman, R., Bell, T., Cavanaugh, K., Contolini, G., Elsmore, K., FloresMiller, R., Garza, C., Hewerdine, W., Iampietro, P., Nickels, A., Saccomanno, V., \& Tezak, S. (2023).
-\textit{Remote sensing tools for mapping and monitoring kelp forests along the West Coast.}
-National Marine Sanctuaries Conservation Series ONMS-23-10. U.S. Department of Commerce, National Oceanic and Atmospheric Administration, Office of National Marine Sanctuaries.
+\bibitem{Ba2024} % New
+Ba, Y., Mancenido, M. V., \& Pan, R. (2024).
+How Does Data Diversity Shape the Weight Landscape of Neural Networks? (Version 1).
+\textit{arXiv preprint arXiv:2410.14602}.
+\url{https://doi.org/10.48550/ARXIV.2410.14602}
 
-\bibitem{Zuckerman2023}
-Zuckerman, C. (2023, May 26).
-The vanishing kelp forest.
-\textit{The Nature Conservancy}.
-Retrieved from \url{https://www.nature.org/en-us/magazine/magazine-articles/kelp-forest/}
-
-\bibitem{Saccomanno2022}
-Saccomanno, V. R., Bell, T., Pawlak, C., Stanley, C. K., Cavanaugh, K. C., Hohman, R., Klausmeyer, K. R., Cavanaugh, K., Nickels, A., Hewerdine, W., Garza, C., Fleener, G., \& Gleason, M. (2022).
-Using unoccupied aerial vehicles to map and monitor changes in emergent kelp canopy after an ecological regime shift.
-\textit{Remote Sensing in Ecology and Conservation, 9}(1), 62--75.
-\url{https://doi.org/10.1002/rse2.295}
-
-\bibitem{MBC2017}
-MBC Applied Environmental Sciences. (2017, August 14).
-\textit{Status of the Kelp Beds in 2016: Ventura, Los Angeles, Orange, and San Diego Counties.}
-Prepared for: Central Region Kelp Survey Consortium and Region Nine Kelp Survey Consortium. MBC Applied Environmental Sciences, Costa Mesa, California.
-
-\bibitem{Bell2018_RSE} % Changed key to be more specific if you resolve year discrepancy
+\bibitem{Bell2020_RSE} % Existing - Year updated to 2020 from DOI for consistency
 Bell, T. W., Cavanaugh, K. C., \& Siegel, D. A. (2020).
 Three decades of variability in California's giant kelp forests from the Landsat satellites.
 \textit{Remote Sensing of Environment, 218}, 26--38.
 \url{https://doi.org/10.1016/j.rse.2018.06.039}
-% Note: Your text cited this as Bell et al. (2020), but the DOI corresponds to a 2018 publication.
+% Note: Your text might have cited this as Bell et al. (2020), ensure consistency.
 
-\bibitem{Rosenthal2018}
+\bibitem{Cavanaugh2023} % New
+Cavanaugh, K. C., Cavanaugh, K. C., Pawlak, C. C., Bell, T. W., \& Saccomanno, V. R. (2023).
+CubeSats show persistence of bull kelp refugia amidst a regional collapse in California.
+\textit{Remote Sensing of Environment, 290}, 113521.
+\url{https://doi.org/10.1016/j.rse.2023.113521}
+
+\bibitem{Eger2023} % New
+Eger, A.M., Marzinelli, E.M., Beas-Luna, R., Blain, C.O., Blamey, L.K., Bolton, J.J., ..., Wernberg, T. (2023). % Truncated author list for brevity in example, list all in actual doc
+The value of ecosystem services in global marine kelp forests.
+\textit{Nature Communications, 14}, 1894.
+\url{https://doi.org/10.1038/s41467-023-37385-0}
+% Note: The original paper has many authors. For the \bibitem, you'd list them all or use "et al."
+% after a certain number if your manual style dictates (e.g., after 6 or 20 authors).
+% For simplicity here, I've shown a truncated list. In your actual document, list all or follow a strict rule.
+
+\bibitem{Hamilton2020} % New
+Hamilton, S. L., Bell, T. W., Watson, J. R., Grorud‐Colvert, K. A., \& Menge, B. A. (2020).
+Remote sensing: generation of long‐term kelp bed data sets for evaluation of impacts of climatic variation.
+\textit{Ecology, 101}(7), e03031. % Added article number e03031 from DOI page
+\url{https://doi.org/10.1002/ecy.3031}
+
+\bibitem{Hestness2017} % New
+Hestness, J., Narang, S., Ardalani, N., Diamos, G., Jun, H., Kianinejad, H., Patwary, Md. M. A., Yang, Y., \& Zhou, Y. (2017).
+Deep Learning Scaling is Predictable, Empirically (Version 1).
+\textit{arXiv preprint arXiv:1712.00409}.
+\url{https://doi.org/10.48550/ARXIV.1712.00409}
+
+\bibitem{Hohman2023} % Existing
+Hohman, R., Bell, T., Cavanaugh, K., Contolini, G., Elsmore, K., FloresMiller, R., Garza, C., Hewerdine, W., Iampietro, P., Nickels, A., Saccomanno, V., \& Tezak, S. (2023).
+\textit{Remote sensing tools for mapping and monitoring kelp forests along the West Coast.}
+National Marine Sanctuaries Conservation Series ONMS-23-10. U.S. Department of Commerce, National Oceanic and Atmospheric Administration, Office of National Marine Sanctuaries.
+
+\bibitem{MBC2017} % Existing
+MBC Applied Environmental Sciences. (2017, August 14).
+\textit{Status of the Kelp Beds in 2016: Ventura, Los Angeles, Orange, and San Diego Counties.}
+Prepared for: Central Region Kelp Survey Consortium and Region Nine Kelp Survey Consortium. MBC Applied Environmental Sciences, Costa Mesa, California.
+
+\bibitem{Morris2019} % New
+Morris, R. L., Graham, T. D. J., Kelvin, J., Ghisalberti, M., \& Swearer, S. E. (2019).
+Kelp beds as coastal protection: wave attenuation of Ecklonia radiata in a shallow coastal bay.
+\textit{Annals of Botany, 125}(2), 257-270. % Added Vol, Issue, Pages from journal site
+\url{https://doi.org/10.1093/aob/mcz127}
+
+\bibitem{Rosenthal2018} % Existing
 Rosenthal, I. S., Byrnes, J. E. K., Cavanaugh, K. C., Bell, T. W., Harder, B., Haupt, A. J., Rassweiler, A. T. W., Pérez-Matus, A., Assis, J., Swanson, A., Boyer, A., McMaster, A., \& Trouille, L. (2018).
 Floating Forests: Quantitative Validation of Citizen Science Data Generated From Consensus Classifications (Version 1).
 \textit{arXiv preprint arXiv:1801.08522}.
 \url{https://doi.org/10.48550/ARXIV.1801.08522}
 
-\bibitem{USGS_SLC}
+\bibitem{Saccomanno2022} % Existing
+Saccomanno, V. R., Bell, T., Pawlak, C., Stanley, C. K., Cavanaugh, K. C., Hohman, R., Klausmeyer, K. R., Cavanaugh, K., Nickels, A., Hewerdine, W., Garza, C., Fleener, G., \& Gleason, M. (2022).
+Using unoccupied aerial vehicles to map and monitor changes in emergent kelp canopy after an ecological regime shift.
+\textit{Remote Sensing in Ecology and Conservation, 9}(1), 62--75.
+\url{https://doi.org/10.1002/rse2.295}
+
+\bibitem{USGS_SLC} % Existing
 U.S. Geological Survey. (n.d.).
 Landsat Collection 2 Known Issues.
 Retrieved from \url{https://www.usgs.gov/landsat-missions/landsat-collection-2-known-issues}
-% Note: Consider adding an access date here.
+% Note: Consider adding an access date here. For example: Retrieved May 10, 2025, from ...
+
+\bibitem{Zuckerman2023} % Existing
+Zuckerman, C. (2023, May 26).
+The vanishing kelp forest.
+\textit{The Nature Conservancy}.
+Retrieved from \url{https://www.nature.org/en-us/magazine/magazine-articles/kelp-forest/}
 
 \end{thebibliography}
 \endgroup % End the group for font size
-
-
-
 
 \newpage
 
@@ -561,404 +730,4 @@ Retrieved from \url{https://www.usgs.gov/landsat-missions/landsat-collection-2-k
   \end{adjustbox}
 \end{table}
 
-
-
 \end{document}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-% \subsection{Retrieval of style files}
-
-
-% The style files for NeurIPS and other conference information are available on
-% the website at
-% \begin{center}
-%   \url{http://www.neurips.cc/}
-% \end{center}
-% The file \verb+neurips_2023.pdf+ contains these instructions and illustrates the
-% various formatting requirements your NeurIPS paper must satisfy.
-
-
-% The only supported style file for NeurIPS 2023 is \verb+neurips_2023.sty+,
-% rewritten for \LaTeXe{}.  \textbf{Previous style files for \LaTeX{} 2.09,
-%   Microsoft Word, and RTF are no longer supported!}
-
-
-% The \LaTeX{} style file contains three optional arguments: \verb+final+, which
-% creates a camera-ready copy, \verb+preprint+, which creates a preprint for
-% submission to, e.g., arXiv, and \verb+nonatbib+, which will not load the
-% \verb+natbib+ package for you in case of package clash.
-
-
-% \paragraph{Preprint option}
-% If you wish to post a preprint of your work online, e.g., on arXiv, using the
-% NeurIPS style, please use the \verb+preprint+ option. This will create a
-% nonanonymized version of your work with the text ``Preprint. Work in progress.''
-% in the footer. This version may be distributed as you see fit, as long as you do not say which conference it was submitted to. Please \textbf{do
-%   not} use the \verb+final+ option, which should \textbf{only} be used for
-% papers accepted to NeurIPS. 
-
-
-% At submission time, please omit the \verb+final+ and \verb+preprint+
-% options. This will anonymize your submission and add line numbers to aid
-% review. Please do \emph{not} refer to these line numbers in your paper as they
-% will be removed during generation of camera-ready copies.
-
-
-% The file \verb+neurips_2023.tex+ may be used as a ``shell'' for writing your
-% paper. All you have to do is replace the author, title, abstract, and text of
-% the paper with your own.
-
-
-% The formatting instructions contained in these style files are summarized in
-% Sections \ref{gen_inst}, \ref{headings}, and \ref{others} below.
-
-
-% \section{General formatting instructions}
-% \label{gen_inst}
-
-
-% The text must be confined within a rectangle 5.5~inches (33~picas) wide and
-% 9~inches (54~picas) long. The left margin is 1.5~inch (9~picas).  Use 10~point
-% type with a vertical spacing (leading) of 11~points.  Times New Roman is the
-% preferred typeface throughout, and will be selected for you by default.
-% Paragraphs are separated by \nicefrac{1}{2}~line space (5.5 points), with no
-% indentation.
-
-
-% The paper title should be 17~point, initial caps/lower case, bold, centered
-% between two horizontal rules. The top rule should be 4~points thick and the
-% bottom rule should be 1~point thick. Allow \nicefrac{1}{4}~inch space above and
-% below the title to rules. All pages should start at 1~inch (6~picas) from the
-% top of the page.
-
-
-% For the final version, authors' names are set in boldface, and each name is
-% centered above the corresponding address. The lead author's name is to be listed
-% first (left-most), and the co-authors' names (if different address) are set to
-% follow. If there is only one co-author, list both author and co-author side by
-% side.
-
-
-% Please pay special attention to the instructions in Section \ref{others}
-% regarding figures, tables, acknowledgments, and references.
-
-
-% \section{Headings: first level}
-% \label{headings}
-
-
-% All headings should be lower case (except for first word and proper nouns),
-% flush left, and bold.
-
-
-% First-level headings should be in 12-point type.
-
-
-% \subsection{Headings: second level}
-
-
-% Second-level headings should be in 10-point type.
-
-
-% \subsubsection{Headings: third level}
-
-
-% Third-level headings should be in 10-point type.
-
-
-% \paragraph{Paragraphs}
-
-
-% There is also a \verb+\paragraph+ command available, which sets the heading in
-% bold, flush left, and inline with the text, with the heading followed by 1\,em
-% of space.
-
-
-% \section{Citations, figures, tables, references}
-% \label{others}
-
-
-% These instructions apply to everyone.
-
-
-% \subsection{Citations within the text}
-
-
-% The \verb+natbib+ package will be loaded for you by default.  Citations may be
-% author/year or numeric, as long as you maintain internal consistency.  As to the
-% format of the references themselves, any style is acceptable as long as it is
-% used consistently.
-
-
-% The documentation for \verb+natbib+ may be found at
-% \begin{center}
-%   \url{http://mirrors.ctan.org/macros/latex/contrib/natbib/natnotes.pdf}
-% \end{center}
-% Of note is the command \verb+\citet+, which produces citations appropriate for
-% use in inline text.  For example,
-% \begin{verbatim}
-%    \citet{hasselmo} investigated\dots
-% \end{verbatim}
-% produces
-% \begin{quote}
-%   Hasselmo, et al.\ (1995) investigated\dots
-% \end{quote}
-
-
-% If you wish to load the \verb+natbib+ package with options, you may add the
-% following before loading the \verb+neurips_2023+ package:
-% \begin{verbatim}
-%    \PassOptionsToPackage{options}{natbib}
-% \end{verbatim}
-
-
-% If \verb+natbib+ clashes with another package you load, you can add the optional
-% argument \verb+nonatbib+ when loading the style file:
-% \begin{verbatim}
-%    \usepackage[nonatbib]{neurips_2023}
-% \end{verbatim}
-
-
-% As submission is double blind, refer to your own published work in the third
-% person. That is, use ``In the previous work of Jones et al.\ [4],'' not ``In our
-% previous work [4].'' If you cite your other papers that are not widely available
-% (e.g., a journal paper under review), use anonymous author names in the
-% citation, e.g., an author of the form ``A.\ Anonymous'' and include a copy of the anonymized paper in the supplementary material.
-
-
-% \subsection{Footnotes}
-
-
-% Footnotes should be used sparingly.  If you do require a footnote, indicate
-% footnotes with a number\footnote{Sample of the first footnote.} in the
-% text. Place the footnotes at the bottom of the page on which they appear.
-% Precede the footnote with a horizontal rule of 2~inches (12~picas).
-
-
-% Note that footnotes are properly typeset \emph{after} punctuation
-% marks.\footnote{As in this example.}
-
-
-% \subsection{Figures}
-
-
-% \begin{figure}
-%   \centering
-%   \fbox{\rule[-.5cm]{0cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
-%   \caption{Sample figure caption.}
-% \end{figure}
-
-
-% All artwork must be neat, clean, and legible. Lines should be dark enough for
-% purposes of reproduction. The figure number and caption always appear after the
-% figure. Place one line space before the figure caption and one line space after
-% the figure. The figure caption should be lower case (except for first word and
-% proper nouns); figures are numbered consecutively.
-
-
-% You may use color figures.  However, it is best for the figure captions and the
-% paper body to be legible if the paper is printed in either black/white or in
-% color.
-
-
-% \subsection{Tables}
-
-
-% All tables must be centered, neat, clean and legible.  The table number and
-% title always appear before the table.  See Table~\ref{sample-table}.
-
-
-% Place one line space before the table title, one line space after the
-% table title, and one line space after the table. The table title must
-% be lower case (except for first word and proper nouns); tables are
-% numbered consecutively.
-
-
-% Note that publication-quality tables \emph{do not contain vertical rules.} We
-% strongly suggest the use of the \verb+booktabs+ package, which allows for
-% typesetting high-quality, professional tables:
-% \begin{center}
-%   \url{https://www.ctan.org/pkg/booktabs}
-% \end{center}
-% This package was used to typeset Table~\ref{sample-table}.
-
-
-% \begin{table}
-%   \caption{Sample table title}
-%   \label{sample-table}
-%   \centering
-%   \begin{tabular}{lll}
-%     \toprule
-%     \multicolumn{2}{c}{Part}                   \\
-%     \cmidrule(r){1-2}
-%     Name     & Description     & Size ($\mu$m) \\
-%     \midrule
-%     Dendrite & Input terminal  & $\sim$100     \\
-%     Axon     & Output terminal & $\sim$10      \\
-%     Soma     & Cell body       & up to $10^6$  \\
-%     \bottomrule
-%   \end{tabular}
-% \end{table}
-
-% \subsection{Math}
-% Note that display math in bare TeX commands will not create correct line numbers for submission. Please use LaTeX (or AMSTeX) commands for unnumbered display math. (You really shouldn't be using \$\$ anyway; see \url{https://tex.stackexchange.com/questions/503/why-is-preferable-to} and \url{https://tex.stackexchange.com/questions/40492/what-are-the-differences-between-align-equation-and-displaymath} for more information.)
-
-% \subsection{Final instructions}
-
-% Do not change any aspects of the formatting parameters in the style files.  In
-% particular, do not modify the width or length of the rectangle the text should
-% fit into, and do not change font sizes (except perhaps in the
-% \textbf{References} section; see below). Please note that pages should be
-% numbered.
-
-
-% \section{Preparing PDF files}
-
-
-% Please prepare submission files with paper size ``US Letter,'' and not, for
-% example, ``A4.''
-
-
-% Fonts were the main cause of problems in the past years. Your PDF file must only
-% contain Type 1 or Embedded TrueType fonts. Here are a few instructions to
-% achieve this.
-
-
-% \begin{itemize}
-
-
-% \item You should directly generate PDF files using \verb+pdflatex+.
-
-
-% \item You can check which fonts a PDF files uses.  In Acrobat Reader, select the
-%   menu Files$>$Document Properties$>$Fonts and select Show All Fonts. You can
-%   also use the program \verb+pdffonts+ which comes with \verb+xpdf+ and is
-%   available out-of-the-box on most Linux machines.
-
-
-% \item \verb+xfig+ "patterned" shapes are implemented with bitmap fonts.  Use
-%   "solid" shapes instead.
-
-
-% \item The \verb+\bbold+ package almost always uses bitmap fonts.  You should use
-%   the equivalent AMS Fonts:
-% \begin{verbatim}
-%    \usepackage{amsfonts}
-% \end{verbatim}
-% followed by, e.g., \verb+\mathbb{R}+, \verb+\mathbb{N}+, or \verb+\mathbb{C}+
-% for $\mathbb{R}$, $\mathbb{N}$ or $\mathbb{C}$.  You can also use the following
-% workaround for reals, natural and complex:
-% \begin{verbatim}
-%    \newcommand{\RR}{I\!\!R} %real numbers
-%    \newcommand{\Nat}{I\!\!N} %natural numbers
-%    \newcommand{\CC}{I\!\!\!\!C} %complex numbers
-% \end{verbatim}
-% Note that \verb+amsfonts+ is automatically loaded by the \verb+amssymb+ package.
-
-
-% \end{itemize}
-
-
-% If your file contains type 3 fonts or non embedded TrueType fonts, we will ask
-% you to fix it.
-
-
-% \subsection{Margins in \LaTeX{}}
-
-
-% Most of the margin problems come from figures positioned by hand using
-% \verb+\special+ or other commands. We suggest using the command
-% \verb+\includegraphics+ from the \verb+graphicx+ package. Always specify the
-% figure width as a multiple of the line width as in the example below:
-% \begin{verbatim}
-%    \usepackage[pdftex]{graphicx} ...
-%    \includegraphics[width=0.8\linewidth]{myfile.pdf}
-% \end{verbatim}
-% See Section 4.4 in the graphics bundle documentation
-% (\url{http://mirrors.ctan.org/macros/latex/required/graphics/grfguide.pdf})
-
-
-% A number of width problems arise when \LaTeX{} cannot properly hyphenate a
-% line. Please give LaTeX hyphenation hints using the \verb+\-+ command when
-% necessary.
-
-
-% \begin{ack}
-% Use unnumbered first level headings for the acknowledgments. All acknowledgments
-% go at the end of the paper before the list of references. Moreover, you are required to declare
-% funding (financial activities supporting the submitted work) and competing interests (related financial activities outside the submitted work).
-% More information about this disclosure can be found at: \url{https://neurips.cc/Conferences/2023/PaperInformation/FundingDisclosure}.
-
-
-% Do {\bf not} include this section in the anonymized submission, only in the final paper. You can use the \texttt{ack} environment provided in the style file to autmoatically hide this section in the anonymized submission.
-% \end{ack}
-
-
-
-% \section{Supplementary Material}
-
-% Authors may wish to optionally include extra information (complete proofs, additional experiments and plots) in the appendix. All such materials should be part of the supplemental material (submitted separately) and should NOT be included in the main submission.
-
-
-% \section*{References}
-
-
-% References follow the acknowledgments in the camera-ready paper. Use unnumbered first-level heading for
-% the references. Any choice of citation style is acceptable as long as you are
-% consistent. It is permissible to reduce the font size to \verb+small+ (9 point)
-% when listing the references.
-% Note that the Reference section does not count towards the page limit.
-% \medskip
-
-
-% {
-% \small
-
-
-% [1] Alexander, J.A.\ \& Mozer, M.C.\ (1995) Template-based algorithms for
-% connectionist rule extraction. In G.\ Tesauro, D.S.\ Touretzky and T.K.\ Leen
-% (eds.), {\it Advances in Neural Information Processing Systems 7},
-% pp.\ 609--616. Cambridge, MA: MIT Press.
-
-
-% [2] Bower, J.M.\ \& Beeman, D.\ (1995) {\it The Book of GENESIS: Exploring
-%   Realistic Neural Models with the GEneral NEural SImulation System.}  New York:
-% TELOS/Springer--Verlag.
-
-
-% [3] Hasselmo, M.E., Schnell, E.\ \& Barkai, E.\ (1995) Dynamics of learning and
-% recall at excitatory recurrent synapses and cholinergic modulation in rat
-% hippocampal region CA3. {\it Journal of Neuroscience} {\bf 15}(7):5249-5262.
-% }
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-

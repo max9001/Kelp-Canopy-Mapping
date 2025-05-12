@@ -8,18 +8,18 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.2}The Need for Intervention}{1}{subsection.1.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Challenges with Existing Monitoring Methods and Why New Methods Are Needed}{2}{subsection.1.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.4}Existing Digital Data and Automation Techniques for Kelp Maps}{2}{subsection.1.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.5}Bridging the Data Gap: Citizen Science}{2}{subsection.1.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.5}Bridging the Data Gap: Citizen Science}{3}{subsection.1.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.6}Remote Sensing as a Solution}{3}{subsection.1.6}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.7}Preview of Approach and Key Findings}{3}{subsection.1.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {2}Background}{3}{section.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}The Landsat 7 Satellite and its Advantages for Kelp Monitoring}{3}{subsection.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Drawbacks of Landsat 7: The Scan Line Corrector (SLC) Failure}{4}{subsection.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Background}{4}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}The Landsat 7 Satellite and its Advantages for Kelp Monitoring}{4}{subsection.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Drawbacks of Landsat 7: The Scan Line Corrector (SLC) Failure}{5}{subsection.2.2}\protected@file@percent }
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{fig:slc1}{{\caption@xref {fig:slc1}{ on input line 167}}{5}{Drawbacks of Landsat 7: The Scan Line Corrector (SLC) Failure}{figure.caption.2}{}}
+\newlabel{fig:slc1}{{\caption@xref {fig:slc1}{ on input line 118}}{5}{Drawbacks of Landsat 7: The Scan Line Corrector (SLC) Failure}{figure.caption.2}{}}
 \newlabel{sub@fig:slc1}{{}{5}{Drawbacks of Landsat 7: The Scan Line Corrector (SLC) Failure}{figure.caption.2}{}}
-\newlabel{fig:slc2}{{\caption@xref {fig:slc2}{ on input line 172}}{5}{Drawbacks of Landsat 7: The Scan Line Corrector (SLC) Failure}{figure.caption.2}{}}
+\newlabel{fig:slc2}{{\caption@xref {fig:slc2}{ on input line 123}}{5}{Drawbacks of Landsat 7: The Scan Line Corrector (SLC) Failure}{figure.caption.2}{}}
 \newlabel{sub@fig:slc2}{{}{5}{Drawbacks of Landsat 7: The Scan Line Corrector (SLC) Failure}{figure.caption.2}{}}
-\newlabel{fig:slc3}{{\caption@xref {fig:slc3}{ on input line 177}}{5}{Drawbacks of Landsat 7: The Scan Line Corrector (SLC) Failure}{figure.caption.2}{}}
+\newlabel{fig:slc3}{{\caption@xref {fig:slc3}{ on input line 128}}{5}{Drawbacks of Landsat 7: The Scan Line Corrector (SLC) Failure}{figure.caption.2}{}}
 \newlabel{sub@fig:slc3}{{}{5}{Drawbacks of Landsat 7: The Scan Line Corrector (SLC) Failure}{figure.caption.2}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Examples of Landsat 7 SLC-off imagery illustrating the characteristic wedge-shaped data gaps caused by the Scan Line Corrector failure.}}{5}{figure.caption.2}\protected@file@percent }
 \newlabel{fig:slc_failure_examples}{{1}{5}{Examples of Landsat 7 SLC-off imagery illustrating the characteristic wedge-shaped data gaps caused by the Scan Line Corrector failure}{figure.caption.2}{}}
@@ -39,31 +39,33 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Dataset Splitting}{8}{subsection.3.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Model Development and Training}{9}{subsection.3.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.1}Model Architecture}{9}{subsubsection.3.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.2}Data Handling and Augmentation}{9}{subsubsection.3.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.3}Training Setup and Procedure}{9}{subsubsection.3.5.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {22}{\ignorespaces Architecture of the UNet model used for kelp canopy segmentation. The encoder utilizes a ResNet backbone, and skip connections pass features from corresponding encoder stages to the decoder stages. The decoder consists of upsampling (UpConv), concatenation (Concat), and convolutional refinement blocks.}}{9}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:unet_architecture}{{22}{9}{Architecture of the UNet model used for kelp canopy segmentation. The encoder utilizes a ResNet backbone, and skip connections pass features from corresponding encoder stages to the decoder stages. The decoder consists of upsampling (UpConv), concatenation (Concat), and convolutional refinement blocks}{figure.caption.5}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.2}Data Handling and Augmentation}{10}{subsubsection.3.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.3}Training Setup and Procedure}{10}{subsubsection.3.5.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.4}Hardware, Precision, and Final Model Output}{10}{subsubsection.3.5.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Determining the Optimal Prediction Threshold}{10}{subsection.3.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}Model Evaluation on the Test Set}{10}{subsection.3.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Results}{10}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Overview of Experimental Setup}{10}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}Model Evaluation on the Test Set}{11}{subsection.3.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Results}{11}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Overview of Experimental Setup}{11}{subsection.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Impact of Data Preprocessing}{11}{subsection.4.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Impact of Data Preprocessing (Cleaning) on Model Performance. All models trained without data augmentation.}}{11}{table.caption.5}\protected@file@percent }
-\newlabel{table:preprocessing_impact}{{1}{11}{Impact of Data Preprocessing (Cleaning) on Model Performance. All models trained without data augmentation}{table.caption.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Impact of Data Augmentation}{11}{subsection.4.3}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Impact of Data Augmentation on Model Performance. All models trained with cleaned data.}}{11}{table.caption.6}\protected@file@percent }
-\newlabel{table:augmentation_impact}{{2}{11}{Impact of Data Augmentation on Model Performance. All models trained with cleaned data}{table.caption.6}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Impact of Data Preprocessing (Cleaning) on Model Performance. All models trained without data augmentation.}}{11}{table.caption.6}\protected@file@percent }
+\newlabel{table:preprocessing_impact}{{1}{11}{Impact of Data Preprocessing (Cleaning) on Model Performance. All models trained without data augmentation}{table.caption.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Impact of Data Augmentation}{12}{subsection.4.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Impact of Data Augmentation on Model Performance. All models trained with cleaned data.}}{12}{table.caption.7}\protected@file@percent }
+\newlabel{table:augmentation_impact}{{2}{12}{Impact of Data Augmentation on Model Performance. All models trained with cleaned data}{table.caption.7}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Comparison of ResNet Backbones}{12}{subsection.4.4}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Comparison of ResNet Backbones. All models trained with cleaned data and data augmentation.}}{12}{table.caption.7}\protected@file@percent }
-\newlabel{table:backbone_comparison}{{3}{12}{Comparison of ResNet Backbones. All models trained with cleaned data and data augmentation}{table.caption.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Comparison of ResNet Backbones. All models trained with cleaned data and data augmentation.}}{12}{table.caption.8}\protected@file@percent }
+\newlabel{table:backbone_comparison}{{3}{12}{Comparison of ResNet Backbones. All models trained with cleaned data and data augmentation}{table.caption.8}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Effect of Land Mask Post-processing}{12}{subsection.4.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Summary of Best Performing Model}{12}{subsection.4.6}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Qualitative Results}{13}{subsection.4.7}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Successful segmentation of clear kelp patches. These examples illustrate the model's ability to accurately delineate well-defined kelp canopy under favorable conditions.}}{13}{figure.caption.8}\protected@file@percent }
-\newlabel{fig:good_segmentation}{{4}{13}{Successful segmentation of clear kelp patches. These examples illustrate the model's ability to accurately delineate well-defined kelp canopy under favorable conditions}{figure.caption.8}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Example of model performance on an image affected by Landsat 7 SLC-off data gaps. Even with missing data strips, the model demonstrates an ability to identify kelp in the visible portions.}}{13}{figure.caption.9}\protected@file@percent }
-\newlabel{fig:slc_performance}{{5}{13}{Example of model performance on an image affected by Landsat 7 SLC-off data gaps. Even with missing data strips, the model demonstrates an ability to identify kelp in the visible portions}{figure.caption.9}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Examples of poor performance and missed detections, particularly for small or sparse patches of kelp. These highlight instances where the model struggled, potentially due to the 30m resolution limit or less distinct kelp signatures.}}{14}{figure.caption.10}\protected@file@percent }
-\newlabel{fig:poor_segmentation}{{6}{14}{Examples of poor performance and missed detections, particularly for small or sparse patches of kelp. These highlight instances where the model struggled, potentially due to the 30m resolution limit or less distinct kelp signatures}{figure.caption.10}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {23}{\ignorespaces Successful segmentation of clear kelp patches. These examples illustrate the model's ability to accurately delineate well-defined kelp canopy under favorable conditions.}}{13}{figure.caption.9}\protected@file@percent }
+\newlabel{fig:good_segmentation}{{23}{13}{Successful segmentation of clear kelp patches. These examples illustrate the model's ability to accurately delineate well-defined kelp canopy under favorable conditions}{figure.caption.9}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {24}{\ignorespaces Example of model performance on an image affected by Landsat 7 SLC-off data gaps. Even with missing data strips, the model demonstrates an ability to identify kelp in the visible portions.}}{13}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:slc_performance}{{24}{13}{Example of model performance on an image affected by Landsat 7 SLC-off data gaps. Even with missing data strips, the model demonstrates an ability to identify kelp in the visible portions}{figure.caption.10}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {25}{\ignorespaces Examples of poor performance and missed detections, particularly for small or sparse patches of kelp. These highlight instances where the model struggled, potentially due to the 30m resolution limit or less distinct kelp signatures.}}{14}{figure.caption.11}\protected@file@percent }
+\newlabel{fig:poor_segmentation}{{25}{14}{Examples of poor performance and missed detections, particularly for small or sparse patches of kelp. These highlight instances where the model struggled, potentially due to the 30m resolution limit or less distinct kelp signatures}{figure.caption.11}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{14}{section.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Summary of Key Findings and Performance}{14}{subsection.5.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Interpretation of Results: Factors Contributing to Model Success}{14}{subsection.5.2}\protected@file@percent }
@@ -77,14 +79,20 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Limitations of the Study}{16}{subsection.5.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.6}Future Work and Directions}{17}{subsection.5.6}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.7}Broader Implications and Conclusion}{17}{subsection.5.7}\protected@file@percent }
-\bibcite{Hohman2023}{1}
-\bibcite{Zuckerman2023}{2}
-\bibcite{Saccomanno2022}{3}
-\bibcite{MBC2017}{4}
-\bibcite{Bell2018_RSE}{5}
-\bibcite{Rosenthal2018}{6}
-\bibcite{USGS_SLC}{7}
+\bibcite{Ba2024}{1}
+\bibcite{Bell2020_RSE}{2}
+\bibcite{Cavanaugh2023}{3}
+\bibcite{Eger2023}{4}
+\bibcite{Hamilton2020}{5}
+\bibcite{Hestness2017}{6}
+\bibcite{Hohman2023}{7}
+\bibcite{MBC2017}{8}
+\bibcite{Morris2019}{9}
+\bibcite{Rosenthal2018}{10}
+\bibcite{Saccomanno2022}{11}
+\bibcite{USGS_SLC}{12}
+\bibcite{Zuckerman2023}{13}
 \@writefile{toc}{\contentsline {section}{\numberline {A}Comprehensive Evaluation Metrics}{19}{appendix.A}\protected@file@percent }
 \newlabel{appendix:all_metrics}{{A}{19}{Comprehensive Evaluation Metrics}{appendix.A}{}}
-\newlabel{table:appendix_all_results}{{\caption@xref {table:appendix_all_results}{ on input line 534}}{19}{Comprehensive Evaluation Metrics}{table.caption.14}{}}
+\newlabel{table:appendix_all_results}{{\caption@xref {table:appendix_all_results}{ on input line 703}}{19}{Comprehensive Evaluation Metrics}{table.caption.15}{}}
 \gdef \@abspage@last{19}

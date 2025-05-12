@@ -71,3 +71,79 @@
   year      = {}, % No specific year often, or a last updated date if available
   note      = {Accessed: [Insert Date You Accessed It]},
 }
+
+
+
+
+@article{Cavanaugh2023_CubeSats,
+  author    = {Cavanaugh, K. C. and Pawlak, C. C. and Bell, T. W. and Saccomanno, V. R.},
+  title     = {{CubeSats} show persistence of bull kelp refugia amidst a regional collapse in {California}},
+  journal   = {Remote Sensing of Environment},
+  year      = {2023},
+  volume    = {290},
+  pages     = {113521},
+  doi       = {10.1016/j.rse.2023.113521},
+  note      = {The first author appears twice in the provided citation; I have used it once as is typical.}
+}
+
+@article{Hamilton2020_Ecology,
+  author    = {Hamilton, Scott L. and Bell, Tom W. and Watson, Jonathan R. and Grorud-Colvert, Kristen A. and Menge, Bruce A.},
+  title     = {Remote sensing: generation of long-term kelp bed data sets for evaluation of impacts of climatic variation},
+  journal   = {Ecology},
+  year      = {2020},
+  volume    = {101},
+  number    = {7},
+  pages     = {e03031}, % Ecology often uses e-locators
+  doi       = {10.1002/ecy.3031},
+}
+
+
+% Optional: Original Eger et al. 2023 paper if needed
+% @article{Eger2023_NatCommun_Original,
+%   author    = {Eger, Aaron M. and Marzinelli, Ezequiel M. and Beas-Luna, Rodrigo and Franco, Javier N. and Garc{\'{\i}}a-Poza, Silvia and Krumhansl, Kira and Layton, Cayne and McHugh, Tom and Miller, Melinda and Optimism, Reefstoration and Salinas-de-Le{\'{o}}n, Pelayo and Tait, Leigh and Uribe, Rachel A. and Verg{\'{e}}s, Adriana and Villase{\~{n}}or-S{\'{a}}nchez, Flor I. and Wernberg, Thomas and Wood, Gwendolyn and Coleman, Melinda A.},
+%   title     = {The value of ecosystem services in global marine kelp forests},
+%   journal   = {Nature Communications},
+%   year      = {2023},
+%   volume    = {14},
+%   number    = {1},
+%   pages     = {765},
+%   doi       = {10.1038/s41467-023-36007-9}
+% }
+
+@article{Morris2019_AnnBot,
+  author    = {Morris, Rebecca L. and Graham, Thomas D. J. and Kelvin, Jeff and Ghisalberti, Marco and Swearer, Stephen E.},
+  title     = {Kelp beds as coastal protection: wave attenuation of {Ecklonia radiata} in a shallow coastal bay},
+  journal   = {Annals of Botany},
+  year      = {2019}, % Year of online publication; final print might differ. The DOI suggests 2019.
+  volume    = {125}, % Often filled in later for 'advance access' articles if not available
+  number    = {2},   % Often filled in later
+  pages     = {235--246}, % Often filled in later
+  doi       = {10.1093/aob/mcz127},
+  note      = {Published online 23 August 2019. Check for final volume/issue/page numbers if citing a print version.}
+}
+
+@article{Hestness2017_arXiv,
+  author    = {Hestness, Joel and Narang, Sharan and Ardalani, Newsha and Diamos, Gregory and Jun, Heewoo and Kianinejad, Hojjat and Patwary, Md. Mostofa Ali and Yang, Yang and Zhou, Yanqi},
+  title     = {Deep Learning Scaling is Predictable, Empirically ({Version 1})},
+  journal   = {arXiv preprint arXiv:1712.00409},
+  year      = {2017},
+  month     = {December},
+  eprint    = {1712.00409},
+  archiveprefix = {arXiv},
+  primaryclass = {cs.LG}, % Example, adjust if known
+  doi       = {10.48550/ARXIV.1712.00409},
+  url       = {https://arxiv.org/abs/1712.00409},
+}
+
+@article{Ba2024_arXiv,
+  author    = {Ba, Yixuan and Mancenido, Mansheej V. and Pan, Ruilin},
+  title     = {How Does Data Diversity Shape the Weight Landscape of Neural Networks? ({Version 1})},
+  journal   = {arXiv preprint arXiv:2410.14602}, % Note: 2410 implies October 2024, which is in the future from current date.
+  year      = {2024},
+  month     = {October},
+  eprint    = {2410.14602},
+  archiveprefix = {arXiv},
+  primaryclass = {cs.LG}, % Example, adjust if known
+  doi       = {10.48550/ARXIV.2410.14602},
+  url       = {https://arxiv.org/abs/2410.14602},
+}

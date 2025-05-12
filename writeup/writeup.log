@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.5.1)  10 MAY 2025 21:43
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.5.1)  11 MAY 2025 20:14
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -304,54 +304,252 @@ Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
 \sift@deathcycles=\count294
 \@vwid@loff=\dimen187
 \@vwid@roff=\dimen188
-)) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/caption\subcaption.sty
+)) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/pgf/frontendlayer\tikz.sty (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgf.sty (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfrcs.sty (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil-common.tex
+\pgfutil@everybye=\toks27
+\pgfutil@tempdima=\dimen189
+\pgfutil@tempdimb=\dimen190
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil-latex.def
+\pgfutil@abb=\box56
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfrcs.code.tex (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf\pgf.revision.tex)
+Package: pgfrcs 2023-01-15 v3.1.10 (3.1.10)
+))
+Package: pgf 2023-01-15 v3.1.10 (3.1.10)
+ (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgfcore.sty (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/pgf/systemlayer\pgfsys.sty (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsys.code.tex
+Package: pgfsys 2023-01-15 v3.1.10 (3.1.10)
+ (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys.code.tex
+\pgfkeys@pathtoks=\toks28
+\pgfkeys@temptoks=\toks29
+ (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeyslibraryfiltered.code.tex
+\pgfkeys@tmptoks=\toks30
+))
+\pgf@x=\dimen191
+\pgf@y=\dimen192
+\pgf@xa=\dimen193
+\pgf@ya=\dimen194
+\pgf@xb=\dimen195
+\pgf@yb=\dimen196
+\pgf@xc=\dimen197
+\pgf@yc=\dimen198
+\pgf@xd=\dimen199
+\pgf@yd=\dimen256
+\w@pgf@writea=\write3
+\r@pgf@reada=\read2
+\c@pgf@counta=\count295
+\c@pgf@countb=\count296
+\c@pgf@countc=\count297
+\c@pgf@countd=\count298
+\t@pgf@toka=\toks31
+\t@pgf@tokb=\toks32
+\t@pgf@tokc=\toks33
+\pgf@sys@id@count=\count299
+ (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf.cfg
+File: pgf.cfg 2023-01-15 v3.1.10 (3.1.10)
+)
+Driver file for pgf: pgfsys-pdftex.def
+ (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsys-pdftex.def
+File: pgfsys-pdftex.def 2023-01-15 v3.1.10 (3.1.10)
+ (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsys-common-pdf.def
+File: pgfsys-common-pdf.def 2023-01-15 v3.1.10 (3.1.10)
+))) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsyssoftpath.code.tex
+File: pgfsyssoftpath.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfsyssoftpath@smallbuffer@items=\count300
+\pgfsyssoftpath@bigbuffer@items=\count301
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsysprotocol.code.tex
+File: pgfsysprotocol.code.tex 2023-01-15 v3.1.10 (3.1.10)
+)) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore.code.tex
+Package: pgfcore 2023-01-15 v3.1.10 (3.1.10)
+ (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code.tex (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathutil.code.tex) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathparser.code.tex
+\pgfmath@dimen=\dimen257
+\pgfmath@count=\count302
+\pgfmath@box=\box57
+\pgfmath@toks=\toks34
+\pgfmath@stack@operand=\toks35
+\pgfmath@stack@operation=\toks36
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunctions.code.tex) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunctions.basic.code.tex) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunctions.trigonometric.code.tex) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunctions.random.code.tex) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunctions.comparison.code.tex) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunctions.base.code.tex) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunctions.round.code.tex) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunctions.misc.code.tex) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunctions.integerarithmetics.code.tex) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathcalc.code.tex) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfloat.code.tex
+\c@pgfmathroundto@lastzeros=\count303
+)) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfint.code.tex) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcorepoints.code.tex
+File: pgfcorepoints.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@picminx=\dimen258
+\pgf@picmaxx=\dimen259
+\pgf@picminy=\dimen260
+\pgf@picmaxy=\dimen261
+\pgf@pathminx=\dimen262
+\pgf@pathmaxx=\dimen263
+\pgf@pathminy=\dimen264
+\pgf@pathmaxy=\dimen265
+\pgf@xx=\dimen266
+\pgf@xy=\dimen267
+\pgf@yx=\dimen268
+\pgf@yy=\dimen269
+\pgf@zx=\dimen270
+\pgf@zy=\dimen271
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcorepathconstruct.code.tex
+File: pgfcorepathconstruct.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@path@lastx=\dimen272
+\pgf@path@lasty=\dimen273
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcorepathusage.code.tex
+File: pgfcorepathusage.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@shorten@end@additional=\dimen274
+\pgf@shorten@start@additional=\dimen275
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcorescopes.code.tex
+File: pgfcorescopes.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfpic=\box58
+\pgf@hbox=\box59
+\pgf@layerbox@main=\box60
+\pgf@picture@serial@count=\count304
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcoregraphicstate.code.tex
+File: pgfcoregraphicstate.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgflinewidth=\dimen276
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcoretransformations.code.tex
+File: pgfcoretransformations.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@pt@x=\dimen277
+\pgf@pt@y=\dimen278
+\pgf@pt@temp=\dimen279
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcorequick.code.tex
+File: pgfcorequick.code.tex 2023-01-15 v3.1.10 (3.1.10)
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcoreobjects.code.tex
+File: pgfcoreobjects.code.tex 2023-01-15 v3.1.10 (3.1.10)
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcorepathprocessing.code.tex
+File: pgfcorepathprocessing.code.tex 2023-01-15 v3.1.10 (3.1.10)
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcorearrows.code.tex
+File: pgfcorearrows.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfarrowsep=\dimen280
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcoreshade.code.tex
+File: pgfcoreshade.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@max=\dimen281
+\pgf@sys@shading@range@num=\count305
+\pgf@shadingcount=\count306
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcoreimage.code.tex
+File: pgfcoreimage.code.tex 2023-01-15 v3.1.10 (3.1.10)
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcoreexternal.code.tex
+File: pgfcoreexternal.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfexternal@startupbox=\box61
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcorelayers.code.tex
+File: pgfcorelayers.code.tex 2023-01-15 v3.1.10 (3.1.10)
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcoretransparency.code.tex
+File: pgfcoretransparency.code.tex 2023-01-15 v3.1.10 (3.1.10)
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcorepatterns.code.tex
+File: pgfcorepatterns.code.tex 2023-01-15 v3.1.10 (3.1.10)
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcorerdf.code.tex
+File: pgfcorerdf.code.tex 2023-01-15 v3.1.10 (3.1.10)
+))) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmoduleshapes.code.tex
+File: pgfmoduleshapes.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfnodeparttextbox=\box62
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmoduleplot.code.tex
+File: pgfmoduleplot.code.tex 2023-01-15 v3.1.10 (3.1.10)
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfcomp-version-0-65.sty
+Package: pgfcomp-version-0-65 2023-01-15 v3.1.10 (3.1.10)
+\pgf@nodesepstart=\dimen282
+\pgf@nodesepend=\dimen283
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfcomp-version-1-18.sty
+Package: pgfcomp-version-1-18 2023-01-15 v3.1.10 (3.1.10)
+)) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgffor.sty (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfkeys.sty
+(C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys.code.tex)) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/pgf/math\pgfmath.sty (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code.tex)) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgffor.code.tex
+Package: pgffor 2023-01-15 v3.1.10 (3.1.10)
+\pgffor@iter=\dimen284
+\pgffor@skip=\dimen285
+\pgffor@stack=\toks37
+\pgffor@toks=\toks38
+)) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tikz\tikz.code.tex
+Package: tikz 2023-01-15 v3.1.10 (3.1.10)
+ (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibraryplothandlers.code.tex
+File: pgflibraryplothandlers.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@plot@mark@count=\count307
+\pgfplotmarksize=\dimen286
+)
+\tikz@lastx=\dimen287
+\tikz@lasty=\dimen288
+\tikz@lastxsaved=\dimen289
+\tikz@lastysaved=\dimen290
+\tikz@lastmovetox=\dimen291
+\tikz@lastmovetoy=\dimen292
+\tikzleveldistance=\dimen293
+\tikzsiblingdistance=\dimen294
+\tikz@figbox=\box63
+\tikz@figbox@bg=\box64
+\tikz@tempbox=\box65
+\tikz@tempbox@bg=\box66
+\tikztreelevel=\count308
+\tikznumberofchildren=\count309
+\tikznumberofcurrentchild=\count310
+\tikz@fig@count=\count311
+ (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodulematrix.code.tex
+File: pgfmodulematrix.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfmatrixcurrentrow=\count312
+\pgfmatrixcurrentcolumn=\count313
+\pgf@matrix@numberofcolumns=\count314
+)
+\tikz@expandcount=\count315
+ (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tikz/libraries\tikzlibrarytopaths.code.tex
+File: tikzlibrarytopaths.code.tex 2023-01-15 v3.1.10 (3.1.10)
+))) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/import\import.sty
+Package: import 2020/04/01  v 6.2
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tikz/libraries\tikzlibrarypositioning.code.tex
+File: tikzlibrarypositioning.code.tex 2023-01-15 v3.1.10 (3.1.10)
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tikz/libraries\tikzlibrary3d.code.tex
+File: tikzlibrary3d.code.tex 2023-01-15 v3.1.10 (3.1.10)
+) (Ball.sty
+Package: Ball 
+) (Box.sty
+Package: Box 
+) (RightBandedBox.sty
+Package: RightBandedBox 
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tikz/libraries\tikzlibraryquotes.code.tex
+File: tikzlibraryquotes.code.tex 2023-01-15 v3.1.10 (3.1.10)
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibraryarrows.meta.code.tex
+File: pgflibraryarrows.meta.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfarrowinset=\dimen295
+\pgfarrowlength=\dimen296
+\pgfarrowwidth=\dimen297
+\pgfarrowlinewidth=\dimen298
+) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/caption\subcaption.sty
 Package: subcaption 2023/07/28 v1.6b Sub-captions (AR)
  (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
 Package: caption 2023/08/05 v3.6o Customizing captions (AR)
  (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty
 Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
-\caption@tempdima=\dimen189
-\captionmargin=\dimen190
-\caption@leftmargin=\dimen191
-\caption@rightmargin=\dimen192
-\caption@width=\dimen193
-\caption@indent=\dimen194
-\caption@parindent=\dimen195
-\caption@hangindent=\dimen196
+\caption@tempdima=\dimen299
+\captionmargin=\dimen300
+\caption@leftmargin=\dimen301
+\caption@rightmargin=\dimen302
+\caption@width=\dimen303
+\caption@indent=\dimen304
+\caption@parindent=\dimen305
+\caption@hangindent=\dimen306
 Package caption Info: Standard document class detected.
 )
-\c@caption@flags=\count295
-\c@continuedfloat=\count296
+\c@caption@flags=\count316
+\c@continuedfloat=\count317
 Package caption Info: hyperref package is loaded.
 )
 Package caption Info: New subtype `subfigure' on input line 238.
-\c@subfigure=\count297
+\c@subfigure=\count318
 Package caption Info: New subtype `subtable' on input line 238.
-\c@subtable=\count298
+\c@subtable=\count319
 ) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdftex.def
 File: l3backend-pdftex.def 2025-03-14 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count299
+\l__color_backend_stack_int=\count320
 ) (writeup.aux)
 \openout1 = `writeup.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 81.
-LaTeX Font Info:    ... okay on input line 81.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 81.
-LaTeX Font Info:    ... okay on input line 81.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 81.
-LaTeX Font Info:    ... okay on input line 81.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 81.
-LaTeX Font Info:    ... okay on input line 81.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 81.
-LaTeX Font Info:    ... okay on input line 81.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 81.
-LaTeX Font Info:    ... okay on input line 81.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 81.
-LaTeX Font Info:    ... okay on input line 81.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 81.
-LaTeX Font Info:    ... okay on input line 81.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 81.
-LaTeX Font Info:    ... okay on input line 81.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -419,46 +617,45 @@ LaTeX Font Info:    ... okay on input line 81.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring OFF on input line 81.
-(writeup.out) (writeup.out)
-\@outlinefile=\write3
-\openout3 = `writeup.out'.
+Package hyperref Info: Link coloring OFF on input line 35.
+\@outlinefile=\write4
+\openout4 = `writeup.out'.
 
 Package microtype Info: Patching varwidth to enable character protrusion.
-\MT@vwid@leftmargin=\dimen197
-\MT@vwid@rightmargin=\dimen198
-LaTeX Info: Redefining \microtypecontext on input line 81.
-Package microtype Info: Applying patch `item' on input line 81.
-Package microtype Info: Applying patch `toc' on input line 81.
-Package microtype Info: Applying patch `eqnum' on input line 81.
-Package microtype Info: Applying patch `footnote' on input line 81.
-Package microtype Info: Applying patch `verbatim' on input line 81.
-LaTeX Info: Redefining \microtypesetup on input line 81.
+\MT@vwid@leftmargin=\dimen307
+\MT@vwid@rightmargin=\dimen308
+LaTeX Info: Redefining \microtypecontext on input line 35.
+Package microtype Info: Applying patch `item' on input line 35.
+Package microtype Info: Applying patch `toc' on input line 35.
+Package microtype Info: Applying patch `eqnum' on input line 35.
+Package microtype Info: Applying patch `footnote' on input line 35.
+Package microtype Info: Applying patch `verbatim' on input line 35.
+LaTeX Info: Redefining \microtypesetup on input line 35.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `alltext-nott'.
-LaTeX Info: Redefining \showhyphens on input line 81.
+LaTeX Info: Redefining \showhyphens on input line 35.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
- (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-ptm.cfg
+(C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-ptm.cfg
 File: mt-ptm.cfg 2006/04/20 v1.7 microtype config. file: Times (RS)
 ) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count300
-\scratchdimen=\dimen199
-\scratchbox=\box56
-\nofMPsegments=\count301
-\nofMParguments=\count302
-\everyMPshowfont=\toks27
-\MPscratchCnt=\count303
-\MPscratchDim=\dimen256
-\MPnumerator=\count304
-\makeMPintoPDFobject=\count305
-\everyMPtoPDFconversion=\toks28
+\scratchcounter=\count321
+\scratchdimen=\dimen309
+\scratchbox=\box67
+\nofMPsegments=\count322
+\nofMParguments=\count323
+\everyMPshowfont=\toks39
+\MPscratchCnt=\count324
+\MPscratchDim=\dimen310
+\MPnumerator=\count325
+\makeMPintoPDFobject=\count326
+\everyMPtoPDFconversion=\toks40
 ) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
@@ -470,13 +667,13 @@ Package caption Info: End \AtBeginDocument code.
  (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-cmr.cfg
 File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msa on input line 85.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 38.
  (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 ) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 85.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 38.
  (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msb.cfg
@@ -487,62 +684,978 @@ File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 
 
 {C:/Users/Max/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/Max/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc}]
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 112.
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 63.
  (C:\Users\Max\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
 
 [2]
-
-[3]
-<slc_image1.png, id=221, 298.4751pt x 298.4751pt>
-File: slc_image1.png Graphic file (type png)
-<use slc_image1.png>
-Package pdftex.def Info: slc_image1.png  used on input line 166.
-(pdftex.def)             Requested size: 119.2467pt x 119.24673pt.
-<slc_image2.png, id=223, 298.4751pt x 298.4751pt>
-File: slc_image2.png Graphic file (type png)
-<use slc_image2.png>
-Package pdftex.def Info: slc_image2.png  used on input line 171.
-(pdftex.def)             Requested size: 119.2467pt x 119.24673pt.
-<slc_image3.png, id=224, 298.4751pt x 298.4751pt>
-File: slc_image3.png Graphic file (type png)
-<use slc_image3.png>
-Package pdftex.def Info: slc_image3.png  used on input line 176.
-(pdftex.def)             Requested size: 119.2467pt x 119.24673pt.
-
-
-[4]
-Underfull \vbox (badness 3635) has occurred while \output is active []
-
-
-
-[5 <./slc_image1.png> <./slc_image2.png> <./slc_image3.png>]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
+
+[3]
+
+[4]
+<slc_image1.png, id=38, 298.4751pt x 298.4751pt>
+File: slc_image1.png Graphic file (type png)
+<use slc_image1.png>
+Package pdftex.def Info: slc_image1.png  used on input line 117.
+(pdftex.def)             Requested size: 119.2467pt x 119.24673pt.
+<slc_image2.png, id=40, 298.4751pt x 298.4751pt>
+File: slc_image2.png Graphic file (type png)
+<use slc_image2.png>
+Package pdftex.def Info: slc_image2.png  used on input line 122.
+(pdftex.def)             Requested size: 119.2467pt x 119.24673pt.
+<slc_image3.png, id=41, 298.4751pt x 298.4751pt>
+File: slc_image3.png Graphic file (type png)
+<use slc_image3.png>
+Package pdftex.def Info: slc_image3.png  used on input line 127.
+(pdftex.def)             Requested size: 119.2467pt x 119.24673pt.
+
+
+[5 <./slc_image1.png> <./slc_image2.png> <./slc_image3.png>]
 
 [6]
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `cmtt' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
-<distribution_0_SWIR_before.png, id=241, 1300.86pt x 361.35pt>
-File: distribution_0_SWIR_before.png Graphic file (type png)
-<use distribution_0_SWIR_before.png>
-Package pdftex.def Info: distribution_0_SWIR_before.png  used on input line 242.
-(pdftex.def)             Requested size: 397.48499pt x 110.41284pt.
 
 
 [7]
-<distribution_0_SWIR_after.png, id=248, 1300.86pt x 361.35pt>
+<distribution_0_SWIR_before.png, id=70, 1300.86pt x 361.35pt>
+File: distribution_0_SWIR_before.png Graphic file (type png)
+<use distribution_0_SWIR_before.png>
+Package pdftex.def Info: distribution_0_SWIR_before.png  used on input line 190.
+(pdftex.def)             Requested size: 397.48499pt x 110.41284pt.
+<distribution_0_SWIR_after.png, id=71, 1300.86pt x 361.35pt>
 File: distribution_0_SWIR_after.png Graphic file (type png)
 <use distribution_0_SWIR_after.png>
-Package pdftex.def Info: distribution_0_SWIR_after.png  used on input line 253.
+Package pdftex.def Info: distribution_0_SWIR_after.png  used on input line 201.
 (pdftex.def)             Requested size: 397.48499pt x 110.41284pt.
 
 
 [8 <./distribution_0_SWIR_before.png> <./distribution_0_SWIR_after.png>]
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:256: Argument of \caption@xdblarg has an extra }.
+<inserted text> 
+                \par 
+l.256 ...           height=40,width={2},depth=40}}
+                                                  ;
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:256: Paragraph ended before \caption@xdblarg was complete.
+<to be read again> 
+                   \par 
+l.256 ...           height=40,width={2},depth=40}}
+                                                  ;
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:259: Argument of \caption@xdblarg has an extra }.
+<inserted text> 
+                \par 
+l.259 ...,opacity=0.5,height=32,width=2,depth=32}}
+                                                  ;
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:259: Paragraph ended before \caption@xdblarg was complete.
+<to be read again> 
+                   \par 
+l.259 ...,opacity=0.5,height=32,width=2,depth=32}}
+                                                  ;
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:264: Argument of \caption@xdblarg has an extra }.
+<inserted text> 
+                \par 
+l.264 ...           height=32,width={2},depth=32}}
+                                                  ;
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:264: Paragraph ended before \caption@xdblarg was complete.
+<to be read again> 
+                   \par 
+l.264 ...           height=32,width={2},depth=32}}
+                                                  ;
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:267: Argument of \caption@xdblarg has an extra }.
+<inserted text> 
+                \par 
+l.267 ...,opacity=0.5,height=25,width=2,depth=25}}
+                                                  ;
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:267: Paragraph ended before \caption@xdblarg was complete.
+<to be read again> 
+                   \par 
+l.267 ...,opacity=0.5,height=25,width=2,depth=25}}
+                                                  ;
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:272: Argument of \caption@xdblarg has an extra }.
+<inserted text> 
+                \par 
+l.272 ...         height=25,width={3.5},depth=25}}
+                                                  ;
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:272: Paragraph ended before \caption@xdblarg was complete.
+<to be read again> 
+                   \par 
+l.272 ...         height=25,width={3.5},depth=25}}
+                                                  ;
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:275: Argument of \caption@xdblarg has an extra }.
+<inserted text> 
+                \par 
+l.275 ...pacity=0.5,height=16,width=3.5,depth=16}}
+                                                  ;
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:275: Paragraph ended before \caption@xdblarg was complete.
+<to be read again> 
+                   \par 
+l.275 ...pacity=0.5,height=16,width=3.5,depth=16}}
+                                                  ;
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:280: Argument of \caption@xdblarg has an extra }.
+<inserted text> 
+                \par 
+l.280 ...         height=16,width={4.5},depth=16}}
+                                                  ;
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:280: Paragraph ended before \caption@xdblarg was complete.
+<to be read again> 
+                   \par 
+l.280 ...         height=16,width={4.5},depth=16}}
+                                                  ;
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:283: Argument of \caption@xdblarg has an extra }.
+<inserted text> 
+                \par 
+l.283 ...,opacity=0.5,height=8,width=4.5,depth=8}}
+                                                  ;
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:283: Paragraph ended before \caption@xdblarg was complete.
+<to be read again> 
+                   \par 
+l.283 ...,opacity=0.5,height=8,width=4.5,depth=8}}
+                                                  ;
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:299: Argument of \caption@xdblarg has an extra }.
+<inserted text> 
+                \par 
+l.299 ...,opacity=0.4,height=16,width=6,depth=16}}
+                                                  ;
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:299: Paragraph ended before \caption@xdblarg was complete.
+<to be read again> 
+                   \par 
+l.299 ...,opacity=0.4,height=16,width=6,depth=16}}
+                                                  ;
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:302: Argument of \caption@xdblarg has an extra }.
+<inserted text> 
+                \par 
+l.302 ...         height=16,width={4.5},depth=16}}
+                                                  ;
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:302: Paragraph ended before \caption@xdblarg was complete.
+<to be read again> 
+                   \par 
+l.302 ...         height=16,width={4.5},depth=16}}
+                                                  ;
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:308: Argument of \caption@xdblarg has an extra }.
+<inserted text> 
+                \par 
+l.308 ...pacity=0.4,height=25,width=4.5,depth=25}}
+                                                  ;
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:308: Paragraph ended before \caption@xdblarg was complete.
+<to be read again> 
+                   \par 
+l.308 ...pacity=0.4,height=25,width=4.5,depth=25}}
+                                                  ;
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:311: Argument of \caption@xdblarg has an extra }.
+<inserted text> 
+                \par 
+l.311 ...         height=25,width={3.5},depth=25}}
+                                                  ;
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:311: Paragraph ended before \caption@xdblarg was complete.
+<to be read again> 
+                   \par 
+l.311 ...         height=25,width={3.5},depth=25}}
+                                                  ;
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:315: Argument of \caption@xdblarg has an extra }.
+<inserted text> 
+                \par 
+l.315 ...,opacity=0.6,height=32,width=2,depth=32}}
+                                                  ;
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:315: Paragraph ended before \caption@xdblarg was complete.
+<to be read again> 
+                   \par 
+l.315 ...,opacity=0.6,height=32,width=2,depth=32}}
+                                                  ;
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:317: Argument of \caption@xdblarg has an extra }.
+<inserted text> 
+                \par 
+l.317 ...pacity=0.4,height=32,width=3.5,depth=32}}
+                                                  ;
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:317: Paragraph ended before \caption@xdblarg was complete.
+<to be read again> 
+                   \par 
+l.317 ...pacity=0.4,height=32,width=3.5,depth=32}}
+                                                  ;
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:320: Argument of \caption@xdblarg has an extra }.
+<inserted text> 
+                \par 
+l.320 ...           height=32,width={2},depth=32}}
+                                                  ;
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:320: Paragraph ended before \caption@xdblarg was complete.
+<to be read again> 
+                   \par 
+l.320 ...           height=32,width={2},depth=32}}
+                                                  ;
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:324: Argument of \caption@xdblarg has an extra }.
+<inserted text> 
+                \par 
+l.324 ...,opacity=0.6,height=40,width=2,depth=40}}
+                                                  ;
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:324: Paragraph ended before \caption@xdblarg was complete.
+<to be read again> 
+                   \par 
+l.324 ...,opacity=0.6,height=40,width=2,depth=40}}
+                                                  ;
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:326: Argument of \caption@xdblarg has an extra }.
+<inserted text> 
+                \par 
+l.326 ...pacity=0.4,height=40,width=2.5,depth=40}}
+                                                  ;
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:326: Paragraph ended before \caption@xdblarg was complete.
+<to be read again> 
+                   \par 
+l.326 ...pacity=0.4,height=40,width=2.5,depth=40}}
+                                                  ;
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:329: Argument of \caption@xdblarg has an extra }.
+<inserted text> 
+                \par 
+l.329 ...           height=40,width={2},depth=40}}
+                                                  ;
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:329: Paragraph ended before \caption@xdblarg was complete.
+<to be read again> 
+                   \par 
+l.329 ...           height=40,width={2},depth=40}}
+                                                  ;
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+
+Overfull \hbox (15.49742pt too wide) in paragraph at lines 334--334
+ [][][]\T1/ptm/b/n/10 (-20) Output 
+ []
+
+
+Overfull \hbox (5.22691pt too wide) in paragraph at lines 334--334
+ \T1/ptm/b/n/10 (-20) (1x1)[] 
+ []
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:338: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.338         \draw [connection]
+                                 (Input-east) -- node {\midarrow} (cr1-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:338: Package pgf Error: No shape named `Input-east' is known.
+
+See the pgf package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.338         \draw [connection] (Input-east)
+                                              -- node {\midarrow} (cr1-west);
+This error message was generated by an \errmessage
+command, so I can't give any explicit help.
+Pretend that you're Hercule Poirot: Examine all clues,
+and deduce the truth by order and method.
+
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:338: Package pgf Error: No shape named `Input-east' is known.
+
+See the pgf package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.338 ...nput-east) -- node {\midarrow} (cr1-west)
+                                                  ;
+(That was another \errmessage.)
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:338: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.338 ...nput-east) -- node {\midarrow} (cr1-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:339: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.339         \draw [connection]
+                                 (cr1-east)   -- node {\midarrow} (p1-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:339: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.339 ...cr1-east)   -- node {\midarrow} (p1-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:340: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.340         \draw [connection]
+                                 (p1-east)    -- node {\midarrow} (cr2-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:340: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.340 ...1-east)    -- node {\midarrow} (cr2-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:341: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.341         \draw [connection]
+                                 (cr2-east)   -- node {\midarrow} (p2-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:341: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.341 ...cr2-east)   -- node {\midarrow} (p2-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:342: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.342         \draw [connection]
+                                 (p2-east)    -- node {\midarrow} (cr3-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:342: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.342 ...2-east)    -- node {\midarrow} (cr3-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:343: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.343         \draw [connection]
+                                 (cr3-east)   -- node {\midarrow} (p3-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:343: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.343 ...cr3-east)   -- node {\midarrow} (p3-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:344: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.344         \draw [connection]
+                                 (p3-east)    -- node {\midarrow} (cr4-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:344: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.344 ...3-east)    -- node {\midarrow} (cr4-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:345: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.345         \draw [connection]
+                                 (cr4-east)   -- node {\midarrow} (p4-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:345: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.345 ...cr4-east)   -- node {\midarrow} (p4-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:346: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.346         \draw [connection]
+                                 (p4-east)    -- node {\midarrow} (cr5-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:346: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.346 ...4-east)    -- node {\midarrow} (cr5-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:348: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.348         \draw [connection]
+                                 (cr5-east)   -- node {\midarrow} (up4-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:348: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.348 ...r5-east)   -- node {\midarrow} (up4-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:349: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.349         \draw [connection]
+                                 (up4-east)   -- node {\midarrow} (cat4-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:349: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.349 ...4-east)   -- node {\midarrow} (cat4-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:350: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.350         \draw [connection]
+                                 (cat4-east)  -- node {\midarrow} (ucr4a-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:350: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.350 ...4-east)  -- node {\midarrow} (ucr4a-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:352: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.352         \draw [connection]
+                                 (ucr4a-east) -- node {\midarrow} (up3-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:352: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.352 ...cr4a-east) -- node {\midarrow} (up3-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:353: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.353         \draw [connection]
+                                 (up3-east)   -- node {\midarrow} (cat3-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:353: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.353 ...3-east)   -- node {\midarrow} (cat3-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:354: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.354         \draw [connection]
+                                 (cat3-east)  -- node {\midarrow} (ucr3a-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:354: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.354 ...3-east)  -- node {\midarrow} (ucr3a-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:356: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.356         \draw [connection]
+                                 (ucr3a-east) -- node {\midarrow} (up2-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:356: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.356 ...cr3a-east) -- node {\midarrow} (up2-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:357: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.357         \draw [connection]
+                                 (up2-east)   -- node {\midarrow} (cat2-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:357: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.357 ...2-east)   -- node {\midarrow} (cat2-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:358: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.358         \draw [connection]
+                                 (cat2-east)  -- node {\midarrow} (ucr2a-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:358: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.358 ...2-east)  -- node {\midarrow} (ucr2a-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:360: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.360         \draw [connection]
+                                 (ucr2a-east) -- node {\midarrow} (up1-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:360: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.360 ...cr2a-east) -- node {\midarrow} (up1-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:361: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.361         \draw [connection]
+                                 (up1-east)   -- node {\midarrow} (cat1-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:361: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.361 ...1-east)   -- node {\midarrow} (cat1-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:362: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.362         \draw [connection]
+                                 (cat1-east)  -- node {\midarrow} (ucr1a-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:362: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.362 ...1-east)  -- node {\midarrow} (ucr1a-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:364: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.364         \draw [connection]
+                                 (ucr1a-east) -- node {\midarrow} (out-west);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/Max/Desktop/My Stuff/Kelp-Canopy-Mapping/writeup/writeup.tex:364: Undefined control sequence.
+<argument> \edgecolor 
+                      
+l.364 ...cr1a-east) -- node {\midarrow} (out-west)
+                                                  ;
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Underfull \vbox (badness 2680) has occurred while \output is active []
+
+
 
 [9]
 
@@ -551,40 +1664,40 @@ Package pdftex.def Info: distribution_0_SWIR_after.png  used on input line 253.
 [11]
 
 [12]
-<good2.png, id=277, 910.602pt x 315.0972pt>
+<good2.png, id=116, 910.602pt x 315.0972pt>
 File: good2.png Graphic file (type png)
 <use good2.png>
-Package pdftex.def Info: good2.png  used on input line 385.
+Package pdftex.def Info: good2.png  used on input line 519.
 (pdftex.def)             Requested size: 317.9892pt x 110.03084pt.
-<good3.png, id=278, 910.602pt x 315.0972pt>
+<good3.png, id=117, 910.602pt x 315.0972pt>
 File: good3.png Graphic file (type png)
 <use good3.png>
-Package pdftex.def Info: good3.png  used on input line 386.
+Package pdftex.def Info: good3.png  used on input line 520.
 (pdftex.def)             Requested size: 317.9892pt x 110.03084pt.
-<good1.png, id=279, 910.602pt x 315.0972pt>
+<good1.png, id=118, 910.602pt x 315.0972pt>
 File: good1.png Graphic file (type png)
 <use good1.png>
-Package pdftex.def Info: good1.png  used on input line 387.
+Package pdftex.def Info: good1.png  used on input line 521.
 (pdftex.def)             Requested size: 317.9892pt x 110.03084pt.
-<goodslc.png, id=280, 910.602pt x 315.0972pt>
+<goodslc.png, id=119, 910.602pt x 315.0972pt>
 File: goodslc.png Graphic file (type png)
 <use goodslc.png>
-Package pdftex.def Info: goodslc.png  used on input line 394.
+Package pdftex.def Info: goodslc.png  used on input line 528.
 (pdftex.def)             Requested size: 317.9892pt x 110.03084pt.
-<bad1.png, id=281, 910.602pt x 315.0972pt>
+<bad1.png, id=120, 910.602pt x 315.0972pt>
 File: bad1.png Graphic file (type png)
 <use bad1.png>
-Package pdftex.def Info: bad1.png  used on input line 401.
+Package pdftex.def Info: bad1.png  used on input line 535.
 (pdftex.def)             Requested size: 317.9892pt x 110.03084pt.
-<bad2.png, id=282, 910.602pt x 315.0972pt>
+<bad2.png, id=121, 910.602pt x 315.0972pt>
 File: bad2.png Graphic file (type png)
 <use bad2.png>
-Package pdftex.def Info: bad2.png  used on input line 402.
+Package pdftex.def Info: bad2.png  used on input line 536.
 (pdftex.def)             Requested size: 317.9892pt x 110.03084pt.
-<bad3.png, id=283, 910.602pt x 315.0972pt>
+<bad3.png, id=122, 910.602pt x 315.0972pt>
 File: bad3.png Graphic file (type png)
 <use bad3.png>
-Package pdftex.def Info: bad3.png  used on input line 403.
+Package pdftex.def Info: bad3.png  used on input line 537.
 (pdftex.def)             Requested size: 317.9892pt x 110.03084pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -611,21 +1724,31 @@ Underfull \vbox (badness 1502) has occurred while \output is active []
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-03-26>
  ***********
-Package rerunfilecheck Info: File `writeup.out' has not changed.
-(rerunfilecheck)             Checksum: 1CA3642C2804E776F7A312C3E89DC87F;12882.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `writeup.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `writeup.out':
+(rerunfilecheck)             Before: <no file>
+(rerunfilecheck)             After:  1CA3642C2804E776F7A312C3E89DC87F;12882.
  ) 
 Here is how much of TeX's memory you used:
- 15112 strings out of 469958
- 248054 string characters out of 5470782
- 675112 words of memory out of 5000000
- 41368 multiletter control sequences out of 15000+600000
- 665573 words of font info for 226 fonts, out of 8000000 for 9000
+ 29624 strings out of 469958
+ 576366 string characters out of 5470782
+ 1158110 words of memory out of 5000000
+ 55634 multiletter control sequences out of 15000+600000
+ 666508 words of font info for 236 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 86i,10n,131p,1613b,525s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 86i,14n,131p,1613b,1475s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\Max\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt0900.pk> <C:\Users\Max\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1000.pk><C:/Users/Max/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/Max/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/Max/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/Max/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/Max/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on writeup.pdf (19 pages, 3011433 bytes).
+Output written on writeup.pdf (19 pages, 3004291 bytes).
 PDF statistics:
- 449 PDF objects out of 1000 (max. 8388607)
- 91 named destinations out of 1000 (max. 500000)
- 38861 words of extra memory for PDF output out of 42996 (max. 10000000)
+ 319 PDF objects out of 1000 (max. 8388607)
+ 98 named destinations out of 1000 (max. 500000)
+ 38473 words of extra memory for PDF output out of 42996 (max. 10000000)
 
