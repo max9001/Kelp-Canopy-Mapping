@@ -1,0 +1,12 @@
+--- Evaluation Metrics ---
+  Run:                           18_og_noaug
+  Backbone:                      resnet18
+  Weights:                       best_weights.pth
+  Threshold Used:                0.2929
+  Land Mask Applied:             Yes
+------------------------------
+  Intersection over Union (IoU): 0.3091
+  Precision:                     0.4286
+  Recall:                        0.5258
+  F1-Score:                      0.4723
+--------------------------
