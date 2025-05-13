@@ -1,0 +1,3 @@
+test_satellite:		1426 items, 1.8GB
+train_satellite:	5635 items, 7.2GB
+train_kelp:			5635 items, 15.4MB
