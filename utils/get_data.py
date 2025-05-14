@@ -6,9 +6,12 @@ import warnings
 # Define the base directory where the split folders are located.
 # Adjust this path as needed. Assumes script is in the project root
 # or one level below (e.g., in a 'scripts' folder).
+
+# Change BASE_DIR below for the model to use different datasets
+
 try:
     # Assumes script is in a 'scripts' subdir relative to 'data'
-    BASE_DIR = Path().resolve().parent / "data" / "original"
+    BASE_DIR = Path().resolve().parent / "data" / "cleaned"
     if not BASE_DIR.exists():
         # If not found, assume script is in project root
         BASE_DIR = Path().resolve() / "data" / "cleaned"

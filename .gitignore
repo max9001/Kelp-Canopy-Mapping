@@ -16,3 +16,6 @@ __pycache__/
 *.ckpt
 *.tif
 *.pth
+
+notes/*
+writeup/*

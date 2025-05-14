@@ -8,6 +8,11 @@ import sys
 import warnings
 from collections import defaultdict
 
+'''
+Used to inspect images with cases of extreme outliers
+'''
+
+
 # --- Configuration ---
 # Assume the script is run from the project root or adjust as needed
 base_dir = Path().resolve()
@@ -256,8 +261,6 @@ Band: 6_DEM
   Max Count of MAX Value (706):
     Filename: UF158815
     Count:    1 pixels
-
-
 
 analysis:
     nothing needs to be done to band 5 or 6

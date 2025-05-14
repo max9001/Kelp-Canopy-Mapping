@@ -1,13 +1,20 @@
 import numpy as np
 import tifffile as tiff
 from pathlib import Path
-import os
+import os # Kept as it was in the original structure provided
 from tqdm import tqdm
 import heapq  # For efficient top-k selection
-import sys
-from pyprojroot import here # Optional, if you use it for root finding
+import sys # Kept as it was in the original structure provided
 
-def calculate_cloud_counts(directory):
+# --- Configuration Constants ---
+# This should point to the directory that CONTAINS subdirectories like "train_satellite", "train_kelp".
+# Example: If your satellite images are in project_root/data/original/train_satellite,
+# then DATA_DIR = Path().resolve().parent / "data" / "original"
+DATA_DIR = Path().resolve().parent / "data" / "original"
+NUM_TOP_CLOUDY_IMAGES = 20  # Number of top cloudy images to report
+
+
+def calculate_cloud_counts(directory: Path):
     """
     Calculates the number of cloud pixels (value 1 in band 5) for each satellite image.
 
@@ -37,6 +44,7 @@ def calculate_cloud_counts(directory):
             image_st = np.array(image_st) # Ensure it's a NumPy array
 
             # Check dimensions - expecting (Height, Width, Channels)
+            # Band 5 is index 5, so needs at least 6 bands (0-5)
             if image_st.ndim != 3 or image_st.shape[-1] < 6:
                 print(f"Warning: Skipping {file_path.name} due to unexpected shape: {image_st.shape}")
                 continue
@@ -55,7 +63,7 @@ def calculate_cloud_counts(directory):
 
     return cloud_counts
 
-def get_kelp_count(kelp_mask_path):
+def get_kelp_count(kelp_mask_path: Path):
     """Loads a kelp mask and returns the count of kelp pixels (value 1)."""
     try:
         kelp_mask = tiff.imread(kelp_mask_path)
@@ -73,23 +81,21 @@ def get_kelp_count(kelp_mask_path):
 
 def main():
     """
-    Finds the top 5 satellite images with the most clouds and prints their
+    Finds the top N satellite images with the most clouds and prints their
     cloud and corresponding kelp pixel counts.
     """
     try:
-        # --- Define Directories ---
-        # root_dir = here()
-        root_dir = Path().resolve().parent
+        # --- Define Directories using the global DATA_DIR ---
+        # These subdirectories are assumed to be within the DATA_DIR
+        # Adjust "train_satellite" and "train_kelp" if your subfolder names differ.
+        satellite_dir = DATA_DIR / "train_satellite"
+        kelp_mask_dir = DATA_DIR / "train_kelp"
 
-        # Directory containing the satellite images
-        satellite_dir = root_dir / "data" / "train_satellite" # Example: Original data
-        # satellite_dir = root_dir / "data" / "tiled_satellite"
-        # satellite_dir = root_dir / "data" / "balanced_tiled_40_60" / "train_satellite"
-
-        # Directory containing the corresponding kelp masks
-        kelp_mask_dir = root_dir / "data" / "train_kelp" # Example: Original data
-        # kelp_mask_dir = root_dir / "data" / "tiled_kelp"
-        # kelp_mask_dir = root_dir / "data" / "balanced_tiled_40_60" / "train_kelp"
+        # Example of how you might switch to other subdirectories within DATA_DIR:
+        # satellite_dir = DATA_DIR / "tiled_satellite"
+        # kelp_mask_dir = DATA_DIR / "tiled_kelp"
+        # satellite_dir = DATA_DIR / "balanced_tiled_40_60" / "train_satellite"
+        # kelp_mask_dir = DATA_DIR / "balanced_tiled_40_60" / "train_kelp"
 
 
         if not satellite_dir.exists():
@@ -105,15 +111,15 @@ def main():
             print("No cloud counts were calculated. Exiting.")
             return
 
-        # --- Find Top 5 Cloudy Images ---
-        k = 20
-        top_k_cloudy_files = heapq.nlargest(k, cloud_counts_with_filenames, key=lambda item: item[0])
+        # --- Find Top N Cloudy Images (using global NUM_TOP_CLOUDY_IMAGES) ---
+        top_k_cloudy_files = heapq.nlargest(NUM_TOP_CLOUDY_IMAGES, cloud_counts_with_filenames, key=lambda item: item[0])
 
-        print(f"\n--- Top {k} Files with Most Cloud Pixels (and their Kelp Counts) ---")
+        print(f"\n--- Top {NUM_TOP_CLOUDY_IMAGES} Files with Most Cloud Pixels (and their Kelp Counts) ---")
         if not top_k_cloudy_files:
-            print(f"No files found to determine top {k}.")
+            print(f"No files found to determine top {NUM_TOP_CLOUDY_IMAGES}.")
         else:
-            num_to_print = min(k, len(top_k_cloudy_files))
+            # Ensure we don't try to print more than we found, if fewer than NUM_TOP_CLOUDY_IMAGES exist
+            num_to_print = min(NUM_TOP_CLOUDY_IMAGES, len(top_k_cloudy_files))
             for i in range(num_to_print):
                 cloud_count, satellite_filename = top_k_cloudy_files[i]
 

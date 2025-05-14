@@ -8,6 +8,11 @@ import os
 from pathlib import Path
 import warnings
 
+'''
+Used to view a random output of the test script. 
+compares RGB representation of a sattelite image, the model's prediction, and its ground truth Kelp Mask
+'''
+
 OUTPUT_RUN = "34_clean_aug"
 
 # --- Helper Functions ---
