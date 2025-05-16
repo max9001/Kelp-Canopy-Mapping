@@ -24,7 +24,7 @@ RUN_NAME = "34_clean_aug"
 BACKBONE_NAME = "resnet34"
 APPLY_LAND_MASK = True
 DATA_DIR_STR = str(Path().resolve().parent / "data" / "cleaned") 
-RESULTS_FILENAME = "DELETE.txt"
+RESULTS_FILENAME = "results.txt"
 
 
 RUN_DIR = Path().resolve().parent / "runs" / RUN_NAME
