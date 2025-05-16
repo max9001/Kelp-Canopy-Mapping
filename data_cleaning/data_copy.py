@@ -2,7 +2,18 @@ import os
 import shutil
 import random
 from pathlib import Path
-from pyprojroot import here
+
+'''
+Run this script to copy a random sample of files from a source to destination directory
+'''
+
+
+#configuration
+SOURCE = Path().resolve().parent / "data" / "original" / "train_kelp"  
+DEST = Path().resolve().parent / "data" / "original" / "train101"
+NUM_2_COPY = 101
+
+
 
 def copy_random_samples(source_dir, dest_dir, num_samples=100):
     """
@@ -44,9 +55,8 @@ def main():
     """
     Main function to copy 100 random training samples to data/train100/.
     """
-    root_dir = here()
-    source_kelp_dir = root_dir / "data" / "train_kelp"  # Corrected source directory
-    dest_dir = root_dir / "data" / "train100"
+    source_kelp_dir = SOURCE  # Corrected source directory
+    dest_dir = DEST
 
     # Make sure source directory exists
     if not source_kelp_dir.exists():
@@ -54,8 +64,8 @@ def main():
 
 
     # Copy kelp files
-    copy_random_samples(source_kelp_dir, dest_dir)
-    print(f"Copied {100} random samples to {dest_dir}")
+    copy_random_samples(source_kelp_dir, dest_dir, NUM_2_COPY)
+    print(f"Copied {NUM_2_COPY} random samples to {dest_dir}")
 
 if __name__ == "__main__":
     main()
