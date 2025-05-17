@@ -9,9 +9,8 @@
 - [Key Features](#key-features)
 - [How to Use the Tool (Inference)](#how-to-use-the-tool-inference)
 - [How to Reproduce Our Results (Training & Evaluation)](#how-to-reproduce-our-results-training--evaluation)
-- [Requirements (Suggested)](#requirements-suggested)
-- [Contributing (Suggested)](#contributing-suggested)
-- [License (Suggested)](#license-suggested)
+- [Requirements](#requirements)
+- [Contributing](#contributing)
 
 ## Overview
 This project presents a deep learning pipeline for the automated mapping of kelp canopy from Landsat 7 satellite imagery. It leverages a UNet architecture with ResNet backbones and citizen science data (Floating Forests labels) for training and evaluation. The primary goal is to provide a scalable solution for monitoring kelp ecosystems, aiding conservation efforts.
