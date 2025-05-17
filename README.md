@@ -89,7 +89,7 @@ Follow these steps to replicate the training process and evaluation results pres
     *   Create a `cleaned` directory inside your `data` folder if it doesn't exist.
     *   Save the downloaded satellite images into `data/cleaned/train_satellite1/`.
     *   Save the downloaded kelp masks into `data/cleaned/train_kelp1/`.
-        *(Note: The study mentions `test_satellite` was unused for this specific reproduction path, but the `split_data.py` script will create test sets.)*
+       
 
 3.  **Clean Data:**
     *   The satellite images in `data/cleaned/train_satellite1/` need to be processed by the cleaning script.
