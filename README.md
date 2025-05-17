@@ -144,7 +144,7 @@ Follow these steps to replicate the training process and evaluation results pres
             ```
             This will display a random sample comparing the original satellite image, the model's prediction, and the ground truth mask.
 
-## Requirements (Suggested)
+## Requirements
 *   Python 3.8+
 *   PyTorch
 *   PyTorch Lightning
