@@ -1,11 +1,12 @@
 # Automated Kelp Canopy Mapping: A UNet Approach with Landsat & Citizen Science
 
+![Example Kelp Prediction](figures/good_predictions/TK423110.png)
+
 > This study developed and evaluated an end-to-end deep learning pipeline, utilizing a UNet architecture with pre-trained ResNet backbones, for semantic segmentation of kelp canopy in Landsat 7 imagery using Floating Forests labels, incorporating rigorous data preprocessing and augmentation. We found that a ResNet34 backbone, trained on cleaned and augmented data, achieved an Intersection over Union (IoU) of 0.5028, with data preprocessing and augmentation proving essential for optimal performance. Our study suggests that deep learning, leveraged with citizen-science-derived ground truth, offers a viable and scalable approach to automate kelp canopy mapping, which can enhance the efficiency of conservation efforts by reallocating resources towards direct ecological interventions.
 
 ## Table of Contents
 - [Overview](#overview)
 - [Key Features](#key-features)
-- [Example Prediction](#example-prediction)
 - [How to Use the Tool (Inference)](#how-to-use-the-tool-inference)
 - [How to Reproduce Our Results (Training & Evaluation)](#how-to-reproduce-our-results-training--evaluation)
 - [Requirements (Suggested)](#requirements-suggested)
@@ -23,11 +24,6 @@ This project presents a deep learning pipeline for the automated mapping of kelp
 - **Data Preprocessing & Augmentation:** Includes steps for data cleaning and augmentation to improve model performance.
 - **End-to-End Pipeline:** Covers data preparation, model training, inference, and evaluation.
 
-## Example Prediction
-Below is an example of the model's prediction compared to the original satellite image and the ground truth.
-
-![Example Kelp Prediction](figures/good_predictions/TK423110.png)
-
 ## How to Use the Tool (Inference)
 Follow these steps to use the pre-trained model to generate kelp canopy masks on new Landsat 7 imagery:
 
@@ -44,7 +40,7 @@ Follow these steps to use the pre-trained model to generate kelp canopy masks on
         *   `6`: Digital Elevation Model (DEM - meters above sea-level)
     *   If Cloud Mask and DEM bands are unavailable, they can be substituted with layers of zeros of the same spatial dimensions.
     *   Store these `.tif` images in the `data/cleaned/train_satellite/` directory.
-        *   *For a quick test, you can use `data_copy.py` (if provided in your utils) to copy some sample training data to this directory.*
+        *   *For a quick test, you can use `data_copy.py` to copy some sample training data to this directory.*
 
 2.  **Clean Data (Optional but Recommended):**
     *   The raw Landsat 7 data can be noisy. We provide an automated cleaning script.
@@ -89,7 +85,7 @@ Follow these steps to replicate the training process and evaluation results pres
     *   Create a `cleaned` directory inside your `data` folder if it doesn't exist.
     *   Save the downloaded satellite images into `data/cleaned/train_satellite1/`.
     *   Save the downloaded kelp masks into `data/cleaned/train_kelp1/`.
-        *(Note: The study mentions `test_satellite` was unused for this specific reproduction path, but the `split_data.py` script will create test sets.)*
+       
 
 3.  **Clean Data:**
     *   The satellite images in `data/cleaned/train_satellite1/` need to be processed by the cleaning script.
@@ -115,7 +111,7 @@ Follow these steps to replicate the training process and evaluation results pres
     *   Adjust training parameters (e.g., `BACKBONE`, `MAX_EPOCHS`, `RUN_NAME`, `DATA_DIR`) at the top of the script as needed. For reproducing the ResNet34 result, ensure `BACKBONE = "resnet34"`.
     *   Run the training script:
         ```bash
-        python 350resnet.py # Or your main training script
+        python 350resnet.py 
         ```
     *   Once training is complete, all relevant information, including model weights and logs, will be stored in a subdirectory within the `runs/` directory, named according to `RUN_NAME`.
 
@@ -144,7 +140,7 @@ Follow these steps to replicate the training process and evaluation results pres
             ```
             This will display a random sample comparing the original satellite image, the model's prediction, and the ground truth mask.
 
-## Requirements (Suggested)
+## Requirements
 *   Python 3.8+
 *   PyTorch
 *   PyTorch Lightning
