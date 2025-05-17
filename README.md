@@ -1,11 +1,12 @@
 # Automated Kelp Canopy Mapping: A UNet Approach with Landsat & Citizen Science
 
+![Example Kelp Prediction](figures/good_predictions/TK423110.png)
+
 > This study developed and evaluated an end-to-end deep learning pipeline, utilizing a UNet architecture with pre-trained ResNet backbones, for semantic segmentation of kelp canopy in Landsat 7 imagery using Floating Forests labels, incorporating rigorous data preprocessing and augmentation. We found that a ResNet34 backbone, trained on cleaned and augmented data, achieved an Intersection over Union (IoU) of 0.5028, with data preprocessing and augmentation proving essential for optimal performance. Our study suggests that deep learning, leveraged with citizen-science-derived ground truth, offers a viable and scalable approach to automate kelp canopy mapping, which can enhance the efficiency of conservation efforts by reallocating resources towards direct ecological interventions.
 
 ## Table of Contents
 - [Overview](#overview)
 - [Key Features](#key-features)
-- [Example Prediction](#example-prediction)
 - [How to Use the Tool (Inference)](#how-to-use-the-tool-inference)
 - [How to Reproduce Our Results (Training & Evaluation)](#how-to-reproduce-our-results-training--evaluation)
 - [Requirements (Suggested)](#requirements-suggested)
@@ -22,11 +23,6 @@ This project presents a deep learning pipeline for the automated mapping of kelp
 - **Citizen Science Integration:** Incorporates Floating Forests labels for ground truth.
 - **Data Preprocessing & Augmentation:** Includes steps for data cleaning and augmentation to improve model performance.
 - **End-to-End Pipeline:** Covers data preparation, model training, inference, and evaluation.
-
-## Example Prediction
-Below is an example of the model's prediction compared to the original satellite image and the ground truth.
-
-![Example Kelp Prediction](figures/good_predictions/TK423110.png)
 
 ## How to Use the Tool (Inference)
 Follow these steps to use the pre-trained model to generate kelp canopy masks on new Landsat 7 imagery:
