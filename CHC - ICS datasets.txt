@@ -1,6 +1,0 @@
-CHC - ICS datasets.txt
-
-https://www.drivendata.org/competitions/255/kelp-forest-segmentation/page/791/
-
-	Original competition - Data backup (Hopefully!): https://www.kaggle.com/datasets/ankushism/kelp-forest-segmentation-driven-data?resource=download
-
