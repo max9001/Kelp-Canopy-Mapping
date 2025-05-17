@@ -115,7 +115,7 @@ Follow these steps to replicate the training process and evaluation results pres
     *   Adjust training parameters (e.g., `BACKBONE`, `MAX_EPOCHS`, `RUN_NAME`, `DATA_DIR`) at the top of the script as needed. For reproducing the ResNet34 result, ensure `BACKBONE = "resnet34"`.
     *   Run the training script:
         ```bash
-        python 350resnet.py # Or your main training script
+        python 350resnet.py 
         ```
     *   Once training is complete, all relevant information, including model weights and logs, will be stored in a subdirectory within the `runs/` directory, named according to `RUN_NAME`.
 
