@@ -15,7 +15,7 @@ if not (BASE_DIR / "data").exists():
          raise FileNotFoundError("Could not automatically find the 'data' directory relative to the script.")
 
 CLEANED_DATA_DIR = BASE_DIR / "data" / "cleaned"
-SAT_DIR = CLEANED_DATA_DIR / "train_satellite" # MODIFY THIS DIRECTORY
+SAT_DIR = CLEANED_DATA_DIR / "train101" # MODIFY THIS DIRECTORY
 
 if not SAT_DIR.is_dir():
     raise FileNotFoundError(f"Directory not found: {SAT_DIR}")

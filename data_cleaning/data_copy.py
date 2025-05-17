@@ -9,7 +9,7 @@ Run this script to copy a random sample of files from a source to destination di
 
 
 #configuration
-SOURCE = Path().resolve().parent / "data" / "original" / "train_satellite"  
+SOURCE = Path().resolve().parent / "data" / "original" / "train_satellite1"  
 DEST = Path().resolve().parent / "data" / "original" / "train101"
 NUM_2_COPY = 101
 
