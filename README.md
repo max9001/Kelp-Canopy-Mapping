@@ -1,6 +1,6 @@
 # Automated Kelp Canopy Mapping: A UNet Approach with Landsat & Citizen Science
 
-![Example Kelp Prediction](figures/good_predictions/TK423110.png)
+![Example Kelp Prediction](figures/good_predictions/readme.png)
 
 > This study developed and evaluated an end-to-end deep learning pipeline, utilizing a UNet architecture with pre-trained ResNet backbones, for semantic segmentation of kelp canopy in Landsat 7 imagery using Floating Forests labels, incorporating rigorous data preprocessing and augmentation. We found that a ResNet34 backbone, trained on cleaned and augmented data, achieved an Intersection over Union (IoU) of 0.5028, with data preprocessing and augmentation proving essential for optimal performance. Our study suggests that deep learning, leveraged with citizen-science-derived ground truth, offers a viable and scalable approach to automate kelp canopy mapping, which can enhance the efficiency of conservation efforts by reallocating resources towards direct ecological interventions.
 
@@ -9,9 +9,7 @@
 - [Key Features](#key-features)
 - [How to Use the Tool (Inference)](#how-to-use-the-tool-inference)
 - [How to Reproduce Our Results (Training & Evaluation)](#how-to-reproduce-our-results-training--evaluation)
-- [Requirements (Suggested)](#requirements-suggested)
-- [Contributing (Suggested)](#contributing-suggested)
-- [License (Suggested)](#license-suggested)
+- [Requirements](#requirements)
 
 ## Overview
 This project presents a deep learning pipeline for the automated mapping of kelp canopy from Landsat 7 satellite imagery. It leverages a UNet architecture with ResNet backbones and citizen science data (Floating Forests labels) for training and evaluation. The primary goal is to provide a scalable solution for monitoring kelp ecosystems, aiding conservation efforts.
