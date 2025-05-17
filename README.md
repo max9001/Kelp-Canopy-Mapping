@@ -44,7 +44,7 @@ Follow these steps to use the pre-trained model to generate kelp canopy masks on
         *   `6`: Digital Elevation Model (DEM - meters above sea-level)
     *   If Cloud Mask and DEM bands are unavailable, they can be substituted with layers of zeros of the same spatial dimensions.
     *   Store these `.tif` images in the `data/cleaned/train_satellite/` directory.
-        *   *For a quick test, you can use `data_copy.py` (if provided in your utils) to copy some sample training data to this directory.*
+        *   *For a quick test, you can use `data_copy.py` to copy some sample training data to this directory.*
 
 2.  **Clean Data (Optional but Recommended):**
     *   The raw Landsat 7 data can be noisy. We provide an automated cleaning script.
